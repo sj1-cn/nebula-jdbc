@@ -15,14 +15,12 @@ import org.junit.runners.Suite;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import nebula.jdbc.DatabaseTest;
 import nebula.jdbc.statements.InsertStatementTest;
 import nebula.jdbc.statements.SelectStatementTest;
 import nebula.jdbc.statements.UpdateStatementTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    DatabaseTest.class,
     InsertStatementTest.class,
     SelectStatementTest.class,
     UpdateStatementTest.class

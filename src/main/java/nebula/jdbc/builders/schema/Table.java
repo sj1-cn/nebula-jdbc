@@ -23,27 +23,27 @@ public class Table implements HasSQLRepresentation {
 		foreignKeys = new ArrayList<>();
 	}
 
-	public ColumnBuilder string(String name) {
+	public ColumnDefination string(String name) {
 		return string(name, 256);
 	}
 
-	public ColumnBuilder string(String name, int length) {
-		ColumnBuilder column = VARCHAR(name, length);
+	public ColumnDefination string(String name, int length) {
+		ColumnDefination column = VARCHAR(name, length);
 		columns.add(column);
 		return column;
 	}
 
-	public ColumnBuilder integer(String name) {
-		ColumnBuilder column = INTEGER(name);
+	public ColumnDefination integer(String name) {
+		ColumnDefination column = INTEGER(name);
 		columns.add(column);
 		return column;
 	}
 
-	public ColumnBuilder increments(String name) {
-		ColumnBuilder id = INTEGER(name).autoIncrement().unsigned().required();
+	public ColumnDefination increments(String name) {
+		ColumnDefination id = INTEGER(name).autoIncrement().unsigned().required();
 		primaryKey = new PrimaryKey(id);
 		columns.add(id);
-		return (ColumnBuilder) id;
+		return (ColumnDefination) id;
 	}
 
 	public ForeignKey foreign(Column column) {

@@ -27,13 +27,13 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Configuration {
-	static EnumMap<JDBCTypes, String> mapper = new EnumMap<>(JDBCTypes.class);
-	static Map<String, JDBCTypes> mapperRevert = new HashMap<>();
+public class JDBCConfiguration {
+	public static EnumMap<JDBCTypes, String> mapper = new EnumMap<>(JDBCTypes.class);
+	public static Map<String, JDBCTypes> mapperRevert = new HashMap<>();
 	static {
-		mapper.put(CHAR, "String");
-		mapper.put(VARCHAR, "String");
-		mapper.put(LONGVARCHAR, "String");
+		mapper.put(CHAR, "java.lang.String");
+		mapper.put(VARCHAR, "java.lang.String");
+		mapper.put(LONGVARCHAR, "java.lang.String");
 		mapper.put(NUMERIC, "java.math.BigDecimal");
 		mapper.put(DECIMAL, "java.math.BigDecimal");
 		mapper.put(BIT, "boolean");
@@ -53,8 +53,9 @@ public class Configuration {
 		mapper.put(TIMESTAMP, "java.sql.Timestamp");
 		mapper.put(TIMESTAMP_WITH_TIMEZONE, "java.sql.Timestamp");
 
-		mapperRevert.put("String", VARCHAR);
+		mapperRevert.put("java.lang.String", VARCHAR);
 		mapperRevert.put("java.math.BigDecimal", NUMERIC);
+		mapperRevert.put("char", VARCHAR);
 		mapperRevert.put("boolean", BIT);
 		mapperRevert.put("byte", TINYINT);
 		mapperRevert.put("short", SMALLINT);
@@ -66,9 +67,19 @@ public class Configuration {
 		mapperRevert.put("java.sql.Date", DATE);
 		mapperRevert.put("java.sql.Time", TIME);
 		mapperRevert.put("java.sql.Timestamp", TIMESTAMP);
+
+		mapperRevert.put("java.lang.Boolean", BIT);
+		mapperRevert.put("java.lang.Character", VARCHAR);
+		mapperRevert.put("java.lang.Byte", TINYINT);
+		mapperRevert.put("java.lang.Short", SMALLINT);
+		mapperRevert.put("java.lang.Integer", INTEGER);
+		mapperRevert.put("java.lang.Long", BIGINT);
+		mapperRevert.put("java.lang.Float", REAL);
+		mapperRevert.put("java.lang.Double", DOUBLE);
+		mapperRevert.put("java.lang.Date", DATE);
 	}
 
-	static EnumMap<JDBCTypes, String> columnDefinations = new EnumMap<>(JDBCTypes.class);
+	public static EnumMap<JDBCTypes, String> columnDefinations = new EnumMap<>(JDBCTypes.class);
 	static {
 		columnDefinations.put(CHAR, "CHAR");// precisionInt
 		columnDefinations.put(VARCHAR, "VARCHAR");
@@ -93,38 +104,57 @@ public class Configuration {
 		columnDefinations.put(TIMESTAMP_WITH_TIMEZONE, "TIME");
 	}
 
-	static class JavaType {
-		String typename;
-		String getname;
-		String setname;
-		Class<?> getclazz;
+	public static class JDBCType {
+		public String typename;
+		public String getname;
+		public String setname;
+		public Class<?> jdbcClazz;
 
-		public JavaType(String typename, String getname, String setname, Class<?> getclazz) {
+		public JDBCType(String typename, String getname, String setname, Class<?> getclazz) {
 			super();
 			this.typename = typename;
 			this.getname = getname;
 			this.setname = setname;
-			this.getclazz = getclazz;
+			this.jdbcClazz = getclazz;
 		}
 	}
 
-	static Map<String, JavaType> javaJdbcTypes = new HashMap<>();
+	public static Map<String, JDBCType> javaJdbcTypes = new HashMap<>();
+
+	static void rigester(Class<?> clazz, JDBCType jdbctype) {
+		javaJdbcTypes.put(clazz.getName(), jdbctype);
+	}
+
+	static void rigester(String clazz, JDBCType jdbctype) {
+		javaJdbcTypes.put(clazz, jdbctype);
+	}
 
 	static {
 		// @formatter:off
-		javaJdbcTypes.put("String", new JavaType("String", "getString","setString", String.class));
-		javaJdbcTypes.put("boolean", new JavaType("boolean", "getBoolean", "setBoolean", boolean.class));
-		javaJdbcTypes.put("byte", new JavaType("byte", "getByte", "setByte", byte.class));
-		javaJdbcTypes.put("short", new JavaType("short", "getShort",  "setShort", short.class));
-		javaJdbcTypes.put("int", new JavaType("int", "getInt", "setInt",int.class));
-		javaJdbcTypes.put("long", new JavaType("long", "getLong","setLong", long.class));
-		javaJdbcTypes.put("float", new JavaType("float", "getFloat", "setFloat",float.class));
-		javaJdbcTypes.put("double", new JavaType("double", "getDouble", "setDouble",  double.class));
-		javaJdbcTypes.put("bytes", new JavaType("bytes", "getBytes", "setBytes",  byte[].class));// byte[]
-		javaJdbcTypes.put("java.sql.Date", new JavaType("java.sql.Date", "getDate","setDate", java.sql.Date.class));// java.sql.Date
-		javaJdbcTypes.put("java.sql.Time", new JavaType("Time", "getTime", "setTime", java.sql.Time.class));// java.sql.Time
-		javaJdbcTypes.put("java.sql.Timestamp", new JavaType("Timestamp", "getTimestamp","setTimestamp", java.sql.Timestamp.class));// java.sql.Timestamp
-		javaJdbcTypes.put("java.math.BigDecimal", new JavaType("java.math.BigDecimal", "getBigDecimal", "setBigDecimal",BigDecimal.class));// java.math.BigDecimal
+		rigester(String.class, new JDBCType("String", "getString","setString", String.class));
+		rigester(boolean.class, new JDBCType("boolean", "getBoolean", "setBoolean", boolean.class));
+		rigester(char.class, new JDBCType("String", "getString","setString", String.class));
+		rigester(byte.class, new JDBCType("byte", "getByte", "setByte", byte.class));
+		rigester(short.class, new JDBCType("short", "getShort",  "setShort", short.class));
+		rigester(int.class, new JDBCType("int", "getInt", "setInt",int.class));
+		rigester(long.class, new JDBCType("long", "getLong","setLong", long.class));
+		rigester(float.class, new JDBCType("float", "getFloat", "setFloat",float.class));
+		rigester(double.class, new JDBCType("double", "getDouble", "setDouble",  double.class));
+		rigester("bytes", new JDBCType("bytes", "getBytes", "setBytes",  byte[].class));// byte[]
+		rigester(java.sql.Date.class, new JDBCType("java.sql.Date", "getDate","setDate", java.sql.Date.class));// java.sql.Date
+		rigester(java.sql.Time.class, new JDBCType("Time", "getTime", "setTime", java.sql.Time.class));// java.sql.Time
+		rigester(java.sql.Timestamp.class, new JDBCType("Timestamp", "getTimestamp","setTimestamp", java.sql.Timestamp.class));// java.sql.Timestamp
+		rigester(java.math.BigDecimal.class, new JDBCType("java.math.BigDecimal", "getBigDecimal", "setBigDecimal",BigDecimal.class));// java.math.BigDecimal
+
+		rigester(String.class, new JDBCType("String", "getString","setString", String.class));
+		rigester(Character.class, new JDBCType("String", "getString","setString", String.class));
+		rigester(Boolean.class, new JDBCType("boolean", "getBoolean", "setBoolean", boolean.class));
+		rigester(Byte.class, new JDBCType("byte", "getByte", "setByte", byte.class));
+		rigester(Short.class, new JDBCType("short", "getShort",  "setShort", short.class));
+		rigester(Integer.class, new JDBCType("int", "getInt", "setInt",int.class));
+		rigester(Long.class, new JDBCType("long", "getLong","setLong", long.class));
+		rigester(Float.class, new JDBCType("float", "getFloat", "setFloat",float.class));
+		rigester(Double.class, new JDBCType("double", "getDouble", "setDouble",  double.class));
 		// @formatter:on
 	}
 

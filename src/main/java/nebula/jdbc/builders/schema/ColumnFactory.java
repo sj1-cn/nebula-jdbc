@@ -1,88 +1,92 @@
 package nebula.jdbc.builders.schema;
 
 public class ColumnFactory {
-	static ColumnBuilder CHAR(String name) {
-		return new ColumnBuilder(name, JDBCTypes.CHAR);
+	static public  ColumnDefination CHAR(String name) {
+		return new ColumnDefination(name, JDBCTypes.CHAR);
 	}
 
-	static ColumnBuilder VARCHAR(String name) {
-		return new ColumnBuilder(name, JDBCTypes.VARCHAR, 256);
+	static public  ColumnDefination VARCHAR(String name) {
+		return new ColumnDefination(name, JDBCTypes.VARCHAR, 256);
 	}
 
-	static ColumnBuilder VARCHAR(String name, int length) {
-		return new ColumnBuilder(name, JDBCTypes.VARCHAR, length);
+	static public  ColumnDefination VARCHAR(String name, int length) {
+		return new ColumnDefination(name, JDBCTypes.VARCHAR, length);
 	}
 
-	static ColumnBuilder LONGVARCHAR(String name) {
-		return new ColumnBuilder(name, JDBCTypes.LONGVARCHAR);
+	static public  ColumnDefination LONGVARCHAR(String name) {
+		return new ColumnDefination(name, JDBCTypes.LONGVARCHAR);
 	}
 
-	static ColumnBuilder NUMERIC(String name) {
-		return new ColumnBuilder(name, JDBCTypes.NUMERIC);
+	static public  ColumnDefination Column(JDBCTypes type, String name) {
+		return new ColumnDefination(name, type);
 	}
 
-	static ColumnBuilder DECIMAL(String name) {
-		return new ColumnBuilder(name, JDBCTypes.DECIMAL);
+	static public  ColumnDefination NUMERIC(String name) {
+		return new ColumnDefination(name, JDBCTypes.NUMERIC);
 	}
 
-	static ColumnBuilder IDENTITY(String name) {
-		return new ColumnBuilder(name, JDBCTypes.IDENTITY);
+	static public  ColumnDefination DECIMAL(String name) {
+		return new ColumnDefination(name, JDBCTypes.DECIMAL);
 	}
 
-	static ColumnBuilder BIT(String name) {
-		return new ColumnBuilder(name, JDBCTypes.BIT);
+	static public  ColumnDefination IDENTITY(String name) {
+		return new ColumnDefination(name, JDBCTypes.IDENTITY);
 	}
 
-	static ColumnBuilder TINYINT(String name) {
-		return new ColumnBuilder(name, JDBCTypes.TINYINT);
+	static public  ColumnDefination BIT(String name) {
+		return new ColumnDefination(name, JDBCTypes.BIT);
 	}
 
-	static ColumnBuilder SMALLINT(String name) {
-		return new ColumnBuilder(name, JDBCTypes.SMALLINT);
+	static public  ColumnDefination TINYINT(String name) {
+		return new ColumnDefination(name, JDBCTypes.TINYINT);
 	}
 
-	static ColumnBuilder INTEGER(String name) {
-		return new ColumnBuilder(name, JDBCTypes.INTEGER);
+	static public  ColumnDefination SMALLINT(String name) {
+		return new ColumnDefination(name, JDBCTypes.SMALLINT);
 	}
 
-	static ColumnBuilder BIGINT(String name) {
-		return new ColumnBuilder(name, JDBCTypes.BIGINT);
+	static public  ColumnDefination INTEGER(String name) {
+		return new ColumnDefination(name, JDBCTypes.INTEGER);
 	}
 
-	static ColumnBuilder REAL(String name) {
-		return new ColumnBuilder(name, JDBCTypes.REAL);
+	static public  ColumnDefination BIGINT(String name) {
+		return new ColumnDefination(name, JDBCTypes.BIGINT);
 	}
 
-	static ColumnBuilder FLOAT(String name) {
-		return new ColumnBuilder(name, JDBCTypes.FLOAT);
+	static public  ColumnDefination REAL(String name) {
+		return new ColumnDefination(name, JDBCTypes.REAL);
 	}
 
-	static ColumnBuilder DOUBLE(String name) {
-		return new ColumnBuilder(name, JDBCTypes.DOUBLE);
+	static public  ColumnDefination FLOAT(String name) {
+		return new ColumnDefination(name, JDBCTypes.FLOAT);
 	}
 
-	static ColumnBuilder BINARY(String name) {
-		return new ColumnBuilder(name, JDBCTypes.BINARY);
+	static public  ColumnDefination DOUBLE(String name) {
+		return new ColumnDefination(name, JDBCTypes.DOUBLE);
 	}
 
-	static ColumnBuilder VARBINARY(String name) {
-		return new ColumnBuilder(name, JDBCTypes.VARBINARY);
+	static public  ColumnDefination BINARY(String name) {
+		return new ColumnDefination(name, JDBCTypes.BINARY);
 	}
 
-	static ColumnBuilder LONGVARBINARY(String name) {
-		return new ColumnBuilder(name, JDBCTypes.LONGVARBINARY);
+	static public  ColumnDefination VARBINARY(String name) {
+		return new ColumnDefination(name, JDBCTypes.VARBINARY);
 	}
 
-	static ColumnBuilder DATE(String name) {
-		return new ColumnBuilder(name, JDBCTypes.DATE);
+	static public  ColumnDefination LONGVARBINARY(String name) {
+		return new ColumnDefination(name, JDBCTypes.LONGVARBINARY);
 	}
 
-	static ColumnBuilder TIME(String name) {
-		return new ColumnBuilder(name, JDBCTypes.TIME);
+	static public  ColumnDefination DATE(String name) {
+		return new ColumnDefination(name, JDBCTypes.DATE);
 	}
 
-	static ColumnBuilder TIMESTAMP(String name) {
-		return new ColumnBuilder(name, JDBCTypes.TIMESTAMP);
+	static public  ColumnDefination TIME(String name) {
+		return new ColumnDefination(name, JDBCTypes.TIME);
+	}
+
+	static public  ColumnDefination TIMESTAMP(String name) {
+		return new ColumnDefination(name, JDBCTypes.TIMESTAMP);
 	}
 
 }
