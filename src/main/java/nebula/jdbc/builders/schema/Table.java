@@ -3,7 +3,7 @@
  */
 package nebula.jdbc.builders.schema;
 
-import static nebula.jdbc.builders.schema.ColumnFactory.*;
+import static nebula.jdbc.builders.schema.ColumnDefinition.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,27 +23,27 @@ public class Table implements HasSQLRepresentation {
 		foreignKeys = new ArrayList<>();
 	}
 
-	public ColumnDefination string(String name) {
+	public ColumnDefinition string(String name) {
 		return string(name, 256);
 	}
 
-	public ColumnDefination string(String name, int length) {
-		ColumnDefination column = VARCHAR(name, length);
+	public ColumnDefinition string(String name, int length) {
+		ColumnDefinition column = VARCHAR(name, length);
 		columns.add(column);
 		return column;
 	}
 
-	public ColumnDefination integer(String name) {
-		ColumnDefination column = INTEGER(name);
+	public ColumnDefinition integer(String name) {
+		ColumnDefinition column = INTEGER(name);
 		columns.add(column);
 		return column;
 	}
 
-	public ColumnDefination increments(String name) {
-		ColumnDefination id = INTEGER(name).autoIncrement().unsigned().required();
+	public ColumnDefinition increments(String name) {
+		ColumnDefinition id = INTEGER(name).autoIncrement().unsigned().required();
 		primaryKey = new PrimaryKey(id);
 		columns.add(id);
-		return (ColumnDefination) id;
+		return (ColumnDefinition) id;
 	}
 
 	public ForeignKey foreign(Column column) {

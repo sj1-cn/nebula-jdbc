@@ -18,7 +18,7 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 
 	@Override
 	public void initJdbc() throws SQLException {
-		PreparedStatement preparedStatement = conn.prepareStatement("CREATE TABLE user(id INT PRIMARY KEY,name VARCHAR,description VARCHAR)");
+		PreparedStatement preparedStatement = conn.prepareStatement("CREATE TABLE user(id INTEGER(10) PRIMARY KEY,name VARCHAR(256),description VARCHAR(256))");
 
 		preparedStatement.execute();
 	}
@@ -54,7 +54,7 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 
 	@Override
 	public boolean insertJdbc(User data) throws SQLException {
-		PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO user(id,name,description) VALUES (?,?,?)");
+		PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO user(id,name,description) VALUES(?,?,?)");
 
 		preparedStatement.setLong(1, data.getId());
 		preparedStatement.setString(2, data.getName());

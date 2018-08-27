@@ -15,7 +15,7 @@ import java.util.List;
 import org.objectweb.asm.Label;
 
 import nebula.jdbc.builders.schema.JDBCConfiguration;
-import nebula.jdbc.builders.schema.JDBCConfiguration.JDBCType;
+import nebula.jdbc.builders.schema.JDBCConfiguration.TypeMapping;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.data.ClassBody;
 import nebula.tinyasm.data.GenericClazz;
@@ -67,12 +67,11 @@ public class JdbcRepositoryBuilder {
 
 		deleteJdbc(clazzID, mappers, tablename);
 
-		findByIdJdbcBridge(clazzID);
-
 		updateJdbcBridge();
 
 		insertJdbcBridge();
 
+		findByIdJdbcBridge(clazzID);
 		return cw.end().toByteArray();
 	}
 
@@ -92,7 +91,6 @@ public class JdbcRepositoryBuilder {
 				mv.PUTFIELD("mapper", this.clazzRowMapper);
 			}
 			{
-				mv.line();
 				mv.RETURN();
 			}
 		});
@@ -115,18 +113,14 @@ public class JdbcRepositoryBuilder {
 		cw.method("initJdbc").tHrow(SQLException.class).code(mv -> {
 			mv.define("preparedStatement", PreparedStatement.class);
 			{
-
-				StringBuilder sb = new StringBuilder();
-
 				List<String> columns = new ArrayList<>();
 
 				for (FieldMapper fieldMapper : mappers) {
 					columns.add(fieldMapper.column.toSQL());
 				}
 
-				sb.append("CREATE TABLE ").append(tablename).append("(").append(String.join(",", columns)).append(")");
-
-				String sql = sb.toString();
+				String sql = JDBCConfiguration.sql("CREATE TABLE ${tablename}(${columndefinitions})", tablename,
+						String.join(",", columns));
 
 				mv.line();
 				mv.LOAD(0);
@@ -168,18 +162,13 @@ public class JdbcRepositoryBuilder {
 					mv.STORE("datas");
 				}
 				{
-
-					StringBuilder sb = new StringBuilder();
-
 					List<String> names = new ArrayList<>();
-
 					for (FieldMapper fieldMapper : mappers) {
-						names.add(fieldMapper.column.name());
+						names.add(fieldMapper.column.getName());
 					}
 
-					sb.append("SELECT ").append(String.join(",", names)).append(" FROM ").append(tablename);
-
-					String sql = sb.toString();
+					String sql = JDBCConfiguration.sql("SELECT ${columns} FROM ${tablename}", String.join(",", names),
+							tablename);
 
 					mv.line();
 					mv.LOAD("this");
@@ -194,10 +183,11 @@ public class JdbcRepositoryBuilder {
 				}
 				mv.line();
 				Label whileStart = mv.codeNewLabel();
-				Label whileCause = mv.codeNewLabel();
 				Label whileEnd = mv.codeNewLabel();
-				mv.GOTO(whileCause);
 				mv.visitLabel(whileStart);
+				mv.LOAD("resultSet");
+				mv.INTERFACE(ResultSet.class, "next").reTurn(boolean.class).INVOKE();
+				mv.IFEQ(whileEnd);
 				{
 					mv.line();
 					mv.LOAD("datas");
@@ -207,15 +197,10 @@ public class JdbcRepositoryBuilder {
 					mv.VIRTUAL(this.clazzRowMapper, "map").parameter(ResultSet.class).reTurn(this.clazzTarget).INVOKE();
 					mv.INTERFACE(List.class, "add").parameter(Object.class).reTurn(boolean.class).INVOKE();
 					mv.POP();
-				}
-				mv.line();
-				mv.visitLabel(whileCause);
-				{
-					mv.LOAD("resultSet");
-					mv.INTERFACE(ResultSet.class, "next").reTurn(boolean.class).INVOKE();
-					mv.IFNE(whileStart);
+					mv.GOTO(whileStart);
 				}
 				mv.visitLabel(whileEnd);
+
 				{
 					mv.line();
 					mv.LOAD("datas");
@@ -241,27 +226,18 @@ public class JdbcRepositoryBuilder {
 					mv.STORE("datas");
 				}
 				{
-
-					StringBuilder sb = new StringBuilder();
-
 					List<String> names = new ArrayList<>();
 					List<String> keys = new ArrayList<>();
 
 					for (FieldMapper fieldMapper : mappers) {
-						names.add(fieldMapper.column.name());
+						names.add(fieldMapper.column.getName());
 						if (fieldMapper.primaryKey) {
-							keys.add(fieldMapper.column.name() + "=?");
+							keys.add(fieldMapper.column.getName() + "=?");
 						}
 					}
 
-					sb.append("SELECT ")
-						.append(String.join(",", names))
-						.append(" FROM ")
-						.append(tablename)
-						.append(" WHERE ")
-						.append(String.join(" AND ", keys));
-
-					String sql = sb.toString();
+					String sql = JDBCConfiguration.sql("SELECT ${columns} FROM ${tablename} WHERE ${causes}",
+							String.join(",", names), tablename, String.join(" AND ", keys));
 
 					mv.line();
 					mv.LOAD("this");
@@ -286,12 +262,14 @@ public class JdbcRepositoryBuilder {
 					mv.INTERFACE(PreparedStatement.class, "executeQuery").reTurn(ResultSet.class).INVOKE();
 					mv.STORE("resultSet");
 				}
+
 				mv.line();
 				Label whileStart = mv.codeNewLabel();
-				Label whileCause = mv.codeNewLabel();
 				Label whileEnd = mv.codeNewLabel();
-				mv.GOTO(whileCause);
 				mv.visitLabel(whileStart);
+				mv.LOAD("resultSet");
+				mv.INTERFACE(ResultSet.class, "next").reTurn(boolean.class).INVOKE();
+				mv.IFEQ(whileEnd);
 				{
 					mv.line();
 					mv.LOAD("datas");
@@ -301,15 +279,10 @@ public class JdbcRepositoryBuilder {
 					mv.VIRTUAL(this.clazzRowMapper, "map").parameter(ResultSet.class).reTurn(this.clazzTarget).INVOKE();
 					mv.INTERFACE(List.class, "add").parameter(Object.class).reTurn(boolean.class).INVOKE();
 					mv.POP();
-				}
-				mv.line();
-				mv.visitLabel(whileCause);
-				{
-					mv.LOAD("resultSet");
-					mv.INTERFACE(ResultSet.class, "next").reTurn(boolean.class).INVOKE();
-					mv.IFNE(whileStart);
+					mv.GOTO(whileStart);
 				}
 				mv.visitLabel(whileEnd);
+
 				{
 					mv.line();
 					mv.LOAD("datas");
@@ -329,25 +302,16 @@ public class JdbcRepositoryBuilder {
 			.code(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
 				{
-					StringBuilder sb = new StringBuilder();
-
 					List<String> names = new ArrayList<>();
 					List<String> values = new ArrayList<>();
 
 					for (FieldMapper fieldMapper : mappers) {
-						names.add(fieldMapper.column.name());
+						names.add(fieldMapper.column.getName());
 						values.add("?");
 					}
 
-					sb.append("INSERT INTO ")
-						.append(tablename)
-						.append("(")
-						.append(String.join(",", names))
-						.append(") VALUES (")
-						.append(String.join(",", values))
-						.append(")");
-
-					String sql = sb.toString();
+					String sql = JDBCConfiguration.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})",
+							tablename, String.join(",", names), String.join(",", values));
 
 					mv.line();
 					mv.LOAD("this");
@@ -362,8 +326,10 @@ public class JdbcRepositoryBuilder {
 
 				int i = 1;
 				for (FieldMapper fieldMapper : mappers) {
-					JDBCType javaType = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.pojoClazz.getName());
-					bindField(mv, i++, fieldMapper.getname, fieldMapper.pojoClazz, javaType.setname, javaType.jdbcClazz);
+					TypeMapping javaType = JDBCConfiguration.mapJavaClazz2JdbcTypes
+						.get(fieldMapper.pojoClazz.getName());
+					bindField(mv, i++, fieldMapper.getname, fieldMapper.pojoClazz, javaType.setname,
+							javaType.jdbcClazz);
 				}
 
 				{
@@ -383,27 +349,19 @@ public class JdbcRepositoryBuilder {
 			.code(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
 				{
-					StringBuilder sb = new StringBuilder();
-
-					List<String> values = new ArrayList<>();
+					List<String> setvalues = new ArrayList<>();
 					List<String> keys = new ArrayList<>();
 
 					for (FieldMapper fieldMapper : mappers) {
 						if (!fieldMapper.primaryKey) {
-							values.add(fieldMapper.column.name() + "=?");
+							setvalues.add(fieldMapper.column.getName() + "=?");
 						} else {
-							keys.add(fieldMapper.column.name() + "=?");
+							keys.add(fieldMapper.column.getName() + "=?");
 						}
 					}
 
-					sb.append("UPDATE ")
-						.append(tablename)
-						.append(" SET ")
-						.append(String.join(",", values))
-						.append(" WHERE ")
-						.append(String.join(" and ", keys));
-
-					String sql = sb.toString();
+					String sql = JDBCConfiguration.sql("UPDATE ${tablename} SET ${setvalues} WHERE ${causes}",
+							tablename, String.join(",", setvalues), String.join(" and ", keys));
 
 					mv.line();
 					mv.LOAD("this");
@@ -419,7 +377,8 @@ public class JdbcRepositoryBuilder {
 				int i = 1;
 				for (FieldMapper fieldMapper : mappers) {
 					if (!fieldMapper.primaryKey) {
-						JDBCType javaType = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.pojoClazz.getName());
+						TypeMapping javaType = JDBCConfiguration.mapJavaClazz2JdbcTypes
+							.get(fieldMapper.pojoClazz.getName());
 						bindField(mv, i++, fieldMapper.getname, fieldMapper.pojoClazz, javaType.setname,
 								javaType.jdbcClazz);
 					}
@@ -427,8 +386,10 @@ public class JdbcRepositoryBuilder {
 
 				for (FieldMapper fieldMapper : mappers) {
 					if (fieldMapper.primaryKey) {
-						JDBCType javaType = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.pojoClazz.getName());
-						bindField(mv, i++, fieldMapper.getname, javaType.jdbcClazz, javaType.setname, javaType.jdbcClazz);
+						TypeMapping javaType = JDBCConfiguration.mapJavaClazz2JdbcTypes
+							.get(fieldMapper.pojoClazz.getName());
+						bindField(mv, i++, fieldMapper.getname, javaType.jdbcClazz, javaType.setname,
+								javaType.jdbcClazz);
 					}
 				}
 				{
@@ -454,15 +415,13 @@ public class JdbcRepositoryBuilder {
 					for (FieldMapper fieldMapper : mappers) {
 						if (!fieldMapper.primaryKey) {
 						} else {
-							keys.add(fieldMapper.column.name() + "=?");
+							keys.add(fieldMapper.column.getName() + "=?");
 						}
 					}
 
-					StringBuilder sb = new StringBuilder();
+					String sql = JDBCConfiguration.sql("DELETE ${tablename} WHERE ${causes}", tablename,
+							String.join(" and ", keys));
 
-					sb.append("DELETE ").append(tablename).append(" WHERE ").append(String.join(" and ", keys));
-
-					String sql = sb.toString();
 					mv.line();
 					mv.LOAD("this");
 					mv.GETFIELD("conn", Connection.class);

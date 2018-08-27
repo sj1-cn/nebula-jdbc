@@ -1,12 +1,12 @@
 package nebula.data.jdbc;
 
+import static java.sql.JDBCType.INTEGER;
+import static java.sql.JDBCType.VARCHAR;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import nebula.jdbc.TestBase;
-import nebula.jdbc.builders.schema.ColumnDefination;
-import nebula.jdbc.builders.schema.JDBCTypes;
-import nebula.tinyasm.util.RefineCode;
+import nebula.jdbc.builders.schema.ColumnDefinition;
 
 public class JdbcRepositoryBuilderTest extends TestBase {
 
@@ -31,28 +29,29 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 
 	@Before
 	public void before() {
-		connection = getConnection();
+		connection = super.openConnection(this.getClass().getName());
 
 		jdbcRowMapperBuilder = new JdbcRowMapperBuilder(arguments);
 		jdbcRepositoryBuilder = new JdbcRepositoryBuilder(arguments);
 		maps = new ArrayList<FieldMapper>();
 		clazz = UserJdbcRowMapper.class.getName();
-		maps.add(new FieldMapper(true, "id", "getId", long.class, new ColumnDefination("id", JDBCTypes.INTEGER)));
-		maps.add(new FieldMapper("name", "getName", String.class, new ColumnDefination("name", JDBCTypes.VARCHAR)));
+		maps.add(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
+		maps.add(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
 		maps.add(new FieldMapper("description", "getDescription", String.class,
-				new ColumnDefination("description", JDBCTypes.VARCHAR)));
+				new ColumnDefinition("description", VARCHAR)));
 
 	}
 
 	@After
 	public void after() {
+		super.closeConnection();
 	}
 
-	@Test
-	public void testPrint() throws IOException {
-		System.out.println(RefineCode.refineCode(toString(UserJdbcRepository.class), ResultSet.class,
-				PreparedStatement.class, JdbcRepository.class));
-	}
+//	@Test
+//	public void testPrint() throws IOException {
+//		System.out.println(RefineCode.refineCode(toString(UserJdbcRepository.class), ResultSet.class,
+//				PreparedStatement.class, JdbcRepository.class));
+//	}
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -85,6 +84,7 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 
 		User a = new User(10, "name_a10", "description_a10");
 		User b = new User(20, "name_b20", "description_b20");
+		User b2 = new User(20, "name_b20_new", "description_b20_new");
 		{
 			userRepository.insert(a);
 			users1 = userRepository.list(0, 0);
@@ -93,13 +93,11 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 		{
 			userRepository.insert(b);
 			users1 = userRepository.list(0, 0);
-			System.out.println(users1);
 			assertEquals(
 					"[User [id=10, name=name_a10, description=description_a10], User [id=20, name=name_b20, description=description_b20]]",
 					users1.toString());
 		}
 		{
-			User b2 = new User(20, "name_b20_new", "description_b20_new");
 			userRepository.update(b2);
 
 			users1 = userRepository.list(0, 0);

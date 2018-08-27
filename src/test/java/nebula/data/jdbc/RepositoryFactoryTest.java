@@ -3,12 +3,12 @@ package nebula.data.jdbc;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,8 +20,12 @@ public class RepositoryFactoryTest extends TestBase {
 
 	@Before
 	public void before() {
-		Connection connection = getConnection();
-		repositoryFactory = new RepositoryFactory(connection);
+		repositoryFactory = new RepositoryFactory(super.openConnection(this.getClass().getName()));
+	}
+
+	@After
+	public void after() {
+		super.closeConnection();
 	}
 
 	@Test
@@ -38,6 +42,7 @@ public class RepositoryFactoryTest extends TestBase {
 
 	@Test
 	public void test_getUserRepository() {
+
 		Repository<User> userRepository = repositoryFactory.getRepository(User.class);
 
 		userRepository.init();
@@ -103,15 +108,15 @@ public class RepositoryFactoryTest extends TestBase {
 			userRepository.insert(a);
 			userlist = userRepository.list(0, 0);
 			assertEquals(
-					"[UserComplex [id=10, string=name_a10, bigDecimal=10000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3]]",
+					"[UserComplex [id=10, string=name_a10, bigDecimal=10000.000000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3]]",
 					userlist.toString());
 		}
 		{
 			userRepository.insert(b);
 			userlist = userRepository.list(0, 0);
 			assertEquals(
-					"[UserComplex [id=10, string=name_a10, bigDecimal=10000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3], "
-							+ "UserComplex [id=20, string=name_b20, bigDecimal=20000, z=false, c=B, b=-5, s=2601, i=2701, l=2801, f=290.1, d=2100.1, date=1970-01-01, time=08:00:21, timestamp=1970-01-01 08:00:21.3]]",
+					"[UserComplex [id=10, string=name_a10, bigDecimal=10000.000000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3], "
+							+ "UserComplex [id=20, string=name_b20, bigDecimal=20000.000000, z=false, c=B, b=-5, s=2601, i=2701, l=2801, f=290.1, d=2100.1, date=1970-01-01, time=08:00:21, timestamp=1970-01-01 08:00:21.3]]",
 					userlist.toString());
 		}
 		{
@@ -119,15 +124,15 @@ public class RepositoryFactoryTest extends TestBase {
 
 			userlist = userRepository.list(0, 0);
 			assertEquals(
-					"[UserComplex [id=10, string=name_a10, bigDecimal=10000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3], "
-							+ "UserComplex [id=20, string=name_b30, bigDecimal=30000, z=false, c=C, b=95, s=3601, i=3701, l=3801, f=390.1, d=3100.1, date=1970-01-01, time=08:00:31, timestamp=1970-01-01 08:00:31.3]]",
+					"[UserComplex [id=10, string=name_a10, bigDecimal=10000.000000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3], "
+							+ "UserComplex [id=20, string=name_b30, bigDecimal=30000.000000, z=false, c=C, b=95, s=3601, i=3701, l=3801, f=390.1, d=3100.1, date=1970-01-01, time=08:00:31, timestamp=1970-01-01 08:00:31.3]]",
 					userlist.toString());
 		}
 		{
 			userRepository.delete(a.getId());
 			userlist = userRepository.list(0, 0);
 			assertEquals(
-					"[UserComplex [id=20, string=name_b30, bigDecimal=30000, z=false, c=C, b=95, s=3601, i=3701, l=3801, f=390.1, d=3100.1, date=1970-01-01, time=08:00:31, timestamp=1970-01-01 08:00:31.3]]",
+					"[UserComplex [id=20, string=name_b30, bigDecimal=30000.000000, z=false, c=C, b=95, s=3601, i=3701, l=3801, f=390.1, d=3100.1, date=1970-01-01, time=08:00:31, timestamp=1970-01-01 08:00:31.3]]",
 					userlist.toString());
 		}
 		{
@@ -139,6 +144,7 @@ public class RepositoryFactoryTest extends TestBase {
 
 	@Test
 	public void test_getUserMoreComplexRepository() {
+
 		Repository<UserMoreComplex> userRepository = repositoryFactory.getRepository(UserMoreComplex.class);
 		List<UserMoreComplex> userlist;
 		userRepository.init();
@@ -163,15 +169,15 @@ public class RepositoryFactoryTest extends TestBase {
 			userRepository.insert(a);
 			userlist = userRepository.list(0, 0);
 			assertEquals(
-					"[UserMoreComplex [id=10, string=name_a10, bigDecimal=10000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3]]",
+					"[UserMoreComplex [id=10, string=name_a10, bigDecimal=10000.000000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3]]",
 					userlist.toString());
 		}
 		{
 			userRepository.insert(b);
 			userlist = userRepository.list(0, 0);
 			assertEquals(
-					"[UserMoreComplex [id=10, string=name_a10, bigDecimal=10000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3], "
-							+ "UserMoreComplex [id=20, string=name_b20, bigDecimal=20000, z=false, c=B, b=-5, s=2601, i=2701, l=2801, f=290.1, d=2100.1, date=1970-01-01, time=08:00:21, timestamp=1970-01-01 08:00:21.3]]",
+					"[UserMoreComplex [id=10, string=name_a10, bigDecimal=10000.000000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3], "
+							+ "UserMoreComplex [id=20, string=name_b20, bigDecimal=20000.000000, z=false, c=B, b=-5, s=2601, i=2701, l=2801, f=290.1, d=2100.1, date=1970-01-01, time=08:00:21, timestamp=1970-01-01 08:00:21.3]]",
 					userlist.toString());
 		}
 		{
@@ -179,15 +185,15 @@ public class RepositoryFactoryTest extends TestBase {
 
 			userlist = userRepository.list(0, 0);
 			assertEquals(
-					"[UserMoreComplex [id=10, string=name_a10, bigDecimal=10000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3], "
-							+ "UserMoreComplex [id=20, string=name_b30, bigDecimal=30000, z=false, c=C, b=95, s=3601, i=3701, l=3801, f=390.1, d=3100.1, date=1970-01-01, time=08:00:31, timestamp=1970-01-01 08:00:31.3]]",
+					"[UserMoreComplex [id=10, string=name_a10, bigDecimal=10000.000000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3], "
+							+ "UserMoreComplex [id=20, string=name_b30, bigDecimal=30000.000000, z=false, c=C, b=95, s=3601, i=3701, l=3801, f=390.1, d=3100.1, date=1970-01-01, time=08:00:31, timestamp=1970-01-01 08:00:31.3]]",
 					userlist.toString());
 		}
 		{
 			userRepository.delete(a.getId());
 			userlist = userRepository.list(0, 0);
 			assertEquals(
-					"[UserMoreComplex [id=20, string=name_b30, bigDecimal=30000, z=false, c=C, b=95, s=3601, i=3701, l=3801, f=390.1, d=3100.1, date=1970-01-01, time=08:00:31, timestamp=1970-01-01 08:00:31.3]]",
+					"[UserMoreComplex [id=20, string=name_b30, bigDecimal=30000.000000, z=false, c=C, b=95, s=3601, i=3701, l=3801, f=390.1, d=3100.1, date=1970-01-01, time=08:00:31, timestamp=1970-01-01 08:00:31.3]]",
 					userlist.toString());
 		}
 		{

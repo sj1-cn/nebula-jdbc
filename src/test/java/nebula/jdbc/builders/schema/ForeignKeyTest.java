@@ -3,12 +3,10 @@
  */
 package nebula.jdbc.builders.schema;
 
-import org.junit.Test;
-
-import nebula.jdbc.builders.schema.ForeignKey;
-
-import static nebula.jdbc.builders.schema.ColumnFactory.*;
+import static nebula.jdbc.builders.schema.ColumnDefinition.IDENTITY;
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 public class ForeignKeyTest {
 	@Test

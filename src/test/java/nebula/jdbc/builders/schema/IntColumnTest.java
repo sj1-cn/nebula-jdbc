@@ -3,11 +3,11 @@
  */
 package nebula.jdbc.builders.schema;
 
+import static nebula.jdbc.builders.schema.ColumnDefinition.INTEGER;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import static nebula.jdbc.builders.schema.ColumnFactory.*;
-import static org.junit.Assert.assertEquals;
 
 public class IntColumnTest {
 
@@ -17,26 +17,28 @@ public class IntColumnTest {
 
 	@Test
 	public void it_converts_to_sql_an_integer_column() {
-		assertEquals("user_id INT", INTEGER("user_id").toSQL());
+		assertEquals("user_id INTEGER(10)", INTEGER("user_id").toSQL());
 	}
 
 	@Test
 	public void it_converts_to_sql_required_integer_column() {
-		assertEquals("user_id INT NOT NULL", INTEGER("user_id").required().toSQL());
+		assertEquals("user_id INTEGER(10) NOT NULL", INTEGER("user_id").required().toSQL());
 	}
 
 	@Test
 	public void it_converts_to_sql_an_autoincrementing_integer_column() {
-		assertEquals("user_id INT AUTO_INCREMENT", INTEGER("user_id").autoIncrement().toSQL());
+		assertEquals("user_id INTEGER(10) AUTO_INCREMENT", INTEGER("user_id").autoIncrement().toSQL());
 	}
 
 	@Test
 	public void it_converts_to_sql_a_required_unsigned_autoincrementing_integer_column() {
-		assertEquals("user_id INT NOT NULL AUTO_INCREMENT", INTEGER("user_id").autoIncrement().required().toSQL());
+		assertEquals("user_id INTEGER(10) NOT NULL AUTO_INCREMENT",
+				INTEGER("user_id").autoIncrement().required().toSQL());
 	}
 
 	@Test
 	public void it_converts_to_sql_a_required_unsigned_integer_column_with_a_default() {
-		assertEquals("user_id INT NOT NULL DEFAULT '1'", INTEGER("user_id").required().defaultValue("1").toSQL());
+		assertEquals("user_id INTEGER(10) NOT NULL DEFAULT '1'",
+				INTEGER("user_id").required().defaultValue("1").toSQL());
 	}
 }

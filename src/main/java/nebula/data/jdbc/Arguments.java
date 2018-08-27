@@ -111,46 +111,23 @@ public class Arguments {
 		});
 
 		register(Date.class, java.sql.Date.class, mv -> {
-			mv.STATIC(Arguments.class, "dateValueOf").parameter(Date.class).reTurn(java.sql.Date.class).INVOKE();
+			mv.STATIC(TypeUtil.class, "dateValueOf").parameter(Date.class).reTurn(java.sql.Date.class).INVOKE();
 		}, mv -> {
-			mv.STATIC(Arguments.class, "dateValueOf").parameter(java.sql.Date.class).reTurn(Date.class).INVOKE();
+			mv.STATIC(TypeUtil.class, "dateValueOf").parameter(java.sql.Date.class).reTurn(Date.class).INVOKE();
 		});
 		register(Date.class, java.sql.Time.class, mv -> {
-			mv.STATIC(Arguments.class, "timeValueOf").parameter(Date.class).reTurn(java.sql.Time.class).INVOKE();
+			mv.STATIC(TypeUtil.class, "timeValueOf").parameter(Date.class).reTurn(java.sql.Time.class).INVOKE();
 		}, mv -> {
-			mv.STATIC(Arguments.class, "dateValueOf").parameter(java.sql.Time.class).reTurn(Date.class).INVOKE();
+			mv.STATIC(TypeUtil.class, "dateValueOf").parameter(java.sql.Time.class).reTurn(Date.class).INVOKE();
 		});
 		register(Date.class, java.sql.Timestamp.class, mv -> {
-			mv.STATIC(Arguments.class, "timestampValueOf")
+			mv.STATIC(TypeUtil.class, "timestampValueOf")
 				.parameter(Date.class)
 				.reTurn(java.sql.Timestamp.class)
 				.INVOKE();
 		}, mv -> {
-			mv.STATIC(Arguments.class, "dateValueOf").parameter(java.sql.Timestamp.class).reTurn(Date.class).INVOKE();
+			mv.STATIC(TypeUtil.class, "dateValueOf").parameter(java.sql.Timestamp.class).reTurn(Date.class).INVOKE();
 		});
 	}
 
-	public static java.sql.Date dateValueOf(Date date) {
-		return new java.sql.Date(date.getTime());
-	}
-
-	public static java.sql.Time timeValueOf(Date date) {
-		return new java.sql.Time(date.getTime());
-	}
-
-	public static java.sql.Timestamp timestampValueOf(Date date) {
-		return new java.sql.Timestamp(date.getTime());
-	}
-
-	public static Date dateValueOf(java.sql.Date date) {
-		return new Date(date.getTime());
-	}
-
-	public static Date dateValueOf(java.sql.Time date) {
-		return new Date(date.getTime());
-	}
-
-	public static Date dateValueOf(java.sql.Timestamp date) {
-		return new Date(date.getTime());
-	}
 }
