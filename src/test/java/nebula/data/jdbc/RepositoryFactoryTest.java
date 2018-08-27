@@ -3,7 +3,6 @@ package nebula.data.jdbc;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -20,17 +19,17 @@ public class RepositoryFactoryTest extends TestBase {
 
 	@Before
 	public void before() {
-		Connection connection = getConnection();
-		repositoryFactory = new RepositoryFactory(connection);
 	}
 
 	@Test
 	public void test_getMapper() {
+		repositoryFactory = new RepositoryFactory(getConnection());
 		repositoryFactory.getMapper(User.class);
 	}
 
 	@Test
 	public void test_getRepository() {
+		repositoryFactory = new RepositoryFactory(getConnection());
 		Repository<User> userRepository = repositoryFactory.getRepository(User.class);
 
 		assert userRepository.getClass().getName() != null;
@@ -38,6 +37,8 @@ public class RepositoryFactoryTest extends TestBase {
 
 	@Test
 	public void test_getUserRepository() {
+		repositoryFactory = new RepositoryFactory(getConnection("test_getUserRepository"));
+
 		Repository<User> userRepository = repositoryFactory.getRepository(User.class);
 
 		userRepository.init();
@@ -85,6 +86,8 @@ public class RepositoryFactoryTest extends TestBase {
 
 	@Test
 	public void test_getUserComplexRepository() {
+		repositoryFactory = new RepositoryFactory(getConnection("test_getUserComplexRepository"));
+
 		Repository<UserComplex> userRepository = repositoryFactory.getRepository(UserComplex.class);
 		List<UserComplex> userlist;
 		userRepository.init();
@@ -139,6 +142,8 @@ public class RepositoryFactoryTest extends TestBase {
 
 	@Test
 	public void test_getUserMoreComplexRepository() {
+		repositoryFactory = new RepositoryFactory(getConnection("test_getUserMoreComplexRepository"));
+
 		Repository<UserMoreComplex> userRepository = repositoryFactory.getRepository(UserMoreComplex.class);
 		List<UserMoreComplex> userlist;
 		userRepository.init();

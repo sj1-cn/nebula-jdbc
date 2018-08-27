@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,19 +18,16 @@ import org.junit.Test;
 import nebula.jdbc.TestBase;
 import nebula.jdbc.builders.schema.ColumnDefination;
 import nebula.jdbc.builders.schema.JDBCTypes;
-import nebula.tinyasm.util.RefineCode;
 
 public class JdbcRowMapperBuilderTest extends TestBase {
 
 	String clazz;
 	List<FieldMapper> maps;
 	JdbcRowMapperBuilder builder;
-	MyClassLoader classLoader;
 	Arguments arguments = new Arguments();
 
 	@Before
 	public void before() {
-		classLoader = new MyClassLoader();
 		builder = new JdbcRowMapperBuilder(arguments);
 		maps = new ArrayList<FieldMapper>();
 		clazz = UserJdbcRowMapper.class.getName();
@@ -45,22 +41,10 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 	public void after() {
 	}
 
-	public void testPrint() throws IOException {
-		System.out.println(RefineCode.refineCode(toString(UserJdbcRowMapper.class), ResultSet.class,
-				PreparedStatement.class, JdbcRepository.class));
-	}
-
-	class MyClassLoader extends ClassLoader {
-		public Class<?> defineClassByName(String name, byte[] b, int off, int len) {
-			Class<?> clazz = super.defineClass(name, b, off, len);
-			return clazz;
-		}
-
-		public Class<?> defineClassByName(String name, byte[] b) {
-			Class<?> clazz = super.defineClass(name, b, 0, b.length);
-			return clazz;
-		}
-	}
+//	public void testPrint() throws IOException {
+//		System.out.println(RefineCode.refineCode(toString(UserJdbcRowMapper.class), ResultSet.class,
+//				PreparedStatement.class, JdbcRepository.class));
+//	}
 
 	@SuppressWarnings("unchecked")
 	@Test

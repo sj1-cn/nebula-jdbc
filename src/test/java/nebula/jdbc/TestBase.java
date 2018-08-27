@@ -55,6 +55,25 @@ public class TestBase {
 		}
 	}
 
+	public Connection getConnection(String name) {
+		try {
+			HikariConfig config = new HikariConfig();
+			config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
+			config.setConnectionTestQuery("VALUES 1");
+			config.addDataSourceProperty("URL", // jdbc:h2:mem:test
+					"jdbc:h2:mem:" + name + ";DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MSSQLServer");
+			config.addDataSourceProperty("user", "sa");
+			config.addDataSourceProperty("password", "sa");
+			HikariDataSource ds = new HikariDataSource(config);
+
+			HikariDataSource dataSource = new HikariDataSource(config);
+
+			return dataSource.getConnection();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	protected MyClassLoader classLoader = new MyClassLoader();
 
 	protected class MyClassLoader extends ClassLoader {
