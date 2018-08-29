@@ -82,7 +82,7 @@ public class RepositoryFactory {
 		}
 	}
 
-	private List<FieldMapper> build(Class<?> type) {
+	public List<FieldMapper> build(Class<?> type) {
 		List<FieldMapper> mappers = new ArrayList<>();
 
 		for (Field field : type.getDeclaredFields()) {

@@ -11,7 +11,7 @@ import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
 import nebula.jdbc.builders.schema.JDBCConfiguration;
 
-public class UserJdbcRepository implements JdbcRepository<User> {
+public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 	private Connection conn;
 	private UserJdbcRowMapper mapper = new UserJdbcRowMapper();
 
@@ -23,11 +23,13 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 	@Override
 	public void initJdbc() throws SQLException {
 		ColumnList columnList = new ColumnList();
-		columnList.push(ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY"));
+		columnList.push(ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY AUTO_INCREMENT"));
 		columnList.push(ColumnDefinition.valueOf("name VARCHAR(256)"));
 		columnList.push(ColumnDefinition.valueOf("description VARCHAR(256)"));
 		if (!JDBCConfiguration.mergeIfExists(conn, "user", columnList)) {
-			conn.prepareStatement("CREATE TABLE user(id INTEGER(10),name VARCHAR(256),description VARCHAR(256),PRIMARY KEY(id))").execute();
+			conn.prepareStatement(
+					"CREATE TABLE user(id INTEGER(10) PRIMARY KEY AUTO_INCREMENT,name VARCHAR(256),description VARCHAR(256))")
+				.execute();
 		}
 	}
 
@@ -63,14 +65,19 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 
 	@Override
 	public User insertJdbc(User data) throws SQLException {
-		PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO user(id,name,description) VALUES(?,?,?)");
+		PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO user(name,description) VALUES(?,?)",
+				PreparedStatement.RETURN_GENERATED_KEYS);
 
-		preparedStatement.setLong(1, data.getId());
-		preparedStatement.setString(2, data.getName());
-		preparedStatement.setString(3, data.getDescription());
+		preparedStatement.setString(1, data.getName());
+		preparedStatement.setString(2, data.getDescription());
 
-		if (preparedStatement.executeUpdate() > 0) {
-			return this.findById(data.getId());
+		int i = preparedStatement.executeUpdate();
+		if (i > 0) {
+			ResultSet rs = preparedStatement.getGeneratedKeys();
+			rs.next();
+			long id = rs.getLong(1);
+			User newuser = this.findById(id);
+			return newuser;
 		} else {
 			return null;
 		}

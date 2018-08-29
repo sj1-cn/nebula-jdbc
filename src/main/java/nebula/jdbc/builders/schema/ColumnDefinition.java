@@ -202,11 +202,11 @@ public class ColumnDefinition implements Column {
 		sql.add(JDBCConfiguration.typeDefinition(this.dataType, columnSize, decimalDigits));
 
 		if (this.unsigned) sql.add("UNSIGNED");
+		if ("YES".equals(this.autoIncrment)) sql.add("AUTO_INCREMENT");
 //		if (this.primarykey) sql.add("PRIMARY KEY");
 //		else if (this.nullable == ResultSetMetaData.columnNoNulls) sql.add("NOT NULL");
 		if (!this.primarykey && this.nullable == ResultSetMetaData.columnNoNulls) sql.add("NOT NULL");
 		if (this.defaultValue != null) sql.add("DEFAULT '" + this.defaultValue.replaceAll("'", "''") + "'");
-		if ("YES".equals(this.autoIncrment)) sql.add("AUTO_INCREMENT");
 
 		return String.join(" ", sql);
 	}

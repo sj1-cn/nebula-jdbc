@@ -35,7 +35,7 @@ public interface JdbcRepository<T> extends Repository<T> {
 	}
 
 	@Override
-	default boolean insert(T pet) {
+	default T insert(T pet) {
 		try {
 			return insertJdbc(pet);
 		} catch (SQLException e) {
@@ -44,7 +44,7 @@ public interface JdbcRepository<T> extends Repository<T> {
 	}
 
 	@Override
-	default boolean update(T pet) {
+	default T update(T pet) {
 		try {
 			return updateJdbc(pet);
 		} catch (SQLException e) {
@@ -53,7 +53,7 @@ public interface JdbcRepository<T> extends Repository<T> {
 	}
 
 	@Override
-	default boolean delete(Object... keys) {
+	default int delete(Object... keys) {
 		try {
 			return deleteJdbc(keys);
 		} catch (SQLException e) {
@@ -67,10 +67,10 @@ public interface JdbcRepository<T> extends Repository<T> {
 
 	T findByIdJdbc(Object... keys) throws SQLException;
 
-	boolean insertJdbc(T pet) throws SQLException;
+	T insertJdbc(T pet) throws SQLException;
 
-	boolean updateJdbc(T pet) throws SQLException;
+	T updateJdbc(T pet) throws SQLException;
 
-	boolean deleteJdbc(Object... keys) throws SQLException;
+	int deleteJdbc(Object... keys) throws SQLException;
 
 }

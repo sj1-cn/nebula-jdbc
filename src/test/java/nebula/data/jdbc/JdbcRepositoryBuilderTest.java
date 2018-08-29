@@ -7,6 +7,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.junit.Test;
 
 import nebula.jdbc.TestBase;
 import nebula.jdbc.builders.schema.ColumnDefinition;
+import nebula.tinyasm.util.RefineCode;
 
 public class JdbcRepositoryBuilderTest extends TestBase {
 
@@ -47,12 +50,12 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 	public void after() {
 		super.closeConnection();
 	}
-//
-//	@Test
-//	public void testPrint() throws IOException {
-//		System.out.println(RefineCode.refineCode(toString(UserJdbcRepository.class), ResultSet.class,
-//				PreparedStatement.class, JdbcRepository.class,Connection.class));
-//	}
+
+	@Test
+	public void testPrint() throws IOException {
+		System.out.println(RefineCode.refineCode(toString(UserJdbcRepository.class), ResultSet.class,
+				PreparedStatement.class, JdbcRepository.class,Connection.class));
+	}
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -139,6 +142,25 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 				new ColumnDefinition("description", VARCHAR)));
 
 		String clazz = UserKeysJdbcRepository.class.getName();
+		String targetClazz = User.class.getName();
+		String mapClazz = UserJdbcRowMapper.class.getName();
+
+		JdbcRepositoryBuilder builder = new JdbcRepositoryBuilder(new Arguments());
+		byte[] code = builder.make(clazz, targetClazz, mapClazz, "user", maps);
+
+		String codeActual = toString(code);
+		String codeExpected = toString(clazz);
+		assertEquals("Code", codeExpected, codeActual);
+	}
+	@Test
+	public void testUserAutoIncrementJdbcRepository() {
+		maps = new ArrayList<FieldMapper>();
+		maps.add(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
+		maps.add(new FieldMapper(true,"name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
+		maps.add(new FieldMapper("description", "getDescription", String.class,
+				new ColumnDefinition("description", VARCHAR)));
+
+		String clazz = UserAutoIncrementJdbcRepository.class.getName();
 		String targetClazz = User.class.getName();
 		String mapClazz = UserJdbcRowMapper.class.getName();
 

@@ -63,35 +63,43 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 	}
 
 	@Override
-	public boolean insertJdbc(User data) throws SQLException {
+	public User insertJdbc(User data) throws SQLException {
 		PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO user(id,name,description) VALUES(?,?,?)");
 
 		preparedStatement.setLong(1, data.getId());
 		preparedStatement.setString(2, data.getName());
 		preparedStatement.setString(3, data.getDescription());
 
-		return preparedStatement.execute();
+		if (preparedStatement.executeUpdate() > 0) {
+			return this.findById(data.getId(),data.getName());
+		} else {
+			return null;
+		}
 	}
 
 	@Override
-	public boolean updateJdbc(User data) throws SQLException {
+	public User updateJdbc(User data) throws SQLException {
 		PreparedStatement preparedStatement = conn.prepareStatement("UPDATE user SET description=? WHERE id=? AND name=?");
 
 		preparedStatement.setString(1, data.getDescription());
 		preparedStatement.setLong(2, data.getId());
 		preparedStatement.setString(3, data.getName());
 
-		return preparedStatement.execute();
+		if (preparedStatement.executeUpdate() > 0) {
+			return this.findById(data.getId(),data.getName());
+		} else {
+			return null;
+		}
 	}
 
 	@Override
-	public boolean deleteJdbc(Object... keys) throws SQLException {
+	public int deleteJdbc(Object... keys) throws SQLException {
 		PreparedStatement preparedStatement = conn.prepareStatement("DELETE user WHERE id=? AND name=?");
 
 		preparedStatement.setLong(1, ((Long) keys[0]).longValue());
 		preparedStatement.setString(2, (String) keys[1]);
 
-		return preparedStatement.execute();
+		return preparedStatement.executeUpdate();
 	}
 
 }

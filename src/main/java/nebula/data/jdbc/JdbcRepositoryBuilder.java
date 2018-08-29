@@ -140,7 +140,7 @@ public class JdbcRepositoryBuilder {
 				mv.line();
 				mv.LOAD(0);
 				mv.GETFIELD("conn", Connection.class);
-				mv.LOADConst("user");
+				mv.LOADConst(tablename);
 				mv.LOAD("columnList");
 				mv.STATIC(JDBCConfiguration.class, "mergeIfExists")
 					.parameter(Connection.class, String.class, ColumnList.class)
@@ -302,19 +302,19 @@ public class JdbcRepositoryBuilder {
 						mv.LOADConst(j++);
 						mv.ARRAYLOAD(Object.class);
 
-						if (fieldMapper.pojoClazz.isPrimitive()) {
-							Class<?> objectclass = mapPrimaryToObject.get(fieldMapper.pojoClazz);
+						if (fieldMapper.pojo_clazz.isPrimitive()) {
+							Class<?> objectclass = mapPrimaryToObject.get(fieldMapper.pojo_clazz);
 							mv.CHECKCAST(objectclass);
-							arguments.getConvert(objectclass, fieldMapper.pojoClazz).apply(mv);
+							arguments.getConvert(objectclass, fieldMapper.pojo_clazz).apply(mv);
 						} else {
-							mv.CHECKCAST(fieldMapper.pojoClazz);
+							mv.CHECKCAST(fieldMapper.pojo_clazz);
 						}
 
 						TypeMapping jdbcType = JDBCConfiguration.mapJavaClazz2JdbcTypes
-							.get(fieldMapper.pojoClazz.getName());
+							.get(fieldMapper.pojo_clazz.getName());
 
-						if (fieldMapper.pojoClazz != jdbcType.jdbcClazz) {
-							arguments.getConvert(fieldMapper.pojoClazz, jdbcType.jdbcClazz).apply(mv);
+						if (fieldMapper.pojo_clazz != jdbcType.jdbcClazz) {
+							arguments.getConvert(fieldMapper.pojo_clazz, jdbcType.jdbcClazz).apply(mv);
 						}
 
 						mv.INTERFACE(PreparedStatement.class, jdbcType.setname)
@@ -364,7 +364,7 @@ public class JdbcRepositoryBuilder {
 	private void insertJdbc(List<FieldMapper> mappers, String tablename) {
 		cw.method(ACC_PUBLIC, "insertJdbc")
 			.parameter("data", this.clazzTarget)
-			.reTurn(boolean.class)
+			.reTurn(this.clazzTarget)
 			.tHrow(SQLException.class)
 			.code(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
@@ -394,16 +394,64 @@ public class JdbcRepositoryBuilder {
 				int i = 1;
 				for (FieldMapper fieldMapper : mappers) {
 					TypeMapping javaType = JDBCConfiguration.mapJavaClazz2JdbcTypes
-						.get(fieldMapper.pojoClazz.getName());
-					bindField(mv, i++, fieldMapper.getname, fieldMapper.pojoClazz, javaType.setname,
+						.get(fieldMapper.pojo_clazz.getName());
+					bindField(mv, i++, fieldMapper.pojo_getname, fieldMapper.pojo_clazz, javaType.setname,
 							javaType.jdbcClazz);
 				}
 
 				{
 					mv.line();
 					mv.LOAD("preparedStatement");
-					mv.INTERFACE(PreparedStatement.class, "execute").reTurn(boolean.class).INVOKE();
-					mv.RETURNTop();
+					mv.INTERFACE(PreparedStatement.class, "executeUpdate").reTurn(int.class).INVOKE();
+					Label elseOfIf = mv.codeNewLabel();
+					mv.IFLE(elseOfIf);
+					{
+						int cntKeys = 0;
+
+						for (FieldMapper fieldMapper : mappers) {
+							if (fieldMapper.primaryKey) {
+								cntKeys++;
+							}
+						}
+						mv.line();
+						mv.LOAD("this");
+
+						mv.LOADConst(cntKeys);
+						mv.NEWARRAY(Object.class);
+						int j = 0;
+						for (FieldMapper fieldMapper : mappers) {
+							if (fieldMapper.primaryKey) {
+								mv.DUP();
+								mv.LOADConst(j++);
+
+								mv.LOAD("data");
+								mv.VIRTUAL(this.clazzTarget, fieldMapper.pojo_getname)
+									.reTurn(fieldMapper.pojo_clazz)
+									.INVOKE();
+
+								if (fieldMapper.pojo_clazz.isPrimitive()) {
+									Class<?> objectclass = mapPrimaryToObject.get(fieldMapper.pojo_clazz);
+									arguments.getRevert(objectclass, fieldMapper.pojo_clazz).apply(mv);
+								}
+
+								mv.ARRAYSTORE();
+							}
+						}
+
+						mv.VIRTUAL(clazz, "findById")
+							.parameter(GenericClazz.generic(Object.class, true))
+							.reTurn(Object.class)
+							.INVOKE();
+						mv.CHECKCAST(this.clazzTarget);
+						mv.RETURNTop();
+					}
+					mv.visitLabel(elseOfIf);
+					{
+						mv.line();
+						mv.LOADConstNULL();
+						mv.RETURNTop();
+					}
+
 				}
 			});
 	}
@@ -423,7 +471,7 @@ public class JdbcRepositoryBuilder {
 	private void updateJdbc(List<FieldMapper> mappers, String tablename) {
 		cw.method(ACC_PUBLIC, "updateJdbc")
 			.parameter("data", this.clazzTarget)
-			.reTurn(boolean.class)
+			.reTurn(this.clazzTarget)
 			.tHrow(SQLException.class)
 			.code(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
@@ -456,27 +504,76 @@ public class JdbcRepositoryBuilder {
 				int i = 1;
 				for (FieldMapper fieldMapper : mappers) {
 					if (!fieldMapper.primaryKey) {
-						TypeMapping javaType = JDBCConfiguration.mapJavaClazz2JdbcTypes
-							.get(fieldMapper.pojoClazz.getName());
-						bindField(mv, i++, fieldMapper.getname, fieldMapper.pojoClazz, javaType.setname,
-								javaType.jdbcClazz);
+						TypeMapping jdbcType = JDBCConfiguration.mapJavaClazz2JdbcTypes
+							.get(fieldMapper.pojo_clazz.getName());
+						bindField(mv, i++, fieldMapper.pojo_getname, fieldMapper.pojo_clazz, jdbcType.setname,
+								jdbcType.jdbcClazz);
 					}
 				}
 
 				for (FieldMapper fieldMapper : mappers) {
 					if (fieldMapper.primaryKey) {
 						TypeMapping javaType = JDBCConfiguration.mapJavaClazz2JdbcTypes
-							.get(fieldMapper.pojoClazz.getName());
-						bindField(mv, i++, fieldMapper.getname, javaType.jdbcClazz, javaType.setname,
+							.get(fieldMapper.pojo_clazz.getName());
+						bindField(mv, i++, fieldMapper.pojo_getname, javaType.jdbcClazz, javaType.setname,
 								javaType.jdbcClazz);
 					}
 				}
 				{
 					mv.line();
 					mv.LOAD("preparedStatement");
-					mv.INTERFACE(PreparedStatement.class, "execute").reTurn(boolean.class).INVOKE();
-					mv.RETURNTop();
+					mv.INTERFACE(PreparedStatement.class, "executeUpdate").reTurn(int.class).INVOKE();
+					Label elseOfIf = mv.codeNewLabel();
+					mv.IFLE(elseOfIf);
+					{
+						int cntKeys = 0;
+
+						for (FieldMapper fieldMapper : mappers) {
+							if (fieldMapper.primaryKey) {
+								cntKeys++;
+							}
+						}
+						mv.line();
+						mv.LOAD("this");
+
+						mv.LOADConst(cntKeys);
+						mv.NEWARRAY(Object.class);
+						int j = 0;
+						for (FieldMapper fieldMapper : mappers) {
+							if (fieldMapper.primaryKey) {
+								mv.DUP();
+								mv.LOADConst(j++);
+
+								mv.LOAD("data");
+								mv.VIRTUAL(this.clazzTarget, fieldMapper.pojo_getname)
+									.reTurn(fieldMapper.pojo_clazz)
+									.INVOKE();
+
+								if (fieldMapper.pojo_clazz.isPrimitive()) {
+									Class<?> objectclass = mapPrimaryToObject.get(fieldMapper.pojo_clazz);
+									arguments.getRevert(objectclass, fieldMapper.pojo_clazz).apply(mv);
+								}
+
+								mv.ARRAYSTORE();
+							}
+						}
+
+						mv.VIRTUAL(clazz, "findById")
+							.parameter(GenericClazz.generic(Object.class, true))
+							.reTurn(Object.class)
+							.INVOKE();
+						mv.CHECKCAST(this.clazzTarget);
+						mv.RETURNTop();
+					}
+					mv.visitLabel(elseOfIf);
+					{
+						mv.line();
+						mv.LOADConstNULL();
+						mv.RETURNTop();
+					}
+
 				}
+
 			});
 	}
 
@@ -485,7 +582,7 @@ public class JdbcRepositoryBuilder {
 			.ACC_PUBLIC()
 			.ACC_VARARGS()
 			.parameter("keys", GenericClazz.generic(Object.class, true))
-			.reTurn(boolean.class)
+			.reTurn(int.class)
 			.tHrow(SQLException.class)
 			.code(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
@@ -525,19 +622,19 @@ public class JdbcRepositoryBuilder {
 						mv.LOADConst(j++);
 						mv.ARRAYLOAD(Object.class);
 
-						if (fieldMapper.pojoClazz.isPrimitive()) {
-							Class<?> objectclass = mapPrimaryToObject.get(fieldMapper.pojoClazz);
+						if (fieldMapper.pojo_clazz.isPrimitive()) {
+							Class<?> objectclass = mapPrimaryToObject.get(fieldMapper.pojo_clazz);
 							mv.CHECKCAST(objectclass);
-							arguments.getConvert(objectclass, fieldMapper.pojoClazz).apply(mv);
+							arguments.getConvert(objectclass, fieldMapper.pojo_clazz).apply(mv);
 						} else {
-							mv.CHECKCAST(fieldMapper.pojoClazz);
+							mv.CHECKCAST(fieldMapper.pojo_clazz);
 						}
 
 						TypeMapping jdbcType = JDBCConfiguration.mapJavaClazz2JdbcTypes
-							.get(fieldMapper.pojoClazz.getName());
+							.get(fieldMapper.pojo_clazz.getName());
 
-						if (fieldMapper.pojoClazz != jdbcType.jdbcClazz) {
-							arguments.getConvert(fieldMapper.pojoClazz, jdbcType.jdbcClazz).apply(mv);
+						if (fieldMapper.pojo_clazz != jdbcType.jdbcClazz) {
+							arguments.getConvert(fieldMapper.pojo_clazz, jdbcType.jdbcClazz).apply(mv);
 						}
 
 						mv.INTERFACE(PreparedStatement.class, jdbcType.setname)
@@ -548,7 +645,7 @@ public class JdbcRepositoryBuilder {
 				{
 					mv.line();
 					mv.LOAD("preparedStatement");
-					mv.INTERFACE(PreparedStatement.class, "execute").reTurn(boolean.class).INVOKE();
+					mv.INTERFACE(PreparedStatement.class, "executeUpdate").reTurn(int.class).INVOKE();
 					mv.RETURNTop();
 				}
 			});
@@ -572,14 +669,14 @@ public class JdbcRepositoryBuilder {
 	private void insertJdbcBridge() {
 		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "insertJdbc")
 			.parameter("data", Object.class)
-			.reTurn(boolean.class)
+			.reTurn(Object.class)
 			.tHrow(SQLException.class)
 			.code(mv -> {
 				mv.line();
 				mv.LOAD("this");
 				mv.LOAD("data");
 				mv.CHECKCAST(this.clazzTarget);
-				mv.VIRTUAL(this.clazz, "insertJdbc").parameter(this.clazzTarget).reTurn(boolean.class).INVOKE();
+				mv.VIRTUAL(this.clazz, "insertJdbc").parameter(this.clazzTarget).reTurn(this.clazzTarget).INVOKE();
 				mv.RETURNTop();
 			});
 	}
@@ -587,14 +684,14 @@ public class JdbcRepositoryBuilder {
 	private void updateJdbcBridge() {
 		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "updateJdbc")
 			.parameter("data", Object.class)
-			.reTurn(boolean.class)
+			.reTurn(Object.class)
 			.tHrow(SQLException.class)
 			.code(mv -> {
 				mv.line();
 				mv.LOAD("this");
 				mv.LOAD("data");
 				mv.CHECKCAST(this.clazzTarget);
-				mv.VIRTUAL(this.clazz, "updateJdbc").parameter(this.clazzTarget).reTurn(boolean.class).INVOKE();
+				mv.VIRTUAL(this.clazz, "updateJdbc").parameter(this.clazzTarget).reTurn(this.clazzTarget).INVOKE();
 				mv.RETURNTop();
 			});
 	}

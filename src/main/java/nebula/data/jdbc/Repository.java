@@ -32,7 +32,7 @@ public interface Repository<T> {
 	 * @param pet T to insert.
 	 * @return Primary key.
 	 */
-	boolean insert(T pet);
+	T insert(T pet);
 
 	/**
 	 * Update a pet and returns true if the pets was updated.
@@ -40,7 +40,7 @@ public interface Repository<T> {
 	 * @param pet T to update.
 	 * @return True if the pet was updated.
 	 */
-	boolean update(T pet);
+	T update(T pet);
 
 	/**
 	 * Delete a pet by ID.
@@ -48,5 +48,5 @@ public interface Repository<T> {
 	 * @param id T ID.
 	 * @return True if the pet was deleted.
 	 */
-	boolean delete(Object... keys);
+	int delete(Object... keys);
 }

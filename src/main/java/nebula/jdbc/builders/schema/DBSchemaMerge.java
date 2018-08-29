@@ -116,7 +116,7 @@ public class DBSchemaMerge {
 
 	}
 
-	ColumnList getCurrentActualColumns(Connection conn, String tableName) throws SQLException {
+	public ColumnList getCurrentActualColumns(Connection conn, String tableName) throws SQLException {
 		ColumnList columnsActual = new ColumnList();
 		DatabaseMetaData meta = conn.getMetaData();
 		try (ResultSet rs = meta.getColumns(null, null, tableName, null)) {
