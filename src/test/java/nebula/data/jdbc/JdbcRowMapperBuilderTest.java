@@ -1,5 +1,7 @@
 package nebula.data.jdbc;
 
+import static java.sql.JDBCType.INTEGER;
+import static java.sql.JDBCType.VARCHAR;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -16,8 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import nebula.jdbc.TestBase;
-import nebula.jdbc.builders.schema.ColumnDefination;
-import nebula.jdbc.builders.schema.JDBCTypes;
+import nebula.jdbc.builders.schema.ColumnDefinition;
 
 public class JdbcRowMapperBuilderTest extends TestBase {
 
@@ -31,10 +32,10 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 		builder = new JdbcRowMapperBuilder(arguments);
 		maps = new ArrayList<FieldMapper>();
 		clazz = UserJdbcRowMapper.class.getName();
-		maps.add(new FieldMapper("id", "getId", long.class, new ColumnDefination("id", JDBCTypes.INTEGER)));
-		maps.add(new FieldMapper("name", "getName", String.class, new ColumnDefination("name", JDBCTypes.VARCHAR)));
+		maps.add(new FieldMapper("id", "getId", long.class, new ColumnDefinition("ID", INTEGER)));
+		maps.add(new FieldMapper("name", "getName", String.class, new ColumnDefinition("NAME", VARCHAR)));
 		maps.add(new FieldMapper("description", "getDescription", String.class,
-				new ColumnDefination("description", JDBCTypes.VARCHAR)));
+				new ColumnDefinition("description", VARCHAR)));
 	}
 
 	@After

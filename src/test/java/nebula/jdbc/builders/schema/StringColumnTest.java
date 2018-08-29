@@ -3,11 +3,10 @@
  */
 package nebula.jdbc.builders.schema;
 
-import org.junit.Test;
-
-import static nebula.jdbc.builders.schema.ColumnFactory.VARCHAR;
+import static nebula.jdbc.builders.schema.ColumnDefinition.VARCHAR;
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Test;
 public class StringColumnTest {
 	@Test
 	public void it_converts_to_sql_a_string_column_with_a_default_length() {

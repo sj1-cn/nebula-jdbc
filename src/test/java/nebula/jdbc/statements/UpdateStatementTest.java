@@ -3,27 +3,19 @@
  */
 package nebula.jdbc.statements;
 
-import nebula.jdbc.statements.SQLError;
-import nebula.jdbc.statements.UpdateStatement;
-import nebula.jdbc.suites.IntegrationSuite;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 public class UpdateStatementTest {
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
-    @Test
-    public void it_throws_exception_if_table_does_not_exists() {
-        UpdateStatement update = new UpdateStatement(
-            IntegrationSuite.connection,
-            "non_existing_table"
-        );
-        update.columns("any");
-
-        exception.expect(SQLError.class);
-        update.execute("won't work anyway...");
-    }
+//    @Rule
+//    public ExpectedException exception = ExpectedException.none();
+//
+//    @Test
+//    public void it_throws_exception_if_table_does_not_exists() {
+//        UpdateStatement update = new UpdateStatement(
+//            IntegrationSuite.connection,
+//            "non_existing_table"
+//        );
+//        update.columns("any");
+//
+//        exception.expect(SQLError.class);
+//        update.execute("won't work anyway...");
+//    }
 }

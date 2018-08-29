@@ -6,5 +6,5 @@ package nebula.jdbc.builders.schema;
 import nebula.jdbc.builders.HasSQLRepresentation;
 
 public interface Column extends HasSQLRepresentation {
-	String name();
+	String getName();
 }

@@ -41,7 +41,8 @@ public class SelectStatement<T> extends SQLStatement {
         this.mapper = mapper;
     }
 
-    public SelectStatement<T> select(String... columns) {
+    @SuppressWarnings("static-access")
+	public SelectStatement<T> select(String... columns) {
         select.columns(columns);
         return this;
     }

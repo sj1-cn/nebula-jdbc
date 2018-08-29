@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 import nebula.jdbc.builders.HasSQLRepresentation;
 
+@SuppressWarnings("serial")
 public class SQLError extends RuntimeException {
     private SQLError(String format, SQLException cause) {
         super(format, cause);

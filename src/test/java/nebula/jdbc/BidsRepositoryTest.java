@@ -1,45 +1,16 @@
 package nebula.jdbc;
 
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 
 public class BidsRepositoryTest {
 
-	private static final Logger log = LoggerFactory.getLogger(BidsRepositoryTest.class);
-
-	static class ContextConfiguration {
-
-		public DataSource dataSource() throws SQLException {
-			HikariConfig config = new HikariConfig();
-			config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
-			config.setConnectionTestQuery("VALUES 1");
-			config.addDataSourceProperty("URL",
-					"jdbc:h2:~/testdb;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MSSQLServer");
-			config.addDataSourceProperty("user", "sa");
-			config.addDataSourceProperty("password", "sa");
-			HikariDataSource ds = new HikariDataSource(config);
-
-			HikariDataSource dataSource = new HikariDataSource(config);
-			
-
-			return dataSource;
-		}
-
-	}
+//	private static final Logger log = LoggerFactory.getLogger(BidsRepositoryTest.class);
 
 	@Test
 	public void shouldSelectEntityForMatchingIds() {
 
-		int userId = 1012;
-		int listingId = 2;
+//		int userId = 1012;
+//		int listingId = 2;
 
 //		Database db = Database.builder().connectionProvider(connectionProvider).build();
 //		db.update("create table Bids\n" + "(\n" + "\tID int not null,\n" + "\tUserID int not null\n"

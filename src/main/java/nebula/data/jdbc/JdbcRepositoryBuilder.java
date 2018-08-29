@@ -10,12 +10,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.objectweb.asm.Label;
 
+import nebula.jdbc.builders.schema.ColumnDefinition;
+import nebula.jdbc.builders.schema.ColumnList;
 import nebula.jdbc.builders.schema.JDBCConfiguration;
-import nebula.jdbc.builders.schema.JDBCConfiguration.JDBCType;
+import nebula.jdbc.builders.schema.JDBCConfiguration.TypeMapping;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.data.ClassBody;
 import nebula.tinyasm.data.GenericClazz;
@@ -67,12 +71,11 @@ public class JdbcRepositoryBuilder {
 
 		deleteJdbc(clazzID, mappers, tablename);
 
-		findByIdJdbcBridge(clazzID);
-
 		updateJdbcBridge();
 
 		insertJdbcBridge();
 
+		findByIdJdbcBridge(clazzID);
 		return cw.end().toByteArray();
 	}
 
@@ -92,7 +95,6 @@ public class JdbcRepositoryBuilder {
 				mv.PUTFIELD("mapper", this.clazzRowMapper);
 			}
 			{
-				mv.line();
 				mv.RETURN();
 			}
 		});
@@ -113,21 +115,56 @@ public class JdbcRepositoryBuilder {
 
 	private void initJdbc(String tablename, List<FieldMapper> mappers) {
 		cw.method("initJdbc").tHrow(SQLException.class).code(mv -> {
-			mv.define("preparedStatement", PreparedStatement.class);
-			{
+			mv.define("columnList", ColumnList.class);
+			{// ColumnList columnList = new ColumnList();
+				mv.line();
+				mv.NEW(ColumnList.class);
+				mv.DUP();
+				mv.SPECIAL(ColumnList.class, "<init>").INVOKE();
+				mv.STORE("columnList");
+			}
+			for (FieldMapper fieldMapper : mappers) {
+				// columnList.push(ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY"));
+				mv.line();
+				mv.LOAD("columnList");
+				mv.LOADConst(fieldMapper.column.toString());
+				mv.STATIC(ColumnDefinition.class, "valueOf")
+					.parameter(String.class)
+					.reTurn(ColumnDefinition.class)
+					.INVOKE();
+				mv.VIRTUAL(ColumnList.class, "push").parameter(Object.class).INVOKE();
 
-				StringBuilder sb = new StringBuilder();
+			}
 
+			{// JDBCConfiguration.mergeIfExists(conn, "user", columnList)
+				mv.line();
+				mv.LOAD(0);
+				mv.GETFIELD("conn", Connection.class);
+				mv.LOADConst("user");
+				mv.LOAD("columnList");
+				mv.STATIC(JDBCConfiguration.class, "mergeIfExists")
+					.parameter(Connection.class, String.class, ColumnList.class)
+					.reTurn(boolean.class)
+					.INVOKE();
+			}
+			Label iffalse = mv.codeNewLabel();
+			mv.IFNE(iffalse);
+			{// if (!) {
 				List<String> columns = new ArrayList<>();
+				List<String> keys = new ArrayList<>();
 
 				for (FieldMapper fieldMapper : mappers) {
 					columns.add(fieldMapper.column.toSQL());
+					if (fieldMapper.primaryKey) {
+						keys.add(fieldMapper.column.getName());
+					}
 				}
 
-				sb.append("CREATE TABLE ").append(tablename).append("(").append(String.join(",", columns)).append(")");
+				String sql = JDBCConfiguration.sql(
+						"CREATE TABLE ${tablename}(${columndefinitions},PRIMARY KEY(${keys}))", tablename,
+						String.join(",", columns), String.join(",", keys));
 
-				String sql = sb.toString();
-
+				// PreparedStatement preparedStatement = conn.prepareStatement(sql);
 				mv.line();
 				mv.LOAD(0);
 				mv.GETFIELD("conn", Connection.class);
@@ -136,14 +173,10 @@ public class JdbcRepositoryBuilder {
 					.parameter(String.class)
 					.reTurn(PreparedStatement.class)
 					.INVOKE();
-				mv.STORE("preparedStatement");
-			}
-			{
-				mv.line();
-				mv.LOAD("preparedStatement");
 				mv.INTERFACE(PreparedStatement.class, "execute").reTurn(boolean.class).INVOKE();
 				mv.POP();
 			}
+			mv.visitLabel(iffalse);
 			{
 				mv.line();
 				mv.RETURN();
@@ -168,18 +201,13 @@ public class JdbcRepositoryBuilder {
 					mv.STORE("datas");
 				}
 				{
-
-					StringBuilder sb = new StringBuilder();
-
 					List<String> names = new ArrayList<>();
-
 					for (FieldMapper fieldMapper : mappers) {
-						names.add(fieldMapper.column.name());
+						names.add(fieldMapper.column.getName());
 					}
 
-					sb.append("SELECT ").append(String.join(",", names)).append(" FROM ").append(tablename);
-
-					String sql = sb.toString();
+					String sql = JDBCConfiguration.sql("SELECT ${columns} FROM ${tablename}", String.join(",", names),
+							tablename);
 
 					mv.line();
 					mv.LOAD("this");
@@ -194,10 +222,11 @@ public class JdbcRepositoryBuilder {
 				}
 				mv.line();
 				Label whileStart = mv.codeNewLabel();
-				Label whileCause = mv.codeNewLabel();
 				Label whileEnd = mv.codeNewLabel();
-				mv.GOTO(whileCause);
 				mv.visitLabel(whileStart);
+				mv.LOAD("resultSet");
+				mv.INTERFACE(ResultSet.class, "next").reTurn(boolean.class).INVOKE();
+				mv.IFEQ(whileEnd);
 				{
 					mv.line();
 					mv.LOAD("datas");
@@ -207,15 +236,10 @@ public class JdbcRepositoryBuilder {
 					mv.VIRTUAL(this.clazzRowMapper, "map").parameter(ResultSet.class).reTurn(this.clazzTarget).INVOKE();
 					mv.INTERFACE(List.class, "add").parameter(Object.class).reTurn(boolean.class).INVOKE();
 					mv.POP();
-				}
-				mv.line();
-				mv.visitLabel(whileCause);
-				{
-					mv.LOAD("resultSet");
-					mv.INTERFACE(ResultSet.class, "next").reTurn(boolean.class).INVOKE();
-					mv.IFNE(whileStart);
+					mv.GOTO(whileStart);
 				}
 				mv.visitLabel(whileEnd);
+
 				{
 					mv.line();
 					mv.LOAD("datas");
@@ -225,8 +249,10 @@ public class JdbcRepositoryBuilder {
 	}
 
 	private void findByIdJdbc(String clazzTarget, Class<Long> clazzID, List<FieldMapper> mappers, String tablename) {
-		cw.method(ACC_PUBLIC, "findByIdJdbc")
-			.parameter("id", clazzID)
+		cw.method("findByIdJdbc")
+			.ACC_PUBLIC()
+			.ACC_VARARGS()
+			.parameter("keys", GenericClazz.generic(Object.class, true))
 			.reTurn(this.clazzTarget)
 			.tHrow(SQLException.class)
 			.code(mv -> {
@@ -241,27 +267,18 @@ public class JdbcRepositoryBuilder {
 					mv.STORE("datas");
 				}
 				{
-
-					StringBuilder sb = new StringBuilder();
-
 					List<String> names = new ArrayList<>();
 					List<String> keys = new ArrayList<>();
 
 					for (FieldMapper fieldMapper : mappers) {
-						names.add(fieldMapper.column.name());
+						names.add(fieldMapper.column.getName());
 						if (fieldMapper.primaryKey) {
-							keys.add(fieldMapper.column.name() + "=?");
+							keys.add(fieldMapper.column.getName() + "=?");
 						}
 					}
 
-					sb.append("SELECT ")
-						.append(String.join(",", names))
-						.append(" FROM ")
-						.append(tablename)
-						.append(" WHERE ")
-						.append(String.join(" AND ", keys));
-
-					String sql = sb.toString();
+					String sql = JDBCConfiguration.sql("SELECT ${columns} FROM ${tablename} WHERE ${causes}",
+							String.join(",", names), tablename, String.join(" AND ", keys));
 
 					mv.line();
 					mv.LOAD("this");
@@ -273,25 +290,53 @@ public class JdbcRepositoryBuilder {
 						.INVOKE();
 					mv.STORE("preparedStatement");
 				}
-				{
-					mv.line();
-					mv.LOAD("preparedStatement");
-					mv.LOADConst(1);
-					mv.LOAD("id");
-					mv.INTERFACE(PreparedStatement.class, "setLong").parameter(int.class, clazzID).INVOKE();
+
+				int i = 1;
+				int j = 0;
+				for (FieldMapper fieldMapper : mappers) {
+					if (fieldMapper.primaryKey) {
+						mv.line();
+						mv.LOAD("preparedStatement");
+						mv.LOADConst(i++);
+						mv.LOAD("keys");
+						mv.LOADConst(j++);
+						mv.ARRAYLOAD(Object.class);
+
+						if (fieldMapper.pojoClazz.isPrimitive()) {
+							Class<?> objectclass = mapPrimaryToObject.get(fieldMapper.pojoClazz);
+							mv.CHECKCAST(objectclass);
+							arguments.getConvert(objectclass, fieldMapper.pojoClazz).apply(mv);
+						} else {
+							mv.CHECKCAST(fieldMapper.pojoClazz);
+						}
+
+						TypeMapping jdbcType = JDBCConfiguration.mapJavaClazz2JdbcTypes
+							.get(fieldMapper.pojoClazz.getName());
+
+						if (fieldMapper.pojoClazz != jdbcType.jdbcClazz) {
+							arguments.getConvert(fieldMapper.pojoClazz, jdbcType.jdbcClazz).apply(mv);
+						}
+
+						mv.INTERFACE(PreparedStatement.class, jdbcType.setname)
+							.parameter(int.class, jdbcType.jdbcClazz)
+							.INVOKE();
+					}
 				}
+
 				{
 					mv.line();
 					mv.LOAD("preparedStatement");
 					mv.INTERFACE(PreparedStatement.class, "executeQuery").reTurn(ResultSet.class).INVOKE();
 					mv.STORE("resultSet");
 				}
+
 				mv.line();
 				Label whileStart = mv.codeNewLabel();
-				Label whileCause = mv.codeNewLabel();
 				Label whileEnd = mv.codeNewLabel();
-				mv.GOTO(whileCause);
 				mv.visitLabel(whileStart);
+				mv.LOAD("resultSet");
+				mv.INTERFACE(ResultSet.class, "next").reTurn(boolean.class).INVOKE();
+				mv.IFEQ(whileEnd);
 				{
 					mv.line();
 					mv.LOAD("datas");
@@ -301,15 +346,10 @@ public class JdbcRepositoryBuilder {
 					mv.VIRTUAL(this.clazzRowMapper, "map").parameter(ResultSet.class).reTurn(this.clazzTarget).INVOKE();
 					mv.INTERFACE(List.class, "add").parameter(Object.class).reTurn(boolean.class).INVOKE();
 					mv.POP();
-				}
-				mv.line();
-				mv.visitLabel(whileCause);
-				{
-					mv.LOAD("resultSet");
-					mv.INTERFACE(ResultSet.class, "next").reTurn(boolean.class).INVOKE();
-					mv.IFNE(whileStart);
+					mv.GOTO(whileStart);
 				}
 				mv.visitLabel(whileEnd);
+
 				{
 					mv.line();
 					mv.LOAD("datas");
@@ -329,25 +369,16 @@ public class JdbcRepositoryBuilder {
 			.code(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
 				{
-					StringBuilder sb = new StringBuilder();
-
 					List<String> names = new ArrayList<>();
 					List<String> values = new ArrayList<>();
 
 					for (FieldMapper fieldMapper : mappers) {
-						names.add(fieldMapper.column.name());
+						names.add(fieldMapper.column.getName());
 						values.add("?");
 					}
 
-					sb.append("INSERT INTO ")
-						.append(tablename)
-						.append("(")
-						.append(String.join(",", names))
-						.append(") VALUES (")
-						.append(String.join(",", values))
-						.append(")");
-
-					String sql = sb.toString();
+					String sql = JDBCConfiguration.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})",
+							tablename, String.join(",", names), String.join(",", values));
 
 					mv.line();
 					mv.LOAD("this");
@@ -362,8 +393,10 @@ public class JdbcRepositoryBuilder {
 
 				int i = 1;
 				for (FieldMapper fieldMapper : mappers) {
-					JDBCType javaType = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.pojoClazz.getName());
-					bindField(mv, i++, fieldMapper.getname, fieldMapper.pojoClazz, javaType.setname, javaType.jdbcClazz);
+					TypeMapping javaType = JDBCConfiguration.mapJavaClazz2JdbcTypes
+						.get(fieldMapper.pojoClazz.getName());
+					bindField(mv, i++, fieldMapper.getname, fieldMapper.pojoClazz, javaType.setname,
+							javaType.jdbcClazz);
 				}
 
 				{
@@ -375,6 +408,18 @@ public class JdbcRepositoryBuilder {
 			});
 	}
 
+	static Map<Class<?>, Class<?>> mapPrimaryToObject = new HashMap<>();
+	static {
+		mapPrimaryToObject.put(boolean.class, Boolean.class);
+		mapPrimaryToObject.put(char.class, Character.class);
+		mapPrimaryToObject.put(byte.class, Byte.class);
+		mapPrimaryToObject.put(short.class, Short.class);
+		mapPrimaryToObject.put(int.class, Integer.class);
+		mapPrimaryToObject.put(long.class, Long.class);
+		mapPrimaryToObject.put(float.class, Float.class);
+		mapPrimaryToObject.put(double.class, Double.class);
+	}
+
 	private void updateJdbc(List<FieldMapper> mappers, String tablename) {
 		cw.method(ACC_PUBLIC, "updateJdbc")
 			.parameter("data", this.clazzTarget)
@@ -383,27 +428,19 @@ public class JdbcRepositoryBuilder {
 			.code(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
 				{
-					StringBuilder sb = new StringBuilder();
-
-					List<String> values = new ArrayList<>();
+					List<String> setvalues = new ArrayList<>();
 					List<String> keys = new ArrayList<>();
 
 					for (FieldMapper fieldMapper : mappers) {
 						if (!fieldMapper.primaryKey) {
-							values.add(fieldMapper.column.name() + "=?");
+							setvalues.add(fieldMapper.column.getName() + "=?");
 						} else {
-							keys.add(fieldMapper.column.name() + "=?");
+							keys.add(fieldMapper.column.getName() + "=?");
 						}
 					}
 
-					sb.append("UPDATE ")
-						.append(tablename)
-						.append(" SET ")
-						.append(String.join(",", values))
-						.append(" WHERE ")
-						.append(String.join(" and ", keys));
-
-					String sql = sb.toString();
+					String sql = JDBCConfiguration.sql("UPDATE ${tablename} SET ${setvalues} WHERE ${causes}",
+							tablename, String.join(",", setvalues), String.join(" AND ", keys));
 
 					mv.line();
 					mv.LOAD("this");
@@ -419,7 +456,8 @@ public class JdbcRepositoryBuilder {
 				int i = 1;
 				for (FieldMapper fieldMapper : mappers) {
 					if (!fieldMapper.primaryKey) {
-						JDBCType javaType = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.pojoClazz.getName());
+						TypeMapping javaType = JDBCConfiguration.mapJavaClazz2JdbcTypes
+							.get(fieldMapper.pojoClazz.getName());
 						bindField(mv, i++, fieldMapper.getname, fieldMapper.pojoClazz, javaType.setname,
 								javaType.jdbcClazz);
 					}
@@ -427,8 +465,10 @@ public class JdbcRepositoryBuilder {
 
 				for (FieldMapper fieldMapper : mappers) {
 					if (fieldMapper.primaryKey) {
-						JDBCType javaType = JDBCConfiguration.javaJdbcTypes.get(fieldMapper.pojoClazz.getName());
-						bindField(mv, i++, fieldMapper.getname, javaType.jdbcClazz, javaType.setname, javaType.jdbcClazz);
+						TypeMapping javaType = JDBCConfiguration.mapJavaClazz2JdbcTypes
+							.get(fieldMapper.pojoClazz.getName());
+						bindField(mv, i++, fieldMapper.getname, javaType.jdbcClazz, javaType.setname,
+								javaType.jdbcClazz);
 					}
 				}
 				{
@@ -442,7 +482,9 @@ public class JdbcRepositoryBuilder {
 
 	private void deleteJdbc(Class<Long> clazzID, List<FieldMapper> mappers, String tablename) {
 		cw.method(ACC_PUBLIC, "deleteJdbc")
-			.parameter("id", clazzID)
+			.ACC_PUBLIC()
+			.ACC_VARARGS()
+			.parameter("keys", GenericClazz.generic(Object.class, true))
 			.reTurn(boolean.class)
 			.tHrow(SQLException.class)
 			.code(mv -> {
@@ -454,15 +496,13 @@ public class JdbcRepositoryBuilder {
 					for (FieldMapper fieldMapper : mappers) {
 						if (!fieldMapper.primaryKey) {
 						} else {
-							keys.add(fieldMapper.column.name() + "=?");
+							keys.add(fieldMapper.column.getName() + "=?");
 						}
 					}
 
-					StringBuilder sb = new StringBuilder();
+					String sql = JDBCConfiguration.sql("DELETE ${tablename} WHERE ${causes}", tablename,
+							String.join(" AND ", keys));
 
-					sb.append("DELETE ").append(tablename).append(" WHERE ").append(String.join(" and ", keys));
-
-					String sql = sb.toString();
 					mv.line();
 					mv.LOAD("this");
 					mv.GETFIELD("conn", Connection.class);
@@ -473,12 +513,37 @@ public class JdbcRepositoryBuilder {
 						.INVOKE();
 					mv.STORE("preparedStatement");
 				}
-				{
-					mv.line();
-					mv.LOAD("preparedStatement");
-					mv.LOADConst(1);
-					mv.LOAD("id");
-					mv.INTERFACE(PreparedStatement.class, "setLong").parameter(int.class, clazzID).INVOKE();
+
+				int i = 1;
+				int j = 0;
+				for (FieldMapper fieldMapper : mappers) {
+					if (fieldMapper.primaryKey) {
+						mv.line();
+						mv.LOAD("preparedStatement");
+						mv.LOADConst(i++);
+						mv.LOAD("keys");
+						mv.LOADConst(j++);
+						mv.ARRAYLOAD(Object.class);
+
+						if (fieldMapper.pojoClazz.isPrimitive()) {
+							Class<?> objectclass = mapPrimaryToObject.get(fieldMapper.pojoClazz);
+							mv.CHECKCAST(objectclass);
+							arguments.getConvert(objectclass, fieldMapper.pojoClazz).apply(mv);
+						} else {
+							mv.CHECKCAST(fieldMapper.pojoClazz);
+						}
+
+						TypeMapping jdbcType = JDBCConfiguration.mapJavaClazz2JdbcTypes
+							.get(fieldMapper.pojoClazz.getName());
+
+						if (fieldMapper.pojoClazz != jdbcType.jdbcClazz) {
+							arguments.getConvert(fieldMapper.pojoClazz, jdbcType.jdbcClazz).apply(mv);
+						}
+
+						mv.INTERFACE(PreparedStatement.class, jdbcType.setname)
+							.parameter(int.class, jdbcType.jdbcClazz)
+							.INVOKE();
+					}
 				}
 				{
 					mv.line();
@@ -536,14 +601,17 @@ public class JdbcRepositoryBuilder {
 
 	private void findByIdJdbcBridge(Class<Long> clazzID) {
 		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "findByIdJdbc")
-			.parameter("id", clazzID)
+			.parameter("keys", GenericClazz.generic(Object.class, true))
 			.reTurn(Object.class)
 			.tHrow(SQLException.class)
 			.code(mv -> {
 				mv.line();
 				mv.LOAD("this");
-				mv.LOAD("id");
-				mv.VIRTUAL(this.clazz, "findByIdJdbc").parameter(clazzID).reTurn(this.clazzTarget).INVOKE();
+				mv.LOAD("keys");
+				mv.VIRTUAL(this.clazz, "findByIdJdbc")
+					.parameter(GenericClazz.generic(Object.class, true))
+					.reTurn(this.clazzTarget)
+					.INVOKE();
 				mv.RETURNTop();
 			});
 	}

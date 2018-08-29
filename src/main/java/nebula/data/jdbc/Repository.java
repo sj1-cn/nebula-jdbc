@@ -6,7 +6,7 @@ import java.util.List;
  * Database access for pets.
  */
 public interface Repository<T> {
-	
+
 	void init();
 
 	/**
@@ -24,7 +24,7 @@ public interface Repository<T> {
 	 * @param id T ID.
 	 * @return T or null.
 	 */
-	T findById(long id);
+	T findById(Object... keys);
 
 	/**
 	 * Insert a pet and returns the generated PK.
@@ -48,5 +48,5 @@ public interface Repository<T> {
 	 * @param id T ID.
 	 * @return True if the pet was deleted.
 	 */
-	boolean delete(long id);
+	boolean delete(Object... keys);
 }

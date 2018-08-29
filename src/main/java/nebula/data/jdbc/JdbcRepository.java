@@ -26,9 +26,9 @@ public interface JdbcRepository<T> extends Repository<T> {
 	}
 
 	@Override
-	default T findById(long id) {
+	default T findById(Object... keys) {
 		try {
-			return findByIdJdbc(id);
+			return findByIdJdbc(keys);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -53,9 +53,9 @@ public interface JdbcRepository<T> extends Repository<T> {
 	}
 
 	@Override
-	default boolean delete(long id) {
+	default boolean delete(Object... keys) {
 		try {
-			return deleteJdbc(id);
+			return deleteJdbc(keys);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -65,12 +65,12 @@ public interface JdbcRepository<T> extends Repository<T> {
 
 	List<T> listJdbc(int start, int max) throws SQLException;
 
-	T findByIdJdbc(long id) throws SQLException;
+	T findByIdJdbc(Object... keys) throws SQLException;
 
 	boolean insertJdbc(T pet) throws SQLException;
 
 	boolean updateJdbc(T pet) throws SQLException;
 
-	boolean deleteJdbc(long id) throws SQLException;
+	boolean deleteJdbc(Object... keys) throws SQLException;
 
 }

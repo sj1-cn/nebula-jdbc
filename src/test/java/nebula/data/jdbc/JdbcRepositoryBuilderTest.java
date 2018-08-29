@@ -1,10 +1,15 @@
 package nebula.data.jdbc;
 
+import static java.sql.JDBCType.INTEGER;
+import static java.sql.JDBCType.VARCHAR;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import nebula.jdbc.TestBase;
-import nebula.jdbc.builders.schema.ColumnDefination;
-import nebula.jdbc.builders.schema.JDBCTypes;
+import nebula.jdbc.builders.schema.ColumnDefinition;
+import nebula.tinyasm.util.RefineCode;
 
 public class JdbcRepositoryBuilderTest extends TestBase {
 
@@ -28,33 +33,34 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 
 	@Before
 	public void before() {
-		connection = getConnection();
+		connection = super.openConnection();
 
 		jdbcRowMapperBuilder = new JdbcRowMapperBuilder(arguments);
 		jdbcRepositoryBuilder = new JdbcRepositoryBuilder(arguments);
 		maps = new ArrayList<FieldMapper>();
 		clazz = UserJdbcRowMapper.class.getName();
-		maps.add(new FieldMapper(true, "id", "getId", long.class, new ColumnDefination("id", JDBCTypes.INTEGER)));
-		maps.add(new FieldMapper("name", "getName", String.class, new ColumnDefination("name", JDBCTypes.VARCHAR)));
+		maps.add(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
+		maps.add(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
 		maps.add(new FieldMapper("description", "getDescription", String.class,
-				new ColumnDefination("description", JDBCTypes.VARCHAR)));
+				new ColumnDefinition("description", VARCHAR)));
 
 	}
 
 	@After
 	public void after() {
+		super.closeConnection();
 	}
-
+//
 //	@Test
 //	public void testPrint() throws IOException {
 //		System.out.println(RefineCode.refineCode(toString(UserJdbcRepository.class), ResultSet.class,
-//				PreparedStatement.class, JdbcRepository.class));
+//				PreparedStatement.class, JdbcRepository.class,Connection.class));
 //	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testUser() throws IOException, InstantiationException, IllegalAccessException, NoSuchMethodException,
-			SecurityException, IllegalArgumentException, InvocationTargetException {
+			SecurityException, IllegalArgumentException, InvocationTargetException, SQLException {
 
 		String clazzTarget = User.class.getName();
 		String clazzRowMapper = UserJdbcRowMapper.class.getName() + "testUser";
@@ -71,10 +77,8 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 		JdbcRepository<User> userRepository = clazzJdbcRepository.newInstance();
 		userRepository.setConnection(connection);
 
-//		jdbi.useHandle(handle -> {
-//			handle.execute("CREATE TABLE user (id INTEGER PRIMARY KEY, name VARCHAR ,description VARCHAR)");
-//			handle.commit();
-//		});
+		connection.createStatement()
+			.execute("CREATE TABLE user (id INTEGER PRIMARY KEY,description VARCHAR)");
 
 		userRepository.init();
 
@@ -116,9 +120,28 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 	}
 
 	@Test
-	public void testConstructerEmptyCode() {
+	public void testUserJdbcRepository() {
 
 		String clazz = UserJdbcRepository.class.getName();
+		String targetClazz = User.class.getName();
+		String mapClazz = UserJdbcRowMapper.class.getName();
+
+		JdbcRepositoryBuilder builder = new JdbcRepositoryBuilder(new Arguments());
+		byte[] code = builder.make(clazz, targetClazz, mapClazz, "user", maps);
+
+		String codeActual = toString(code);
+		String codeExpected = toString(clazz);
+		assertEquals("Code", codeExpected, codeActual);
+	}
+	@Test
+	public void testUserKeysJdbcRepository() {
+		maps = new ArrayList<FieldMapper>();
+		maps.add(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
+		maps.add(new FieldMapper(true,"name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
+		maps.add(new FieldMapper("description", "getDescription", String.class,
+				new ColumnDefinition("description", VARCHAR)));
+
+		String clazz = UserKeysJdbcRepository.class.getName();
 		String targetClazz = User.class.getName();
 		String mapClazz = UserJdbcRowMapper.class.getName();
 

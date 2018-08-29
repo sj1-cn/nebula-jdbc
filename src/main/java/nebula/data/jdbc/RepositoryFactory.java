@@ -5,14 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.Connection;
+import java.sql.JDBCType;
 import java.util.ArrayList;
 import java.util.List;
 
-import nebula.jdbc.builders.schema.ColumnDefination;
-import nebula.jdbc.builders.schema.ColumnFactory;
+import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.JDBCConfiguration;
-import nebula.jdbc.builders.schema.JDBCTypes;
 
 public class RepositoryFactory {
 	Connection conn;
@@ -86,15 +86,19 @@ public class RepositoryFactory {
 		List<FieldMapper> mappers = new ArrayList<>();
 
 		for (Field field : type.getDeclaredFields()) {
-			String fieldname = field.getName();
-			Class<?> fieldClazz = field.getType();
-			JDBCTypes jdbctype = JDBCConfiguration.mapperRevert.get(fieldClazz.getName());
-			assert jdbctype != null : fieldClazz.getName() + " hasn't exist!";
-			ColumnDefination column = ColumnFactory.Column(jdbctype, fieldname);
-			String getname = getGetName(field.getName(), field.getType());
-			boolean primaryKey = "id".equals(fieldname);
-			FieldMapper mapper = new FieldMapper(primaryKey, fieldname, getname, fieldClazz, column);
-			mappers.add(mapper);
+			int modifier = field.getModifiers();
+			if (!Modifier.isStatic(modifier) && !Modifier.isSynchronized(modifier) && !Modifier.isAbstract(modifier)
+					&& !Modifier.isNative(modifier)) {
+				String fieldname = field.getName();
+				Class<?> fieldClazz = field.getType();
+				JDBCType jdbctype = JDBCConfiguration.mapJavaClass2JDBCType.get(fieldClazz.getName());
+				assert jdbctype != null : field.getName() + "'s class " + fieldClazz.getName() + " hasn't exist!";
+				ColumnDefinition column = ColumnDefinition.Column(jdbctype, fieldname);
+				String getname = getGetName(field.getName(), field.getType());
+				boolean primaryKey = "id".equals(fieldname);
+				FieldMapper mapper = new FieldMapper(primaryKey, fieldname, getname, fieldClazz, column);
+				mappers.add(mapper);
+			}
 		}
 		return mappers;
 	}
