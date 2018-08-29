@@ -155,8 +155,8 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 	@Test
 	public void testUserAutoIncrementJdbcRepository() {
 		maps = new ArrayList<FieldMapper>();
-		maps.add(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
-		maps.add(new FieldMapper(true,"name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
+		maps.add(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER).autoIncrement()));
+		maps.add(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
 		maps.add(new FieldMapper("description", "getDescription", String.class,
 				new ColumnDefinition("description", VARCHAR)));
 

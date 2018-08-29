@@ -217,6 +217,7 @@ public class JDBCConfiguration {
 		JDBCConfiguration.registerSQL("ALTER TABLE ${tablename} ADD PRIMARY KEY ${columnname}", "ALTER TABLE %1$s ADD PRIMARY KEY (%2$s)");
 		JDBCConfiguration.registerSQL("ALTER TABLE ${tablename} DROP COLUMN ${columnname}", "ALTER TABLE %1$s DROP COLUMN %2$s");
 
+		JDBCConfiguration.registerSQL("CREATE TABLE ${tablename}(${columndefinitions}))", "CREATE TABLE %1$s(%2$s)");
 		JDBCConfiguration.registerSQL("CREATE TABLE ${tablename}(${columndefinitions},PRIMARY KEY(${keys}))", "CREATE TABLE %1$s(%2$s,PRIMARY KEY(%3$s))");
 		JDBCConfiguration.registerSQL("SELECT ${columns} FROM ${tablename}", "SELECT %1$s FROM %2$s");
 		JDBCConfiguration.registerSQL("SELECT ${columns} FROM ${tablename} WHERE ${causes}", "SELECT %1$s FROM %2$s WHERE %3$s");

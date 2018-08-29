@@ -27,12 +27,12 @@ public class IntColumnTest {
 
 	@Test
 	public void it_converts_to_sql_an_autoincrementing_integer_column() {
-		assertEquals("user_id INTEGER(10) AUTO_INCREMENT", INTEGER("user_id").autoIncrement().toSQL());
+		assertEquals("user_id INTEGER(10) PRIMARY KEY AUTO_INCREMENT", INTEGER("user_id").autoIncrement().toSQL());
 	}
 
 	@Test
 	public void it_converts_to_sql_a_required_unsigned_autoincrementing_integer_column() {
-		assertEquals("user_id INTEGER(10) NOT NULL AUTO_INCREMENT",
+		assertEquals("user_id INTEGER(10) PRIMARY KEY AUTO_INCREMENT",
 				INTEGER("user_id").autoIncrement().required().toSQL());
 	}
 

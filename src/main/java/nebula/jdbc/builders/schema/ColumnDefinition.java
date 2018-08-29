@@ -116,7 +116,8 @@ public class ColumnDefinition implements Column {
 		return this;
 	}
 
-	ColumnDefinition autoIncrement() {
+	public ColumnDefinition autoIncrement() {
+		primarykey = true;
 		autoIncrment = "YES";
 		return this;
 	}
@@ -202,7 +203,10 @@ public class ColumnDefinition implements Column {
 		sql.add(JDBCConfiguration.typeDefinition(this.dataType, columnSize, decimalDigits));
 
 		if (this.unsigned) sql.add("UNSIGNED");
-		if ("YES".equals(this.autoIncrment)) sql.add("AUTO_INCREMENT");
+		if ("YES".equals(this.autoIncrment)) {
+			sql.add("PRIMARY KEY");
+			sql.add("AUTO_INCREMENT");
+		}
 //		if (this.primarykey) sql.add("PRIMARY KEY");
 //		else if (this.nullable == ResultSetMetaData.columnNoNulls) sql.add("NOT NULL");
 		if (!this.primarykey && this.nullable == ResultSetMetaData.columnNoNulls) sql.add("NOT NULL");
@@ -299,6 +303,10 @@ public class ColumnDefinition implements Column {
 
 	static public ColumnDefinition DATE(String name) {
 		return new ColumnDefinition(name, DATE);
+	}
+
+	public String getAutoIncrment() {
+		return autoIncrment;
 	}
 
 	static public ColumnDefinition TIME(String name) {

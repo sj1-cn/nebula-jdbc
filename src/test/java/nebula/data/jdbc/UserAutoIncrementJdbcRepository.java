@@ -27,9 +27,7 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		columnList.push(ColumnDefinition.valueOf("name VARCHAR(256)"));
 		columnList.push(ColumnDefinition.valueOf("description VARCHAR(256)"));
 		if (!JDBCConfiguration.mergeIfExists(conn, "user", columnList)) {
-			conn.prepareStatement(
-					"CREATE TABLE user(id INTEGER(10) PRIMARY KEY AUTO_INCREMENT,name VARCHAR(256),description VARCHAR(256))")
-				.execute();
+			conn.prepareStatement("CREATE TABLE user(id INTEGER(10) PRIMARY KEY AUTO_INCREMENT,name VARCHAR(256),description VARCHAR(256))").execute();
 		}
 	}
 
@@ -65,19 +63,18 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 
 	@Override
 	public User insertJdbc(User data) throws SQLException {
-		PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO user(name,description) VALUES(?,?)",
-				PreparedStatement.RETURN_GENERATED_KEYS);
+		PreparedStatement preparedStatement = null;
+		ResultSet rs = null;
+		
+		preparedStatement = conn.prepareStatement("INSERT INTO user(name,description) VALUES(?,?)",PreparedStatement.RETURN_GENERATED_KEYS);
 
 		preparedStatement.setString(1, data.getName());
 		preparedStatement.setString(2, data.getDescription());
 
-		int i = preparedStatement.executeUpdate();
-		if (i > 0) {
-			ResultSet rs = preparedStatement.getGeneratedKeys();
+		if (preparedStatement.executeUpdate() > 0) {
+			rs = preparedStatement.getGeneratedKeys();
 			rs.next();
-			long id = rs.getLong(1);
-			User newuser = this.findById(id);
-			return newuser;
+			return this.findById(rs.getLong(1));
 		} else {
 			return null;
 		}
