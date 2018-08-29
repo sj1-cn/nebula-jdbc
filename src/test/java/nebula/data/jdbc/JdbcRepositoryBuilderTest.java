@@ -7,8 +7,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,6 @@ import org.junit.Test;
 
 import nebula.jdbc.TestBase;
 import nebula.jdbc.builders.schema.ColumnDefinition;
-import nebula.tinyasm.util.RefineCode;
 
 public class JdbcRepositoryBuilderTest extends TestBase {
 

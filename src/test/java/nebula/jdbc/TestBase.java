@@ -25,7 +25,7 @@ public class TestBase {
 	@Rule
 	public TestName name = new TestName();
 	public Connection openConnection() {
-		return openConnection(name.getMethodName());
+		return openConnection(this.getClass().getName() + "_" +  name.getMethodName());
 	}
 
 	static public void assertListtoString(List<?> expected, List<?> actual) {
