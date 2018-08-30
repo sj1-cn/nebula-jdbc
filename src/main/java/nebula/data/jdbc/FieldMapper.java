@@ -6,7 +6,7 @@ public class FieldMapper {
 	final boolean primaryKey;
 	final String fieldName;
 	final String pojo_getname;
-	final Class<?> pojo_clazz;
+	final Class<?> pojoClazz;
 	final ColumnDefinition column;
 
 	public boolean isPrimaryKey() {
@@ -22,7 +22,7 @@ public class FieldMapper {
 	}
 
 	public Class<?> getPojoClazz() {
-		return pojo_clazz;
+		return pojoClazz;
 	}
 
 	public ColumnDefinition getColumn() {
@@ -34,7 +34,7 @@ public class FieldMapper {
 		super();
 		this.primaryKey = primaryKey;
 		this.fieldName = javaname;
-		this.pojo_clazz = fieldClazz;
+		this.pojoClazz = fieldClazz;
 		this.pojo_getname = getname;
 		this.column = column;
 		if(primaryKey) this.column.primarykey();

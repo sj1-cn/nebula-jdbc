@@ -35,15 +35,17 @@ public class JdbcRowMapperBuilder {
 				for (int i = 0; i < maps.size(); i++) {
 					FieldMapper fieldMapper = maps.get(i);
 					String name = fieldMapper.fieldName;
-					TypeMapping javatype = JDBCConfiguration.mapJavaClazz2JdbcTypes.get(fieldMapper.pojo_clazz.getName());
+					TypeMapping javatype = JDBCConfiguration.mapJavaClazz2JdbcTypes.get(fieldMapper.pojoClazz.getName());
+					assert javatype != null : name + "'s type [" + fieldMapper.pojoClazz.getName()+ "] has not jdbc type";
 					String getname = javatype.getname;
 					Class<?> jdbcClazz = javatype.jdbcClazz;
-					Class<?> pojoClazz = fieldMapper.pojo_clazz;
+					Class<?> pojoClazz = fieldMapper.pojoClazz;
 					clazzes[i] = pojoClazz;
 
 					map(mv, name, getname, pojoClazz, jdbcClazz);
 				}
 				mv.SPECIAL(targetClazz, "<init>").parameter(clazzes).INVOKE();
+				mv.line();
 				mv.RETURNTop();
 			});
 		}
@@ -68,6 +70,7 @@ public class JdbcRowMapperBuilder {
 		{
 			mv.LOAD("rs");
 			mv.LOADConst(name);
+			mv.line();
 			mv.INTERFACE(ResultSet.class, jdbcFuncName).parameter(String.class).reTurn(jdbcClazz).INVOKE();
 			if (pojoClazz != jdbcClazz) {
 				arguments.getRevert(pojoClazz, jdbcClazz).apply(mv);

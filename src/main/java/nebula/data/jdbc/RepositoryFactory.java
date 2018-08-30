@@ -96,8 +96,13 @@ public class RepositoryFactory {
 				ColumnDefinition column = ColumnDefinition.Column(jdbctype, fieldname);
 				String getname = getGetName(field.getName(), field.getType());
 				boolean primaryKey = "id".equals(fieldname);
-				FieldMapper mapper = new FieldMapper(primaryKey, fieldname, getname, fieldClazz, column);
-				mappers.add(mapper);
+				if (primaryKey) {
+					FieldMapper mapper = new FieldMapper(primaryKey, fieldname, getname, fieldClazz, column.autoIncrement());
+					mappers.add(mapper);
+				} else {
+					FieldMapper mapper = new FieldMapper(primaryKey, fieldname, getname, fieldClazz, column);
+					mappers.add(mapper);
+				}
 			}
 		}
 		return mappers;

@@ -71,9 +71,8 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 
 		if (preparedStatement.executeUpdate() > 0) {
 			return this.findById(data.getId());
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	@Override
@@ -86,9 +85,8 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 
 		if (preparedStatement.executeUpdate() > 0) {
 			return findById(data.getId());
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	@Override

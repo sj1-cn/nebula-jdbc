@@ -47,8 +47,7 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 	public User findByIdJdbc(Object... keys) throws SQLException {
 		PreparedStatement preparedStatement;
 		ResultSet resultSet;
-		List<User> datas;
-		datas = new ArrayList<>();
+		List<User> datas = new ArrayList<>();
 		preparedStatement = conn.prepareStatement("SELECT id,name,description FROM user WHERE id=? AND name=?");
 
 		preparedStatement.setLong(1, ((Long) keys[0]).longValue());
@@ -72,9 +71,8 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 
 		if (preparedStatement.executeUpdate() > 0) {
 			return this.findById(data.getId(),data.getName());
-		} else {
-			return null;
 		}
+		return null;		
 	}
 
 	@Override
@@ -87,9 +85,8 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 
 		if (preparedStatement.executeUpdate() > 0) {
 			return this.findById(data.getId(),data.getName());
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	@Override
