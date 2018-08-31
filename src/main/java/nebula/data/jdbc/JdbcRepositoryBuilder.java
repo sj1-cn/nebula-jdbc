@@ -16,6 +16,8 @@ import java.util.Map;
 
 import org.objectweb.asm.Label;
 
+import nebula.jdbc.builders.queries.Select;
+import nebula.jdbc.builders.schema.Column;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
 import nebula.jdbc.builders.schema.JDBCConfiguration;
@@ -275,18 +277,20 @@ public class JdbcRepositoryBuilder {
 					mv.STORE("datas");
 				}
 				{
-					List<String> names = new ArrayList<>();
-					List<String> keys = new ArrayList<>();
+					List<Column> allnames = new ArrayList<>();
+					List<Column> keys = new ArrayList<>();
 
 					for (FieldMapper fieldMapper : mappers) {
-						names.add(fieldMapper.column.getName());
+						allnames.add(fieldMapper.column);
 						if (fieldMapper.primaryKey) {
-							keys.add(fieldMapper.column.getName() + "=?");
+							keys.add(fieldMapper.column);
 						}
 					}
 
-					String sql = JDBCConfiguration.sql("SELECT ${columns} FROM ${tablename} WHERE ${causes}",
-							String.join(",", names), tablename, String.join(" AND ", keys));
+					String sql = Select.columns(ColumnList.namesOf(allnames))
+						.from(tablename)
+						.where(ColumnList.namesOf(keys))
+						.toSQL();
 
 					mv.line();
 					mv.LOAD("this");
@@ -433,10 +437,7 @@ public class JdbcRepositoryBuilder {
 				int i = 1;
 				for (FieldMapper fieldMapper : mappers) {
 					if (!"YES".equals(fieldMapper.column.getAutoIncrment())) {
-						TypeMapping javaType = JDBCConfiguration.mapJavaClazz2JdbcTypes
-							.get(fieldMapper.pojoClazz.getName());
-						bindField(mv, i++, fieldMapper.pojo_getname, fieldMapper.pojoClazz, javaType.setname,
-								javaType.jdbcClazz);
+						bindField(mv, i++, fieldMapper);
 					}
 				}
 
@@ -510,12 +511,9 @@ public class JdbcRepositoryBuilder {
 								mv.DUP();
 								mv.LOADConst(j++);
 
-								mv.LOAD("data");
-								mv.VIRTUAL(this.clazzTarget, fieldMapper.pojo_getname)
-									.reTurn(fieldMapper.pojoClazz)
-									.INVOKE();
+								Class<?> pojoClazz = getObjectField(mv, fieldMapper);
 
-								box(mv, fieldMapper.pojoClazz);
+								box(mv, pojoClazz);
 
 								mv.ARRAYSTORE();
 							}
@@ -623,19 +621,13 @@ public class JdbcRepositoryBuilder {
 				int i = 1;
 				for (FieldMapper fieldMapper : mappers) {
 					if (!fieldMapper.primaryKey) {
-						TypeMapping jdbcType = JDBCConfiguration.mapJavaClazz2JdbcTypes
-							.get(fieldMapper.pojoClazz.getName());
-						bindField(mv, i++, fieldMapper.pojo_getname, fieldMapper.pojoClazz, jdbcType.setname,
-								jdbcType.jdbcClazz);
+						bindField(mv, i++, fieldMapper);
 					}
 				}
 
 				for (FieldMapper fieldMapper : mappers) {
 					if (fieldMapper.primaryKey) {
-						TypeMapping javaType = JDBCConfiguration.mapJavaClazz2JdbcTypes
-							.get(fieldMapper.pojoClazz.getName());
-						bindField(mv, i++, fieldMapper.pojo_getname, fieldMapper.pojoClazz, javaType.setname,
-								javaType.jdbcClazz);
+						bindField(mv, i++, fieldMapper);
 					}
 				}
 				{
@@ -767,19 +759,28 @@ public class JdbcRepositoryBuilder {
 			});
 	}
 
-	private void bindField(MethodCode mv, int index, String propGetName, Class<?> pojoGetClazz, String jdbcSetName,
-			Class<?> jdbcSetClazz) {
+	private void bindField(MethodCode mv, int index, FieldMapper field) {
 		{
 			mv.line();
 			mv.LOAD("preparedStatement");
 			mv.LOADConst(index);
-			mv.LOAD("data");
-			mv.VIRTUAL(this.clazzTarget, propGetName).reTurn(pojoGetClazz).INVOKE();
-			if (pojoGetClazz != jdbcSetClazz) {
-				arguments.getConvert(pojoGetClazz, jdbcSetClazz).apply(mv);
-			}
-			mv.INTERFACE(PreparedStatement.class, jdbcSetName).parameter(int.class, jdbcSetClazz).INVOKE();
+			Class<?> jdbcClazz = getObjectField(mv, field);
+			setParam(mv, index, jdbcClazz);
 		}
+	}
+
+	private Class<?> getObjectField(MethodCode mv, FieldMapper field) {
+		mv.LOAD("data");
+		mv.VIRTUAL(this.clazzTarget, field.pojo_getname).reTurn(field.pojoClazz).INVOKE();
+		return field.pojoClazz;
+	}
+
+	private void setParam(MethodCode mv, int index, Class<?> pojoClazz) {
+		TypeMapping jdbcType = JDBCConfiguration.mapJavaClazz2JdbcTypes.get(pojoClazz.getName());
+		if (pojoClazz != jdbcType.jdbcClazz) {
+			arguments.getConvert(pojoClazz, jdbcType.jdbcClazz).apply(mv);
+		}
+		mv.INTERFACE(PreparedStatement.class, jdbcType.setname).parameter(int.class, jdbcType.jdbcClazz).INVOKE();
 	}
 
 	private void insertJdbcBridge() {

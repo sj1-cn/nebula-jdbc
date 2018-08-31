@@ -10,64 +10,67 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Where implements HasSQLRepresentation {
-    private final List<WhereExpression> expressions;
+	private final List<WhereExpression> expressions;
 
-    private Where() {
-        expressions = new ArrayList<>();
-    }
+	private Where() {
+		expressions = new ArrayList<>();
+	}
 
-    public static Where empty() {
-        return new Where();
-    }
+	public static Where empty() {
+		return new Where();
+	}
 
-    public Where and(String expression) {
-        addWhere(expression, Operator.AND);
-        return this;
-    }
+	public Where and(String expression) {
+		addWhere(expression, Operator.AND);
+		return this;
+	}
 
-    public Where and(String column, int parametersCount) {
-        addWhere(whereInToSQL(column, parametersCount), Operator.AND);
-        return this;
-    }
+	public Where and(String[] columns) {
+		for (int i = 0; i < columns.length; i++) {
+			and(String.format("%s = ?", columns[i]));
+		}
+		return this;
+	}
 
-    public Where or(String expression) {
-        addWhere(expression, Operator.OR);
-        return this;
-    }
+	public Where and(String column, int parametersCount) {
+		addWhere(whereInToSQL(column, parametersCount), Operator.AND);
+		return this;
+	}
 
-    public Where or(String column, int parametersCount) {
-        addWhere(whereInToSQL(column, parametersCount), Operator.OR);
-        return this;
-    }
+	public Where or(String expression) {
+		addWhere(expression, Operator.OR);
+		return this;
+	}
 
-    private String whereInToSQL(String column, int parametersCount) {
-        return String.format(
-            "%s IN %s", column, ParameterPlaceholders.generate(parametersCount)
-        );
-    }
+	public Where or(String column, int parametersCount) {
+		addWhere(whereInToSQL(column, parametersCount), Operator.OR);
+		return this;
+	}
 
-    private void addWhere(String expression, Operator operator) {
-        if (isEmpty()) operator = null;
+	private String whereInToSQL(String column, int parametersCount) {
+		return String.format("%s IN %s", column, ParameterPlaceholders.generate(parametersCount));
+	}
 
-        expressions.add(WhereExpression.with(expression, operator));
-    }
+	private void addWhere(String expression, Operator operator) {
+		if (isEmpty()) operator = null;
 
-    @Override
-    public String toSQL() {
-        if (isEmpty()) return "";
+		expressions.add(WhereExpression.with(expression, operator));
+	}
 
-        return String.format("WHERE %s", appendExpressions());
-    }
+	@Override
+	public String toSQL() {
+		if (isEmpty()) return "";
 
-    private String appendExpressions() {
-        StringBuilder where = new StringBuilder();
-        expressions
-            .forEach(expression -> where.append(expression.toSQL()).append(" "))
-        ;
-        return where.toString().replaceAll(" $", "");
-    }
+		return String.format("WHERE %s", appendExpressions());
+	}
 
-    private boolean isEmpty() {
-        return expressions.size() == 0;
-    }
+	private String appendExpressions() {
+		StringBuilder where = new StringBuilder();
+		expressions.forEach(expression -> where.append(expression.toSQL()).append(" "));
+		return where.toString().replaceAll(" $", "");
+	}
+
+	private boolean isEmpty() {
+		return expressions.size() == 0;
+	}
 }

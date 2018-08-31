@@ -11,10 +11,11 @@ import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
 import nebula.jdbc.builders.schema.JDBCConfiguration;
 
-public class UserJdbcRepository implements JdbcRepository<User> {
+public class UserJdbcSelectRepository implements JdbcRepository<User> {
 	private Connection conn;
 	private UserJdbcRowMapper mapper = new UserJdbcRowMapper();
 
+	ColumnList columnList = new ColumnList();
 	@Override
 	public void setConnection(Connection conn) {
 		this.conn = conn;
@@ -22,7 +23,6 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 
 	@Override
 	public void initJdbc() throws SQLException {
-		ColumnList columnList = new ColumnList();
 		columnList.push(ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY"));
 		columnList.push(ColumnDefinition.valueOf("name VARCHAR(256)"));
 		columnList.push(ColumnDefinition.valueOf("description VARCHAR(256)"));
@@ -34,6 +34,7 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 	@Override
 	public List<User> listJdbc(int start, int max) throws SQLException {
 		List<User> datas = new ArrayList<>();
+				
 		ResultSet resultSet = conn.prepareStatement("SELECT id,name,description FROM user").executeQuery();
 
 		while (resultSet.next()) {
@@ -49,7 +50,7 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 		ResultSet resultSet;
 		List<User> datas;
 		datas = new ArrayList<>();
-		preparedStatement = conn.prepareStatement("SELECT id, name, description FROM user WHERE id = ?");
+		preparedStatement = conn.prepareStatement("SELECT id,name,description FROM user WHERE id=?");
 
 		preparedStatement.setLong(1, ((Long) keys[0]).longValue());
 

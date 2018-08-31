@@ -48,7 +48,7 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 		PreparedStatement preparedStatement;
 		ResultSet resultSet;
 		List<User> datas = new ArrayList<>();
-		preparedStatement = conn.prepareStatement("SELECT id,name,description FROM user WHERE id=? AND name=?");
+		preparedStatement = conn.prepareStatement("SELECT id, name, description FROM user WHERE id = ? AND name = ?");
 
 		preparedStatement.setLong(1, ((Long) keys[0]).longValue());
 		preparedStatement.setString(2, (String) keys[1]);

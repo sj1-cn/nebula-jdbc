@@ -49,7 +49,7 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		ResultSet resultSet;
 		List<User> datas;
 		datas = new ArrayList<>();
-		preparedStatement = conn.prepareStatement("SELECT id,name,description FROM user WHERE id=?");
+		preparedStatement = conn.prepareStatement("SELECT id, name, description FROM user WHERE id = ?");
 
 		preparedStatement.setLong(1, ((Long) keys[0]).longValue());
 
@@ -74,7 +74,8 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		if (preparedStatement.executeUpdate() > 0) {
 			rs = preparedStatement.getGeneratedKeys();
 			rs.next();
-			return this.findById(rs.getLong(1));
+			
+			return this.findById( rs.getLong(1));
 		} else {
 			return null;
 		}

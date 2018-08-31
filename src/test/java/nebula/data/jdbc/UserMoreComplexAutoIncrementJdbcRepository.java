@@ -58,7 +58,7 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 		PreparedStatement preparedStatement;
 		ResultSet resultSet;
 		List<UserMoreComplex> datas = new ArrayList<>();
-		preparedStatement = this.conn.prepareStatement("SELECT id,string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp FROM UserMoreComplex WHERE id=?");
+		preparedStatement = this.conn.prepareStatement("SELECT id, string, bigDecimal, z, c, b, s, i, l, f, d, date, time, timestamp FROM UserMoreComplex WHERE id = ?");
 
 		preparedStatement.setLong(1, ((Long) keys[0]).longValue());
 
