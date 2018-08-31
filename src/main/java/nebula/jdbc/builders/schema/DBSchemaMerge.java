@@ -1,9 +1,6 @@
 package nebula.jdbc.builders.schema;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.JDBCType;
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -15,13 +12,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import nebula.data.jdbc.Command;
+import nebula.jdbc.meta.JdbcDababaseMetadata;
 
 public class DBSchemaMerge {
 	static Logger logger = LoggerFactory.getLogger(DBSchemaMerge.class);
 
+	JdbcDababaseMetadata jdbcDababaseMetadata = new JdbcDababaseMetadata();
+
 	public boolean merge(Connection conn, String tableName, ColumnList columnsExpected) throws SQLException {
 		{
-			ColumnList columnsActual = getCurrentActualColumns(conn, tableName);
+			ColumnList columnsActual = jdbcDababaseMetadata.getColumns(conn, tableName);
 			if (columnsActual.size() == 0) {
 				return false;
 			}
@@ -34,7 +34,7 @@ public class DBSchemaMerge {
 			statement.close();
 		}
 		{
-			ColumnList columnsActual = getCurrentActualColumns(conn, tableName);
+			ColumnList columnsActual = jdbcDababaseMetadata.getColumns(conn, tableName);
 			List<Command> commandBus = compare(columnsExpected, columnsActual);
 			assert commandBus.size() == 0;
 			return true;
@@ -115,39 +115,8 @@ public class DBSchemaMerge {
 		return commandBus;
 
 	}
-
-	public ColumnList getCurrentActualColumns(Connection conn, String tableName) throws SQLException {
-		ColumnList columnsActual = new ColumnList();
-		DatabaseMetaData meta = conn.getMetaData();
-		try (ResultSet rs = meta.getColumns(null, null, tableName, null)) {
-
-			while (rs.next()) {
-				String columnName = rs.getString("COLUMN_NAME");
-				JDBCType dataType = JDBCType.valueOf(rs.getInt("DATA_TYPE"));
-				String typeName = rs.getString("TYPE_NAME");
-				int columnSize = rs.getInt("COLUMN_SIZE");
-				int decimalDigits = rs.getInt("DECIMAL_DIGITS");
-				int nullable = rs.getInt("NULLABLE");
-				String remarks = rs.getString("REMARKS");
-				String defaultValue = rs.getString("COLUMN_DEF");
-				int charOctetLength = rs.getInt("CHAR_OCTET_LENGTH");
-				int ordinalPosition = rs.getInt("ORDINAL_POSITION");
-				short sourceDataType = rs.getShort("SOURCE_DATA_TYPE");
-				String autoincrment = rs.getString("IS_AUTOINCREMENT");
-
-				ColumnDefinition column = new ColumnDefinition(columnName, dataType, typeName, columnSize,
-						decimalDigits, nullable, remarks, defaultValue, charOctetLength, ordinalPosition,
-						sourceDataType, autoincrment);
-				columnsActual.push(column);
-			}
-
-			try (ResultSet primaryKeys = meta.getPrimaryKeys(null, null, tableName)) {
-				while (primaryKeys.next()) {
-					String columnName = primaryKeys.getString("COLUMN_NAME");
-					columnsActual.get(columnName).primarykey();
-				}
-			}
-		}
-		return columnsActual;
+	public ColumnList getColumns(Connection conn, String tableName) throws SQLException {
+		return this.jdbcDababaseMetadata.getColumns(conn, tableName);
 	}
+
 }
