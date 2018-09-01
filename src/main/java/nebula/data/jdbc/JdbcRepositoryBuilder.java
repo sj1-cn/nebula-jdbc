@@ -97,35 +97,25 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 	private void initJdbc(String tablename, FieldList mappers) {
 		cw.method("initJdbc").tHrow(SQLException.class).code(mv -> {
 			mv.define("columnList", ColumnList.class);
-			{// ColumnList columnList = new ColumnList();
-				mv.line().init(ColumnList.class);
-				mv.STORE("columnList");
-			}
+			// ColumnList columnList = new ColumnList();
+			mv.line().init(ColumnList.class).setTo("columnList");
 
 			for (FieldMapper field : mappers) {
 				// columnList.push(ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY"));
-				mv.line();
-				mv.LOAD("columnList");
-				mv.LOADConst(field.column.toString());
-				mv.STATIC(ColumnDefinition.class, "valueOf").parameter(String.class).reTurn(ColumnDefinition.class).INVOKE();
-				mv.VIRTUAL(ColumnList.class, "push").parameter(Object.class).INVOKE();
+				mv.line().load("columnList").virtual("push").parameter(Object.class).invokeVoid(p0 -> {
+					p0.clazz(ColumnDefinition.class).call("valueOf").reTurn(ColumnDefinition.class).invoke(p00 -> p00.LOADConst(field.column.toString()));
+				});
 
 			}
 
-			{// JDBCConfiguration.mergeIfExists(conn, "user", columnList)
-				mv.line()
-					.clazz(JDBCConfiguration.class)
-					.call("mergeIfExists")
-					.reTurn(boolean.class)
-					.invoke(m -> m.load("conn"), m -> m.LOADConst(tablename), m -> m.LOAD("columnList"));
-//				mv.STATIC(JDBCConfiguration.class, "mergeIfExists")
-//					.parameter(Connection.class, String.class, ColumnList.class)
-//					.reTurn(boolean.class)
-//					.INVOKE();
-			}
-			Label iffalse = mv.codeNewLabel();
-			mv.IFNE(iffalse);
-			{// if (!) {
+			// JDBCConfiguration.mergeIfExists(conn, "user", columnList)
+			mv.line()
+				.clazz(JDBCConfiguration.class)
+				.call("mergeIfExists")
+				.reTurn(boolean.class)
+				.invoke(m -> m.load("conn"), m -> m.LOADConst(tablename), m -> m.LOAD("columnList"));
+
+			mv.ifFalse(b -> {// if (!) {
 
 				boolean hasAutoIncrment = mappers.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
 
@@ -144,11 +134,9 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 				mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke(m -> m.LOADConst(sql)).inter("execute").reTurn(boolean.class).invoke();
 
 				mv.POP();
-			}
-			mv.visitLabel(iffalse);
-			{
-				mv.line().returnVoid();
-			}
+			});
+			mv.line().returnVoid();
+
 		});
 	}
 
@@ -272,17 +260,18 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 				mv.IFEQ(whileEnd);
 				{
 					mv.line();
-					mv.load("datas");
-					mv.load("mapper").virtual("map").reTurn(this.clazzTarget).invoke("resultSet");
-					mv.INTERFACE(List.class, "add").parameter(Object.class).reTurn(boolean.class).INVOKE();
+					mv.load("datas")
+						.inter("add")
+						.parameter(Object.class)
+						.reTurn(boolean.class)
+						.invoke(p0 -> mv.load("mapper").virtual("map").reTurn(this.clazzTarget).invoke("resultSet"));
 					mv.POP();
 					mv.GOTO(whileStart);
 				}
 				mv.visitLabel(whileEnd);
 
 				{
-					mv.line().load("datas").inter("get").reTurn(Object.class).invoke(m -> m.LOADConst(0));
-					mv.CHECKCAST(this.clazzTarget);
+					mv.line().load("datas").inter("get").reTurn(Object.class).invoke(m -> m.LOADConst(0)).checkcast(this.clazzTarget);
 					mv.RETURNTop();
 				}
 			});
@@ -299,14 +288,11 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 				List<String> values = mappers.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> "?");
 				{
 
-					mv.line();
 					mv.define("preparedStatement", PreparedStatement.class);
-					mv.LOADConstNULL();
-					mv.STORE("preparedStatement");
-					mv.line();
+					mv.line().setNull("preparedStatement");
+
 					mv.define("rs", ResultSet.class);
-					mv.LOADConstNULL();
-					mv.STORE("rs");
+					mv.line().setNull("rs");
 				}
 				String sql = JDBCConfiguration.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", tablename, String.join(",", names), String.join(",", values));
 
