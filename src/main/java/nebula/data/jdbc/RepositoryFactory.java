@@ -8,8 +8,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.JDBCType;
-import java.util.ArrayList;
-import java.util.List;
 
 import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.JDBCConfiguration;
@@ -60,7 +58,7 @@ public class RepositoryFactory {
 	private MyClassLoader myClassLoader = new MyClassLoader();
 
 	public <T> Repository<T> getRepository(Class<T> type) {
-		List<FieldMapper> mappers = build(type);
+		FieldList mappers = build(type);
 
 		getMapper(type);
 
@@ -82,8 +80,8 @@ public class RepositoryFactory {
 		}
 	}
 
-	public List<FieldMapper> build(Class<?> type) {
-		List<FieldMapper> mappers = new ArrayList<>();
+	public FieldList build(Class<?> type) {
+		FieldList mappers = new FieldList();
 
 		for (Field field : type.getDeclaredFields()) {
 			int modifier = field.getModifiers();
@@ -98,10 +96,10 @@ public class RepositoryFactory {
 				boolean primaryKey = "id".equals(fieldname);
 				if (primaryKey) {
 					FieldMapper mapper = new FieldMapper(primaryKey, fieldname, getname, fieldClazz, column.autoIncrement());
-					mappers.add(mapper);
+					mappers.push(mapper);
 				} else {
 					FieldMapper mapper = new FieldMapper(primaryKey, fieldname, getname, fieldClazz, column);
-					mappers.add(mapper);
+					mappers.push(mapper);
 				}
 			}
 		}
@@ -120,7 +118,7 @@ public class RepositoryFactory {
 	public JdbcRepositoryBuilder repositoryBuilder = new JdbcRepositoryBuilder(arguments);
 
 	public <T> JdbcRowMapper<T> getMapper(Class<T> type) {
-		List<FieldMapper> mappers = build(type);
+		FieldList mappers = build(type);
 
 		String clazz = type.getName() + "RowMapper";
 		String targetClazz = type.getName();

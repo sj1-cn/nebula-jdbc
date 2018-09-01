@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -32,7 +31,7 @@ import nebula.jdbc.builders.schema.ColumnDefinition;
 public class JdbcRepositoryBuilderTest extends TestBase {
 
 	String clazz;
-	List<FieldMapper> maps;
+	FieldList maps;
 	JdbcRowMapperBuilder jdbcRowMapperBuilder;
 
 	JdbcRepositoryBuilder jdbcRepositoryBuilder;
@@ -45,11 +44,11 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 
 		jdbcRowMapperBuilder = new JdbcRowMapperBuilder(arguments);
 		jdbcRepositoryBuilder = new JdbcRepositoryBuilder(arguments);
-		maps = new ArrayList<FieldMapper>();
+		maps = new FieldList();
 		clazz = UserJdbcRowMapper.class.getName();
-		maps.add(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
-		maps.add(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
-		maps.add(new FieldMapper("description", "getDescription", String.class,
+		maps.push(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
+		maps.push(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
+		maps.push(new FieldMapper("description", "getDescription", String.class,
 				new ColumnDefinition("description", VARCHAR)));
 
 	}
@@ -143,10 +142,10 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 
 	@Test
 	public void testUserKeysJdbcRepository() {
-		maps = new ArrayList<FieldMapper>();
-		maps.add(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
-		maps.add(new FieldMapper(true, "name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
-		maps.add(new FieldMapper("description", "getDescription", String.class,
+		maps = new FieldList();
+		maps.push(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
+		maps.push(new FieldMapper(true, "name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
+		maps.push(new FieldMapper("description", "getDescription", String.class,
 				new ColumnDefinition("description", VARCHAR)));
 
 		String clazz = UserKeysJdbcRepository.class.getName();
@@ -163,23 +162,23 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 
 	@Test
 	public void testUserMoreComplexAutoIncrementJdbcRepository() {
-		List<FieldMapper> maps = new ArrayList<FieldMapper>();
-		maps.add(new FieldMapper(true, "id", "getId", Long.class,
+		FieldList maps = new FieldList();
+		maps.push(new FieldMapper(true, "id", "getId", Long.class,
 				new ColumnDefinition("id", BIGINT).primarykey().autoIncrement()));
-		maps.add(new FieldMapper("string", "getString", String.class, new ColumnDefinition("string", VARCHAR)));
-		maps.add(new FieldMapper("bigDecimal", "getBigDecimal", java.math.BigDecimal.class,
+		maps.push(new FieldMapper("string", "getString", String.class, new ColumnDefinition("string", VARCHAR)));
+		maps.push(new FieldMapper("bigDecimal", "getBigDecimal", java.math.BigDecimal.class,
 				new ColumnDefinition("bigDecimal", DECIMAL)));
-		maps.add(new FieldMapper("z", "getZ", Boolean.class, new ColumnDefinition("z", BOOLEAN)));
-		maps.add(new FieldMapper("c", "getC", Character.class, new ColumnDefinition("c", CHAR)));
-		maps.add(new FieldMapper("b", "getB", Byte.class, new ColumnDefinition("b", TINYINT)));
-		maps.add(new FieldMapper("s", "getS", Short.class, new ColumnDefinition("s", SMALLINT)));
-		maps.add(new FieldMapper("i", "getI", Integer.class, new ColumnDefinition("i", INTEGER)));
-		maps.add(new FieldMapper("l", "getL", Long.class, new ColumnDefinition("l", BIGINT)));
-		maps.add(new FieldMapper("f", "getF", Float.class, new ColumnDefinition("f", FLOAT)));
-		maps.add(new FieldMapper("d", "getD", Double.class, new ColumnDefinition("d", DOUBLE)));
-		maps.add(new FieldMapper("date", "getDate", java.sql.Date.class, new ColumnDefinition("date", DATE)));
-		maps.add(new FieldMapper("time", "getTime", java.sql.Time.class, new ColumnDefinition("time", TIME)));
-		maps.add(new FieldMapper("timestamp", "getTimestamp", java.sql.Timestamp.class,
+		maps.push(new FieldMapper("z", "getZ", Boolean.class, new ColumnDefinition("z", BOOLEAN)));
+		maps.push(new FieldMapper("c", "getC", Character.class, new ColumnDefinition("c", CHAR)));
+		maps.push(new FieldMapper("b", "getB", Byte.class, new ColumnDefinition("b", TINYINT)));
+		maps.push(new FieldMapper("s", "getS", Short.class, new ColumnDefinition("s", SMALLINT)));
+		maps.push(new FieldMapper("i", "getI", Integer.class, new ColumnDefinition("i", INTEGER)));
+		maps.push(new FieldMapper("l", "getL", Long.class, new ColumnDefinition("l", BIGINT)));
+		maps.push(new FieldMapper("f", "getF", Float.class, new ColumnDefinition("f", FLOAT)));
+		maps.push(new FieldMapper("d", "getD", Double.class, new ColumnDefinition("d", DOUBLE)));
+		maps.push(new FieldMapper("date", "getDate", java.sql.Date.class, new ColumnDefinition("date", DATE)));
+		maps.push(new FieldMapper("time", "getTime", java.sql.Time.class, new ColumnDefinition("time", TIME)));
+		maps.push(new FieldMapper("timestamp", "getTimestamp", java.sql.Timestamp.class,
 				new ColumnDefinition("timestamp", TIMESTAMP)));
 
 		String clazz = UserMoreComplexAutoIncrementJdbcRepository.class.getName();
@@ -195,10 +194,11 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 
 	@Test
 	public void testUserAutoIncrementJdbcRepository() {
-		maps = new ArrayList<FieldMapper>();
-		maps.add(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER).autoIncrement()));
-		maps.add(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
-		maps.add(new FieldMapper("description", "getDescription", String.class,
+		maps = new FieldList();
+		maps.push(
+				new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER).autoIncrement()));
+		maps.push(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
+		maps.push(new FieldMapper("description", "getDescription", String.class,
 				new ColumnDefinition("description", VARCHAR)));
 
 		String clazz = UserAutoIncrementJdbcRepository.class.getName();

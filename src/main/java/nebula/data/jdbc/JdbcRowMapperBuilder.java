@@ -6,7 +6,6 @@ import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 import nebula.jdbc.builders.schema.JDBCConfiguration;
 import nebula.jdbc.builders.schema.JDBCConfiguration.TypeMapping;
@@ -21,7 +20,7 @@ public class JdbcRowMapperBuilder {
 		this.arguments = arguments;
 	}
 
-	public byte[] make(String clazz, String targetClazz, List<FieldMapper> maps) {
+	public byte[] make(String clazz, String targetClazz, FieldList maps) {
 
 		ClassBody cw = ClassBuilder.make(clazz).imPlements(JdbcRowMapper.class, targetClazz).body();
 
