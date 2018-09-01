@@ -67,12 +67,12 @@ public class RepositoryBuilder {
 			mv.line();
 			mv.LOAD("preparedStatement");
 			mv.LOADConst(index);
-			Class<?> jdbcClazz = getObjectField(mv, clazzTarget, field);
+			Class<?> jdbcClazz = loadObjectField(mv, clazzTarget, field);
 			setParam(mv, index, jdbcClazz);
 		}
 	}
 
-	protected Class<?> getObjectField(MethodCode mv, String clazzTarget, FieldMapper field) {
+	protected Class<?> loadObjectField(MethodCode mv, String clazzTarget, FieldMapper field) {
 		mv.LOAD("data");
 		mv.VIRTUAL(clazzTarget, field.pojo_getname).reTurn(field.pojoClazz).INVOKE();
 		return field.pojoClazz;
