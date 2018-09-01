@@ -248,7 +248,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 						.where(ColumnList.namesOf(keys))
 						.toSQL();
 
-					mv.line().loadThisField("conn");
+					mv.line().load("conn");
 					mv.LOADConst(sql);
 					mv.INTERFACE(Connection.class, "prepareStatement")
 						.parameter(String.class)
@@ -264,9 +264,8 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 						mv.line();
 						mv.LOAD("preparedStatement");
 						mv.LOADConst(i++);
-						mv.LOAD("keys");
-						mv.LOADConst(j++);
-						mv.ARRAYLOAD(Object.class);
+
+						mv.arrayload("keys", j++);
 
 						if (fieldMapper.pojoClazz.isPrimitive()) {
 							Class<?> objectclass = mapPrimaryToObject.get(fieldMapper.pojoClazz);
@@ -300,14 +299,14 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 				Label whileStart = mv.codeNewLabel();
 				Label whileEnd = mv.codeNewLabel();
 				mv.visitLabel(whileStart);
-				mv.LOAD("resultSet");
+				mv.load("resultSet");
 				mv.INTERFACE(ResultSet.class, "next").reTurn(boolean.class).INVOKE();
 				mv.IFEQ(whileEnd);
 				{
 					mv.line();
-					mv.LOAD("datas");
-					mv.loadThisField("mapper");
-					mv.LOAD("resultSet");
+					mv.load("datas");
+					mv.load("mapper");
+					mv.load("resultSet");
 					mv.VIRTUAL(this.clazzRowMapper, "map").parameter(ResultSet.class).reTurn(this.clazzTarget).INVOKE();
 					mv.INTERFACE(List.class, "add").parameter(Object.class).reTurn(boolean.class).INVOKE();
 					mv.POP();
