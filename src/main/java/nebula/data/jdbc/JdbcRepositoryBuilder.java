@@ -115,13 +115,15 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			}
 
 			{// JDBCConfiguration.mergeIfExists(conn, "user", columnList)
-				mv.line().loadThisField("conn");
-				mv.LOADConst(tablename);
-				mv.LOAD("columnList");
-				mv.STATIC(JDBCConfiguration.class, "mergeIfExists")
-					.parameter(Connection.class, String.class, ColumnList.class)
-					.reTurn(boolean.class)
-					.INVOKE();
+				mv.line()
+					.clazz(JDBCConfiguration.class)
+					.call("mergeIfExists")
+					.returnObject(boolean.class)
+					.invoke(m -> m.load("conn"), m -> m.LOADConst(tablename), m -> m.LOAD("columnList"));
+//				mv.STATIC(JDBCConfiguration.class, "mergeIfExists")
+//					.parameter(Connection.class, String.class, ColumnList.class)
+//					.reTurn(boolean.class)
+//					.INVOKE();
 			}
 			Label iffalse = mv.codeNewLabel();
 			mv.IFNE(iffalse);
