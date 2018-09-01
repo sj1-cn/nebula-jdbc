@@ -10,12 +10,9 @@ import nebula.tinyasm.data.MethodCode;
 
 public class RepositoryBuilder {
 	Arguments arguments;
+
 	public RepositoryBuilder(Arguments arguments) {
 		this.arguments = arguments;
-	}
-
-	public RepositoryBuilder() {
-		super();
 	}
 
 	protected void revertFromJdbc(MethodCode mv, Class<?> pojoClazz, Class<?> jdbcClazz) {
@@ -54,6 +51,7 @@ public class RepositoryBuilder {
 		mapObjectToPrimary.put(Float.class, float.class);
 		mapObjectToPrimary.put(Double.class, double.class);
 	}
+
 	@SuppressWarnings("unused")
 	private Class<?> unbox(MethodCode mv, Class<?> objectClazz) {
 		Class<?> primaryClazz = mapObjectToPrimary.get(objectClazz);
@@ -64,17 +62,17 @@ public class RepositoryBuilder {
 		return objectClazz;
 	}
 
-	protected void bindField(MethodCode mv, int index,String clazzTarget,  FieldMapper field) {
+	protected void bindField(MethodCode mv, int index, String clazzTarget, FieldMapper field) {
 		{
 			mv.line();
 			mv.LOAD("preparedStatement");
 			mv.LOADConst(index);
-			Class<?> jdbcClazz = getObjectField(mv, clazzTarget,field);
+			Class<?> jdbcClazz = getObjectField(mv, clazzTarget, field);
 			setParam(mv, index, jdbcClazz);
 		}
 	}
 
-	protected Class<?> getObjectField(MethodCode mv,String clazzTarget, FieldMapper field) {
+	protected Class<?> getObjectField(MethodCode mv, String clazzTarget, FieldMapper field) {
 		mv.LOAD("data");
 		mv.VIRTUAL(clazzTarget, field.pojo_getname).reTurn(field.pojoClazz).INVOKE();
 		return field.pojoClazz;

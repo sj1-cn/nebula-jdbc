@@ -27,7 +27,7 @@ import nebula.tinyasm.data.GenericClazz;
 public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 	public JdbcRepositoryBuilder(Arguments arguments) {
-		this.arguments = arguments;
+		super(arguments);
 	}
 
 	ClassBody cw;
@@ -78,34 +78,17 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 	private void constructor() {
 		cw.method(ACC_PUBLIC, "<init>").code(mv -> {
-			{
-				mv.line();
-				mv.LOAD("this");
-				mv.SPECIAL(Object.class, "<init>").INVOKE();
-			}
-			{
-				mv.line();
-				mv.LOAD("this");
-				mv.NEW(this.clazzRowMapper);
-				mv.DUP();
-				mv.SPECIAL(this.clazzRowMapper, "<init>").INVOKE();
-				mv.PUTFIELD("mapper", this.clazzRowMapper);
-			}
-			{
-				mv.RETURN();
-			}
+			mv.line().initThis();
+			mv.line().putThisFieldOfNewObject("mapper", clazzRowMapper);
+			mv.RETURN();
 		});
 	}
 
 	private void setConnection() {
 		cw.method(ACC_PUBLIC, "setConnection").parameter("conn", Connection.class).code(mv -> {
 			{
-				mv.line();
-				mv.LOAD("this");
-				mv.LOAD("conn");
-				mv.PUTFIELD("conn", Connection.class);
-				mv.line();
-				mv.RETURN();
+				mv.line().putThisFieldOfVar("conn", "conn");
+				mv.line().RETURN();
 			}
 		});
 	}
@@ -114,13 +97,10 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 		cw.method("initJdbc").tHrow(SQLException.class).code(mv -> {
 			mv.define("columnList", ColumnList.class);
 			{// ColumnList columnList = new ColumnList();
-				mv.line();
-				mv.NEW(ColumnList.class);
-				mv.DUP();
-				mv.SPECIAL(ColumnList.class, "<init>").INVOKE();
+				mv.line().init(ColumnList.class);
 				mv.STORE("columnList");
 			}
-			
+
 			for (FieldMapper field : mappers) {
 				// columnList.push(ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY"));
 				mv.line();
@@ -148,26 +128,19 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			Label iffalse = mv.codeNewLabel();
 			mv.IFNE(iffalse);
 			{// if (!) {
-				List<String> columns = new ArrayList<>();
-				List<String> keys = new ArrayList<>();
 
-				boolean hasAutoIncrment = false;
-				for (FieldMapper fieldMapper : mappers) {
-					columns.add(fieldMapper.column.toSQL());
-					if (fieldMapper.primaryKey) {
-						if ("YES".equals(fieldMapper.column.getAutoIncrment())) {
-							hasAutoIncrment = true;
-						}
-						keys.add(fieldMapper.column.getName());
-					}
-				}
+				boolean hasAutoIncrment = mappers.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
+
+				List<String> keys = mappers.filter(f -> f.primaryKey).map(f -> f.column.getName());
+				List<String> columnDefinitions = mappers.map(f -> f.column.toSQL());
+
 				String sql;
 				if (hasAutoIncrment) {
 					sql = JDBCConfiguration.sql("CREATE TABLE ${tablename}(${columndefinitions}))", tablename,
-							String.join(",", columns));
+							String.join(",", columnDefinitions));
 				} else {
 					sql = JDBCConfiguration.sql("CREATE TABLE ${tablename}(${columndefinitions},PRIMARY KEY(${keys}))",
-							tablename, String.join(",", columns), String.join(",", keys));
+							tablename, String.join(",", columnDefinitions), String.join(",", keys));
 				}
 
 				// PreparedStatement preparedStatement = conn.prepareStatement(sql);
@@ -184,8 +157,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			}
 			mv.visitLabel(iffalse);
 			{
-				mv.line();
-				mv.RETURN();
+				mv.line().RETURN();
 			}
 		});
 	}
