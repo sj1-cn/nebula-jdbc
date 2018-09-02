@@ -87,10 +87,8 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 	private void setConnection() {
 		cw.method(ACC_PUBLIC, "setConnection").parameter("conn", Connection.class).code(mv -> {
-			{
-				mv.line().putThisFieldWithVar("conn", "conn");
-				mv.line().returnVoid();
-			}
+			mv.line().putThisFieldWithVar("conn", "conn");
+			mv.line().returnVoid();
 		});
 	}
 
@@ -102,13 +100,12 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 			for (FieldMapper field : mappers) {
 				// columnList.push(ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY"));
-				mv.line().load("columnList").virtual("push").parameter(Object.class).invokeVoid(p0 -> {
-					p0.clazz(ColumnDefinition.class)
+				mv.line().load("columnList").virtual("push").parameter(Object.class).invokeVoid(p -> {
+					p.clazz(ColumnDefinition.class)
 						.call("valueOf")
 						.reTurn(ColumnDefinition.class)
-						.invoke(p00 -> p00.LOADConst(field.column.toString()));
+						.invoke(p0 -> p0.LOADConst(field.column.toString()));
 				});
-
 			}
 
 			// JDBCConfiguration.mergeIfExists(conn, "user", columnList)
@@ -119,7 +116,6 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 				.invoke(m -> m.load("conn"), m -> m.LOADConst(tablename), m -> m.LOAD("columnList"));
 
 			mv.ifFalse(b -> {// if (!) {
-
 				boolean hasAutoIncrment = mappers.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
 
 				List<String> keys = mappers.filter(f -> f.primaryKey).map(f -> f.column.getName());
