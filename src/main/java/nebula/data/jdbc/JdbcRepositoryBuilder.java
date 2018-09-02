@@ -276,7 +276,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.reTurn(this.clazzTarget)
 			.tHrow(SQLException.class)
 			.code(mv -> {
-
+				
 				boolean hasAutoIncrment = mappers.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
 				FieldMapper keyMapper = mappers.filter(f -> f.isPrimaryKey()).get(0);
 
@@ -390,10 +390,9 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 														.boxWhenNeed());
 									}
 								}
-							});
-
-						m.CHECKCAST(this.clazzTarget);
-						m.RETURNTop();
+							})
+							.checkcast(clazzTarget)
+							.returnValue();
 					});
 					mv.line().returnNull();
 
