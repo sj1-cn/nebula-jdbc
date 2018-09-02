@@ -41,6 +41,10 @@ public class Select implements HasSQLRepresentation {
 		return new Select(Columns.all());
 	}
 
+	public static Select columns(String columns) {
+		return new Select(Columns.empty().add(columns.split(",")));
+	}
+
 	public static Select columns(String... columns) {
 		return new Select(Columns.empty().add(columns));
 	}
@@ -176,8 +180,8 @@ public class Select implements HasSQLRepresentation {
 	@Override
 	public String toSQL() {
 		return String
-			.format("SELECT %s FROM %s %s %s %s", parts.get("columns").toSQL(), parts.get("from").toSQL(),
-					parts.get("join").toSQL(), parts.get("where").toSQL(), parts.get("rows").toSQL())
+			.format("SELECT %s FROM %s %s %s %s", parts.get("columns").toSQL(), parts.get("from").toSQL(), parts.get("join").toSQL(),
+					parts.get("where").toSQL(), parts.get("rows").toSQL())
 			.trim()
 			.replaceAll("( )+", " ");
 	}

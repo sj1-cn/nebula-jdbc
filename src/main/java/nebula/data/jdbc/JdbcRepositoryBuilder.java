@@ -158,38 +158,30 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 				mv.line().setNew("datas", ArrayList.class);
 
-				{
-					String sql = JDBC.sql("SELECT ${columns} FROM ${tablename}", String.join(",", mappers.map(f -> f.column.getName())),
-							tablename);
+				String sql = JDBC.sql("SELECT ${columns} FROM ${tablename}", String.join(",", mappers.map(f -> f.column.getName())),
+						tablename);
 
-					mv.line()
-						.load("conn")
-						.inter("prepareStatement")
-						.reTurn(PreparedStatement.class)
-						.invoke(m -> m.LOADConst(sql))
-						.inter("executeQuery")
-						.reTurn(ResultSet.class)
-						.invoke()
-						.setTo("resultSet");
-				}
-				mv.line();
-				Label whileStart = mv.codeNewLabel();
-				Label whileEnd = mv.codeNewLabel();
-				mv.visitLabel(whileStart);
-				mv.load("resultSet").inter("next").reTurn(boolean.class).invoke();
-				mv.IFEQ(whileEnd);
-				{
+				mv.line()
+					.load("conn")
+					.inter("prepareStatement")
+					.reTurn(PreparedStatement.class)
+					.invoke(m -> m.LOADConst(sql))
+					.inter("executeQuery")
+					.reTurn(ResultSet.class)
+					.invoke()
+					.setTo("resultSet");
+
+				mv.line().wHile(cause -> mv.load("resultSet").inter("next").reTurn(boolean.class).invoke(), block -> {
 					mv.line();
-					mv.load("datas");
-					mv.load("mapper").virtual("map").reTurn(this.clazzTarget).invoke("resultSet");
-					mv.INTERFACE(List.class, "add").parameter(Object.class).reTurn(boolean.class).INVOKE();
-					mv.POP();
+					mv.load("datas")
+						.inter("add")
+						.parameter(Object.class)
+						.reTurn(boolean.class)
+						.invoke(p -> p.load("mapper").virtual("map").reTurn(this.clazzTarget).invoke("resultSet"))
+						.pop();
+				});
 
-					mv.GOTO(whileStart);
-				}
-				mv.visitLabel(whileEnd);
-
-				mv.line().RETURN("datas");
+				mv.line().returnVar("datas");
 
 			});
 	}
@@ -276,7 +268,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.reTurn(this.clazzTarget)
 			.tHrow(SQLException.class)
 			.code(mv -> {
-				
+
 				boolean hasAutoIncrment = mappers.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
 				FieldMapper keyMapper = mappers.filter(f -> f.isPrimaryKey()).get(0);
 
