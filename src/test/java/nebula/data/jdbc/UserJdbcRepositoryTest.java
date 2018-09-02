@@ -58,8 +58,8 @@ public class UserJdbcRepositoryTest extends TestBase {
 //	}
 
 	@Test
-	public void testUser() throws IOException, InstantiationException, IllegalAccessException, NoSuchMethodException,
-			SecurityException, IllegalArgumentException, InvocationTargetException {
+	public void testUser() throws IOException, InstantiationException, IllegalAccessException, NoSuchMethodException, SecurityException,
+			IllegalArgumentException, InvocationTargetException {
 
 		// 利用反射创建对象
 		JdbcRepository<User> userRepository = new UserJdbcRepository();
@@ -68,7 +68,7 @@ public class UserJdbcRepositoryTest extends TestBase {
 		userRepository.init();
 		userRepository.init();
 
-		List<User> users = userRepository.list(0, 0);
+		List<User> users = userRepository.list(0, 10);
 
 		User a = new User(10, "name_a10", "description_a10");
 		User b = new User(20, "name_b20", "description_b20");
@@ -76,34 +76,34 @@ public class UserJdbcRepositoryTest extends TestBase {
 		{
 			User realuser = userRepository.insert(a);
 			assertEquals("User [id=10, name=name_a10, description=description_a10]", String.valueOf(realuser));
-			users = userRepository.list(0, 0);
+			users = userRepository.list(0, 10);
 			assertEquals("[User [id=10, name=name_a10, description=description_a10]]", users.toString());
 		}
 		{
 			User realuser = userRepository.insert(b);
 			assertEquals("User [id=20, name=name_b20, description=description_b20]", String.valueOf(realuser));
-			users = userRepository.list(0, 0);
+			users = userRepository.list(0, 10);
 			assertEquals(
 					"[User [id=10, name=name_a10, description=description_a10], User [id=20, name=name_b20, description=description_b20]]",
 					users.toString());
 		}
 		{
-			User realuser =userRepository.update(b2);
+			User realuser = userRepository.update(b2);
 
 			assertEquals("User [id=20, name=name_b20_new, description=description_b20_new]", String.valueOf(realuser));
-			users = userRepository.list(0, 0);
+			users = userRepository.list(0, 10);
 			assertEquals(
 					"[User [id=10, name=name_a10, description=description_a10], User [id=20, name=name_b20_new, description=description_b20_new]]",
 					users.toString());
 		}
 		{
 			userRepository.delete(a.getId());
-			users = userRepository.list(0, 0);
+			users = userRepository.list(0, 10);
 			assertEquals("[User [id=20, name=name_b20_new, description=description_b20_new]]", users.toString());
 		}
 		{
 			userRepository.delete(b.getId());
-			users = userRepository.list(0, 0);
+			users = userRepository.list(0, 10);
 			assertEquals("[]", users.toString());
 		}
 	}
@@ -118,19 +118,19 @@ public class UserJdbcRepositoryTest extends TestBase {
 
 		userRepository.init();
 
-		List<User> users1 = userRepository.list(0, 0);
+		List<User> users1 = userRepository.list(0, 10);
 
 		User a = new User(10, "name_a10", "description_a10");
 		User b = new User(20, "name_b20", "description_b20");
 		User b2 = new User(20, "name_b20_new", "description_b20_new");
 		{
 			userRepository.insert(a);
-			users1 = userRepository.list(0, 0);
+			users1 = userRepository.list(0, 10);
 			assertEquals("[User [id=10, name=name_a10, description=description_a10]]", users1.toString());
 		}
 		{
 			userRepository.insert(b);
-			users1 = userRepository.list(0, 0);
+			users1 = userRepository.list(0, 10);
 			assertEquals(
 					"[User [id=10, name=name_a10, description=description_a10], User [id=20, name=name_b20, description=description_b20]]",
 					users1.toString());
@@ -138,19 +138,19 @@ public class UserJdbcRepositoryTest extends TestBase {
 		{
 			userRepository.update(b2);
 
-			users1 = userRepository.list(0, 0);
+			users1 = userRepository.list(0, 10);
 			assertEquals(
 					"[User [id=10, name=name_a10, description=description_a10], User [id=20, name=name_b20_new, description=description_b20_new]]",
 					users1.toString());
 		}
 		{
 			userRepository.delete(a.getId());
-			users1 = userRepository.list(0, 0);
+			users1 = userRepository.list(0, 10);
 			assertEquals("[User [id=20, name=name_b20_new, description=description_b20_new]]", users1.toString());
 		}
 		{
 			userRepository.delete(b.getId());
-			users1 = userRepository.list(0, 0);
+			users1 = userRepository.list(0, 10);
 			assertEquals("[]", users1.toString());
 		}
 	}

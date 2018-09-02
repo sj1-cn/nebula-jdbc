@@ -52,17 +52,17 @@ public class RepositoryFactoryTest extends TestBase {
 
 		List<User> userlist;
 		{
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals("[]", userlist.toString());
 		}
 		{
 			userRepository.insert(a);
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals("[User [id=1, name=name_a10, description=description_a10]]", userlist.toString());
 		}
 		{
 			userRepository.insert(b);
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals(
 					"[User [id=1, name=name_a10, description=description_a10], User [id=2, name=name_b20, description=description_b20]]",
 					userlist.toString());
@@ -71,19 +71,19 @@ public class RepositoryFactoryTest extends TestBase {
 			User b2 = new User(2, "name_b20_new", "description_b20_new");
 			userRepository.update(b2);
 
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals(
 					"[User [id=1, name=name_a10, description=description_a10], User [id=2, name=name_b20_new, description=description_b20_new]]",
 					userlist.toString());
 		}
 		{
 			userRepository.delete(a.getId());
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals("[User [id=2, name=name_b20_new, description=description_b20_new]]", userlist.toString());
 		}
 		{
 			userRepository.delete(b.getId());
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals("[]", userlist.toString());
 		}
 	}
@@ -94,7 +94,7 @@ public class RepositoryFactoryTest extends TestBase {
 		List<UserComplex> userlist;
 		userRepository.init();
 		{
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals("[]", userlist.toString());
 		}
 		UserComplex a = new UserComplex(1, "name_a10", new BigDecimal(10000), false, 'A', (byte) 51, (short) 601, 701,
@@ -106,14 +106,14 @@ public class RepositoryFactoryTest extends TestBase {
 
 		{
 			userRepository.insert(a);
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals(
 					"[UserComplex [id=1, string=name_a10, bigDecimal=10000.000000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3]]",
 					userlist.toString());
 		}
 		{
 			userRepository.insert(b);
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals(
 					"[UserComplex [id=1, string=name_a10, bigDecimal=10000.000000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3], "
 							+ "UserComplex [id=2, string=name_b20, bigDecimal=20000.000000, z=false, c=B, b=-5, s=2601, i=2701, l=2801, f=290.1, d=2100.1, date=1970-01-01, time=08:00:21, timestamp=1970-01-01 08:00:21.3]]",
@@ -122,7 +122,7 @@ public class RepositoryFactoryTest extends TestBase {
 		{
 			userRepository.update(b2);
 
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals(
 					"[UserComplex [id=1, string=name_a10, bigDecimal=10000.000000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3], "
 							+ "UserComplex [id=2, string=name_b30, bigDecimal=30000.000000, z=false, c=C, b=95, s=3601, i=3701, l=3801, f=390.1, d=3100.1, date=1970-01-01, time=08:00:31, timestamp=1970-01-01 08:00:31.3]]",
@@ -130,14 +130,14 @@ public class RepositoryFactoryTest extends TestBase {
 		}
 		{
 			userRepository.delete(a.getId());
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals(
 					"[UserComplex [id=2, string=name_b30, bigDecimal=30000.000000, z=false, c=C, b=95, s=3601, i=3701, l=3801, f=390.1, d=3100.1, date=1970-01-01, time=08:00:31, timestamp=1970-01-01 08:00:31.3]]",
 					userlist.toString());
 		}
 		{
 			userRepository.delete(b.getId());
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals("[]", userlist.toString());
 		}
 	}
@@ -149,7 +149,7 @@ public class RepositoryFactoryTest extends TestBase {
 		List<UserMoreComplex> userlist;
 		userRepository.init();
 		{
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals("[]", userlist.toString());
 		}
 
@@ -167,14 +167,14 @@ public class RepositoryFactoryTest extends TestBase {
 
 		{
 			userRepository.insert(a);
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals(
 					"[UserMoreComplex [id=1, string=name_a10, bigDecimal=10000.000000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3]]",
 					userlist.toString());
 		}
 		{
 			userRepository.insert(b);
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals(
 					"[UserMoreComplex [id=1, string=name_a10, bigDecimal=10000.000000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3], "
 							+ "UserMoreComplex [id=2, string=name_b20, bigDecimal=20000.000000, z=false, c=B, b=-5, s=2601, i=2701, l=2801, f=290.1, d=2100.1, date=1970-01-01, time=08:00:21, timestamp=1970-01-01 08:00:21.3]]",
@@ -183,7 +183,7 @@ public class RepositoryFactoryTest extends TestBase {
 		{
 			userRepository.update(b2);
 
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals(
 					"[UserMoreComplex [id=1, string=name_a10, bigDecimal=10000.000000, z=false, c=A, b=51, s=601, i=701, l=801, f=90.1, d=100.1, date=1970-01-01, time=08:00:01, timestamp=1970-01-01 08:00:01.3], "
 							+ "UserMoreComplex [id=2, string=name_b30, bigDecimal=30000.000000, z=false, c=C, b=95, s=3601, i=3701, l=3801, f=390.1, d=3100.1, date=1970-01-01, time=08:00:31, timestamp=1970-01-01 08:00:31.3]]",
@@ -191,14 +191,14 @@ public class RepositoryFactoryTest extends TestBase {
 		}
 		{
 			userRepository.delete(a.getId());
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals(
 					"[UserMoreComplex [id=2, string=name_b30, bigDecimal=30000.000000, z=false, c=C, b=95, s=3601, i=3701, l=3801, f=390.1, d=3100.1, date=1970-01-01, time=08:00:31, timestamp=1970-01-01 08:00:31.3]]",
 					userlist.toString());
 		}
 		{
 			userRepository.delete(b.getId());
-			userlist = userRepository.list(0, 0);
+			userlist = userRepository.list(0, 10);
 			assertEquals("[]", userlist.toString());
 		}
 	}

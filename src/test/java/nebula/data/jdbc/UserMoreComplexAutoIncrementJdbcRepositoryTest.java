@@ -29,27 +29,6 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTest extends TestBase {
 		super.closeConnection();
 	}
 
-	@Test
-	public void testc() {
-//		String code = "id INTEGER(10,6) PRIMARY KEY REMARK 'DSF'";
-////		  List<Parameter> parms = new ArrayList<>();
-//		Matcher matcher = CONST_PATTERN.matcher(code);
-//		int start = 0;
-//		StringBuilder buf = new StringBuilder();
-//		while (matcher.find()) {
-//			int pos = matcher.start();
-//			for (int i = 1; i <= matcher.groupCount(); i++) {
-//				System.out.println(String.format("%d %s", i, matcher.group(i)));
-//			}
-//
-//			start = matcher.end();
-//		}
-
-//		String dd = code.replaceAll(match, "[$1] [$2] [$3] [$4] [$5] [$6] [$7] [$8]");
-//		System.out.println(dd);
-
-	}
-
 //	@Test
 //	public void testPrint() throws IOException {
 //		System.out.println(nebula.tinyasm.util.RefineCode.refineCode(toString(UserJdbcRepository.class), ResultSet.class,
@@ -67,7 +46,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTest extends TestBase {
 		userRepository.init();
 		userRepository.init();
 
-		List<User> users1 = userRepository.list(0, 0);
+		List<User> users1 = userRepository.list(0, 10);
 
 		User a = new User(0, "name_a10", "description_a10");
 		User b = new User(0, "name_b20", "description_b20");
@@ -75,13 +54,13 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTest extends TestBase {
 		{
 			a = userRepository.insert(a);
 			assertEquals("User [id=1, name=name_a10, description=description_a10]", String.valueOf(a));
-			users1 = userRepository.list(0, 0);
+			users1 = userRepository.list(0, 10);
 			assertEquals("[User [id=1, name=name_a10, description=description_a10]]", users1.toString());
 		}
 		{
 			b = userRepository.insert(b);
 			assertEquals("User [id=2, name=name_b20, description=description_b20]", String.valueOf(b));
-			users1 = userRepository.list(0, 0);
+			users1 = userRepository.list(0, 10);
 			assertEquals(
 					"[User [id=1, name=name_a10, description=description_a10], User [id=2, name=name_b20, description=description_b20]]",
 					users1.toString());
@@ -90,19 +69,19 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTest extends TestBase {
 			b = userRepository.update(b2);
 			assertEquals("User [id=2, name=name_b20_new, description=description_b20_new]", String.valueOf(b));
 
-			users1 = userRepository.list(0, 0);
+			users1 = userRepository.list(0, 10);
 			assertEquals(
 					"[User [id=1, name=name_a10, description=description_a10], User [id=2, name=name_b20_new, description=description_b20_new]]",
 					users1.toString());
 		}
 		{
 			userRepository.delete(a.getId());
-			users1 = userRepository.list(0, 0);
+			users1 = userRepository.list(0, 10);
 			assertEquals("[User [id=2, name=name_b20_new, description=description_b20_new]]", users1.toString());
 		}
 		{
 			userRepository.delete(b.getId());
-			users1 = userRepository.list(0, 0);
+			users1 = userRepository.list(0, 10);
 			assertEquals("[]", users1.toString());
 		}
 	}

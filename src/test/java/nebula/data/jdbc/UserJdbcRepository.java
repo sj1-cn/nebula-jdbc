@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import nebula.jdbc.builders.queries.Select;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
 import nebula.jdbc.builders.schema.JDBC;
@@ -34,7 +35,8 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 	@Override
 	public List<User> listJdbc(int start, int max) throws SQLException {
 		List<User> datas = new ArrayList<>();
-		ResultSet resultSet = conn.prepareStatement("SELECT id,name,description FROM user").executeQuery();
+		String sql = Select.columns("id,name,description").from("user").offset(start).limit(max).toSQL();
+		ResultSet resultSet = conn.prepareStatement(sql).executeQuery();
 
 		while (resultSet.next()) {
 			datas.add(mapper.map(resultSet));

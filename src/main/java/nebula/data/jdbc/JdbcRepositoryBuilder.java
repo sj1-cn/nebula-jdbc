@@ -12,8 +12,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.objectweb.asm.Label;
-
 import nebula.jdbc.builders.queries.Select;
 import nebula.jdbc.builders.schema.Column;
 import nebula.jdbc.builders.schema.ColumnDefinition;
@@ -154,29 +152,29 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.tHrow(SQLException.class)
 			.code(mv -> {
 				mv.define("datas", GenericClazz.generic(List.class, clazzTarget));
-				mv.define("resultSet", ResultSet.class);
 
 				mv.line().setNew("datas", ArrayList.class);
 
-				String sql = JDBC.sql("SELECT ${columns} FROM ${tablename}", String.join(",", mappers.map(f -> f.column.getName())),
-						tablename);
+			// @formatter:off
+				mv.line().clazz(Select.class).call("columns").parameter(String.class).reTurn(Select.class)
+					.invoke(p -> p.LOADConst(String.join(",", mappers.map(f -> f.column.getName()))));
+				mv.topInstance().virtual("from").reTurn(Select.class).invoke(p -> p.LOADConst(tablename));
+				mv.topInstance().virtual("offset").reTurn(Select.class).invoke("start");
+				mv.topInstance().virtual("limit").reTurn(Select.class).invoke("max");
+				mv.topInstance().virtual("toSQL").reTurn(String.class).invoke();
+				mv.topInstance().setTo("sql");
 
-				mv.line()
-					.load("conn")
-					.inter("prepareStatement")
-					.reTurn(PreparedStatement.class)
-					.invoke(m -> m.LOADConst(sql))
-					.inter("executeQuery")
-					.reTurn(ResultSet.class)
-					.invoke()
+//				String sql = Select.columns("id,name,description").from("user").offset(start).limit(max).toSQL();
+//
+//				String sql = JDBC.sql("SELECT ${columns} FROM ${tablename}", String.join(",", mappers.map(f -> f.column.getName())),
+//						tablename);
+
+				mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke("sql")
+					.inter("executeQuery").reTurn(ResultSet.class).invoke()
 					.setTo("resultSet");
 
 				mv.line().wHile(cause -> mv.load("resultSet").inter("next").reTurn(boolean.class).invoke(), block -> {
-					mv.line();
-					mv.load("datas")
-						.inter("add")
-						.parameter(Object.class)
-						.reTurn(boolean.class)
+					mv.line().load("datas").inter("add").parameter(Object.class).reTurn(boolean.class)
 						.invoke(p -> p.load("mapper").virtual("map").reTurn(this.clazzTarget).invoke("resultSet"))
 						.pop();
 				});
@@ -205,11 +203,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 				String sql = Select.columns(ColumnList.namesOf(all)).from(tablename).where(ColumnList.namesOf(keys)).toSQL();
 
-				mv.line()
-					.load("conn")
-					.inter("prepareStatement")
-					.reTurn(PreparedStatement.class)
-					.invoke(m -> m.LOADConst(sql))
+				mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke(m -> m.LOADConst(sql))
 					.setTo("preparedStatement");
 
 				int i = 1;
@@ -243,11 +237,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 				mv.line().load("preparedStatement").inter("executeQuery").reTurn(ResultSet.class).invoke().setTo("resultSet");
 
 				mv.line().wHile(f -> mv.load("resultSet").inter("next").reTurn(boolean.class).invoke(), b -> {
-					mv.line()
-						.load("datas")
-						.inter("add")
-						.parameter(Object.class)
-						.reTurn(boolean.class)
+					mv.line().load("datas").inter("add").parameter(Object.class).reTurn(boolean.class)
 						.invoke(p0 -> mv.load("mapper").virtual("map").reTurn(this.clazzTarget).invoke("resultSet"))
 						.pop();
 				});
@@ -347,11 +337,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 					String sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", tablename, String.join(",", names),
 							String.join(",", values));
 
-					mv.line()
-						.load("conn")
-						.inter("prepareStatement")
-						.reTurn(PreparedStatement.class)
-						.invoke(m -> m.LOADConst(sql))
+					mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke(m -> m.LOADConst(sql))
 						.setTo("preparedStatement");
 
 					int i = 1;
@@ -373,21 +359,14 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 								for (FieldMapper field : mappers) {
 									if (field.primaryKey) {
-										p.dup()
-											.setElement(j++,
-													p0 -> m.load("data")
-														.virtual(field.pojo_getname)
-														.reTurn(field.pojoClazz)
-														.invoke()
-														.boxWhenNeed());
+										p.dup().setElement(j++,
+											p0 -> m.load("data").virtual(field.pojo_getname).reTurn(field.pojoClazz).invoke().boxWhenNeed());
 									}
 								}
 							})
-							.checkcast(clazzTarget)
-							.returnValue();
+							.checkcast(clazzTarget).returnValue();
 					});
 					mv.line().returnNull();
-
 				}
 
 			});

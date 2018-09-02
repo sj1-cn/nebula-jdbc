@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import nebula.jdbc.builders.queries.Select;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
 import nebula.jdbc.builders.schema.JDBC;
@@ -44,7 +46,8 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 	@Override
 	public List<UserMoreComplex> listJdbc(int start, int max) throws SQLException {
 		List<UserMoreComplex> datas = new ArrayList<>();
-		ResultSet resultSet = this.conn.prepareStatement("SELECT id,string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp FROM UserMoreComplex").executeQuery();
+		String sql = Select.columns("id,string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp").from("UserMoreComplex").offset(start).limit(max).toSQL();
+		ResultSet resultSet = this.conn.prepareStatement(sql).executeQuery();
 
 		while (resultSet.next()) {
 			datas.add(mapper.map(resultSet));

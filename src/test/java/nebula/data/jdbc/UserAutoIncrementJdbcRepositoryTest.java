@@ -67,7 +67,7 @@ public class UserAutoIncrementJdbcRepositoryTest extends TestBase {
 		userRepository.init();
 		userRepository.init();
 
-		List<User> users1 = userRepository.list(0, 0);
+		List<User> users1 = userRepository.list(0, 10);
 
 		User a = new User(0, "name_a10", "description_a10");
 		User b = new User(0, "name_b20", "description_b20");
@@ -75,13 +75,13 @@ public class UserAutoIncrementJdbcRepositoryTest extends TestBase {
 		{
 			a = userRepository.insert(a);
 			assertEquals("User [id=1, name=name_a10, description=description_a10]", String.valueOf(a));
-			users1 = userRepository.list(0, 0);
+			users1 = userRepository.list(0, 10);
 			assertEquals("[User [id=1, name=name_a10, description=description_a10]]", users1.toString());
 		}
 		{
 			b = userRepository.insert(b);
 			assertEquals("User [id=2, name=name_b20, description=description_b20]", String.valueOf(b));
-			users1 = userRepository.list(0, 0);
+			users1 = userRepository.list(0, 10);
 			assertEquals(
 					"[User [id=1, name=name_a10, description=description_a10], User [id=2, name=name_b20, description=description_b20]]",
 					users1.toString());
@@ -90,19 +90,19 @@ public class UserAutoIncrementJdbcRepositoryTest extends TestBase {
 			b = userRepository.update(b2);
 			assertEquals("User [id=2, name=name_b20_new, description=description_b20_new]", String.valueOf(b));
 
-			users1 = userRepository.list(0, 0);
+			users1 = userRepository.list(0, 10);
 			assertEquals(
 					"[User [id=1, name=name_a10, description=description_a10], User [id=2, name=name_b20_new, description=description_b20_new]]",
 					users1.toString());
 		}
 		{
 			userRepository.delete(a.getId());
-			users1 = userRepository.list(0, 0);
+			users1 = userRepository.list(0, 10);
 			assertEquals("[User [id=2, name=name_b20_new, description=description_b20_new]]", users1.toString());
 		}
 		{
 			userRepository.delete(b.getId());
-			users1 = userRepository.list(0, 0);
+			users1 = userRepository.list(0, 10);
 			assertEquals("[]", users1.toString());
 		}
 	}
