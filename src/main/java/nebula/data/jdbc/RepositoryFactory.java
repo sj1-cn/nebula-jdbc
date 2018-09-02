@@ -10,7 +10,7 @@ import java.sql.Connection;
 import java.sql.JDBCType;
 
 import nebula.jdbc.builders.schema.ColumnDefinition;
-import nebula.jdbc.builders.schema.JDBCConfiguration;
+import nebula.jdbc.builders.schema.JDBC;
 
 public class RepositoryFactory {
 	Connection conn;
@@ -89,7 +89,7 @@ public class RepositoryFactory {
 					&& !Modifier.isNative(modifier)) {
 				String fieldname = field.getName();
 				Class<?> fieldClazz = field.getType();
-				JDBCType jdbctype = JDBCConfiguration.mapJavaClass2JDBCType.get(fieldClazz.getName());
+				JDBCType jdbctype = JDBC.mapJavaClass2JDBCType.get(fieldClazz.getName());
 				assert jdbctype != null : field.getName() + "'s class " + fieldClazz.getName() + " hasn't exist!";
 				ColumnDefinition column = ColumnDefinition.Column(jdbctype, fieldname);
 				String getname = getGetName(field.getName(), field.getType());

@@ -50,33 +50,33 @@ public class DBSchemaMerge {
 	void prepareMerge(Statement statement, String tableName, Command command) throws SQLException {
 		if (command instanceof AlterTable.AlterColumnCommand) {
 			ColumnDefinition column = command.getColumn();
-			String sql = JDBCConfiguration.sql(
+			String sql = JDBC.sql(
 					"ALTER TABLE ${tablename} ALTER COLUMN ${columnname} ${columndefinition}", tableName,
 					column.columnName, makeColumnDefinition(column));
 			statement.addBatch(sql);
 		} else if (command instanceof AlterTable.AddColumnCommand) {
 			ColumnDefinition column = command.getColumn();
-			String sql = JDBCConfiguration.sql("ALTER TABLE ${tablename} ADD COLUMN ${columnname} ${columndefinition}",
+			String sql = JDBC.sql("ALTER TABLE ${tablename} ADD COLUMN ${columnname} ${columndefinition}",
 					tableName, column.columnName, this.makeColumnDefinition(column));
 			statement.addBatch(sql);
 		} else if (command instanceof AlterTable.DropColumnCommand) {
-			String sql = JDBCConfiguration.sql("ALTER TABLE ${tablename} DROP COLUMN ${columnname}", tableName,
+			String sql = JDBC.sql("ALTER TABLE ${tablename} DROP COLUMN ${columnname}", tableName,
 					command.getColumn().columnName);
 			statement.addBatch(sql);
 		} else if (command instanceof AlterTable.AlterColumnNullableCommand) {
-			String sql = JDBCConfiguration.sql("ALTER TABLE ${tablename} ALTER COLUMN ${oldname} SET ${nullable}",
+			String sql = JDBC.sql("ALTER TABLE ${tablename} ALTER COLUMN ${oldname} SET ${nullable}",
 					tableName, command.getColumn().columnName,
 					command.getColumn().nullable == ResultSetMetaData.columnNoNulls ? "NOT NULL" : "NULL");
 			statement.addBatch(sql);
 		} else if (command instanceof AlterTable.AlterColumnRemarksCommand) {
-			String sql = JDBCConfiguration.sql("ALTER TABLE ${tablename} ALTER COLUMN ${columnname} REMARKS ${remarks}",
+			String sql = JDBC.sql("ALTER TABLE ${tablename} ALTER COLUMN ${columnname} REMARKS ${remarks}",
 					tableName, command.getColumn().columnName, command.getColumn().remarks.replaceAll("'", "''"));
 			statement.addBatch(sql);
 		}
 	}
 
 	String makeColumnDefinition(ColumnDefinition column) {
-		return JDBCConfiguration.typeDefinition(column.dataType, column.columnSize, column.decimalDigits);
+		return JDBC.typeDefinition(column.dataType, column.columnSize, column.decimalDigits);
 	}
 
 	List<Command> compare(ColumnList columnsExpected, ColumnList columnsActual) throws SQLException {
@@ -90,7 +90,7 @@ public class DBSchemaMerge {
 				continue;
 			}
 
-			if (actual.dataType != exptected.dataType || !JDBCConfiguration.ignoreSize(exptected.dataType)
+			if (actual.dataType != exptected.dataType || !JDBC.ignoreSize(exptected.dataType)
 					&& (exptected.columnSize > actual.columnSize || exptected.decimalDigits > actual.decimalDigits)) {
 				commandBus.add(new AlterTable.AlterColumnCommand(exptected));
 			}

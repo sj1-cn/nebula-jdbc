@@ -9,7 +9,7 @@ import java.util.List;
 
 import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
-import nebula.jdbc.builders.schema.JDBCConfiguration;
+import nebula.jdbc.builders.schema.JDBC;
 
 public class UserJdbcRepository implements JdbcRepository<User> {
 	private Connection conn;
@@ -26,7 +26,7 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 		columnList.push(ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY"));
 		columnList.push(ColumnDefinition.valueOf("name VARCHAR(256)"));
 		columnList.push(ColumnDefinition.valueOf("description VARCHAR(256)"));
-		if (!JDBCConfiguration.mergeIfExists(conn, "user", columnList)) {
+		if (!JDBC.mergeIfExists(conn, "user", columnList)) {
 			conn.prepareStatement("CREATE TABLE user(id INTEGER(10),name VARCHAR(256),description VARCHAR(256),PRIMARY KEY(id))").execute();
 		}
 	}

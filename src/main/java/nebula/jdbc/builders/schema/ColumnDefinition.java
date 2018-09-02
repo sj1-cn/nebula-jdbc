@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import nebula.jdbc.builders.schema.JDBCConfiguration.ColumnType;
+import nebula.jdbc.builders.schema.JDBC.ColumnType;
 
 public class ColumnDefinition implements Column {
 	String columnName;
@@ -51,7 +51,7 @@ public class ColumnDefinition implements Column {
 		this.columnName = name;
 		this.dataType = datatype;
 
-		ColumnType columnType = JDBCConfiguration.mapJDBCType2RealColumnTypeName.get(dataType);
+		ColumnType columnType = JDBC.mapJDBCType2RealColumnTypeName.get(dataType);
 		this.columnSize = columnType.size;
 		this.decimalDigits = columnType.digit;
 	}
@@ -200,7 +200,7 @@ public class ColumnDefinition implements Column {
 		List<String> sql = new ArrayList<>();
 		sql.add(this.columnName);
 
-		sql.add(JDBCConfiguration.typeDefinition(this.dataType, columnSize, decimalDigits));
+		sql.add(JDBC.typeDefinition(this.dataType, columnSize, decimalDigits));
 
 		if (this.unsigned) sql.add("UNSIGNED");
 		if ("YES".equals(this.autoIncrment)) {

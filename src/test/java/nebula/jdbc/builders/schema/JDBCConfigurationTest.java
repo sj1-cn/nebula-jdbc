@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import nebula.jdbc.builders.schema.JDBCConfiguration.ColumnType;
+import nebula.jdbc.builders.schema.JDBC.ColumnType;
 
 public class JDBCConfigurationTest {
 

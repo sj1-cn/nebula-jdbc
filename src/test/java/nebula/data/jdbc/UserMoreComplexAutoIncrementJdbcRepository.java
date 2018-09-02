@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
-import nebula.jdbc.builders.schema.JDBCConfiguration;
+import nebula.jdbc.builders.schema.JDBC;
 
 public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepository<UserMoreComplex> {
 	private Connection conn;
@@ -36,7 +36,7 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 		columnList.push(ColumnDefinition.valueOf("date DATE"));
 		columnList.push(ColumnDefinition.valueOf("time TIME"));
 		columnList.push(ColumnDefinition.valueOf("timestamp TIMESTAMP"));
-		if (!JDBCConfiguration.mergeIfExists(this.conn, "UserMoreComplex", columnList)) {
+		if (!JDBC.mergeIfExists(this.conn, "UserMoreComplex", columnList)) {
 			this.conn.prepareStatement("CREATE TABLE UserMoreComplex(id BIGINT(19) PRIMARY KEY AUTO_INCREMENT,string VARCHAR(256),bigDecimal DECIMAL(15,6),z BOOLEAN,c CHAR(1),b TINYINT(3),s SMALLINT(5),i INTEGER(10),l BIGINT(19),f FLOAT(7),d DOUBLE(17),date DATE,time TIME,timestamp TIMESTAMP)").execute();
 		}
 	}

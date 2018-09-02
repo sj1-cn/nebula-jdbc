@@ -53,7 +53,7 @@ public class DBSchemaMergeTest extends TestBase {
 					keys.add(columnDefinition.columnName);
 				}
 			}
-			String sqlCreateTable = JDBCConfiguration.sql(
+			String sqlCreateTable = JDBC.sql(
 					"CREATE TABLE ${tablename}(${columndefinitions},PRIMARY KEY(${keys}))", tableName,
 					String.join(",", ls), String.join(",", keys));
 

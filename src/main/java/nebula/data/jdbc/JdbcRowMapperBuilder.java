@@ -7,8 +7,8 @@ import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import nebula.jdbc.builders.schema.JDBCConfiguration;
-import nebula.jdbc.builders.schema.JDBCConfiguration.TypeMapping;
+import nebula.jdbc.builders.schema.JDBC;
+import nebula.jdbc.builders.schema.JDBC.TypeMapping;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.data.ClassBody;
 import nebula.tinyasm.data.MethodCode;
@@ -34,7 +34,7 @@ public class JdbcRowMapperBuilder {
 				for (int i = 0; i < maps.size(); i++) {
 					FieldMapper fieldMapper = maps.get(i);
 					String name = fieldMapper.fieldName;
-					TypeMapping javatype = JDBCConfiguration.mapJavaClazz2JdbcTypes.get(fieldMapper.pojoClazz.getName());
+					TypeMapping javatype = JDBC.mapJavaClazz2JdbcTypes.get(fieldMapper.pojoClazz.getName());
 					assert javatype != null : name + "'s type [" + fieldMapper.pojoClazz.getName()+ "] has not jdbc type";
 					String getname = javatype.getname;
 					Class<?> jdbcClazz = javatype.jdbcClazz;

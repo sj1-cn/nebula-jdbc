@@ -4,8 +4,8 @@ import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.Map;
 
-import nebula.jdbc.builders.schema.JDBCConfiguration;
-import nebula.jdbc.builders.schema.JDBCConfiguration.TypeMapping;
+import nebula.jdbc.builders.schema.JDBC;
+import nebula.jdbc.builders.schema.JDBC.TypeMapping;
 import nebula.tinyasm.data.MethodCode;
 
 public class RepositoryBuilder {
@@ -79,7 +79,7 @@ public class RepositoryBuilder {
 	}
 
 	private void setParam(MethodCode mv, int index, Class<?> pojoClazz) {
-		TypeMapping jdbcType = JDBCConfiguration.mapJavaClazz2JdbcTypes.get(pojoClazz.getName());
+		TypeMapping jdbcType = JDBC.mapJavaClazz2JdbcTypes.get(pojoClazz.getName());
 		if (pojoClazz != jdbcType.jdbcClazz) {
 			arguments.getConvert(pojoClazz, jdbcType.jdbcClazz).apply(mv);
 		}

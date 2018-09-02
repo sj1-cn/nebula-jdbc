@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 import static java.sql.JDBCType.*;
 
-public class JDBCConfiguration {
+public class JDBC {
 	public static EnumMap<JDBCType, String> mapJDBCType2JavaClazz = new EnumMap<>(JDBCType.class);
 	public static Map<String, JDBCType> mapJavaClass2JDBCType = new HashMap<>();
 	static {
@@ -113,7 +113,7 @@ public class JDBCConfiguration {
 
 	static String typeDefinition(JDBCType dataType, int columnSize, int decimalDigits) {
 		String definition;
-		ColumnType columnType = JDBCConfiguration.mapJDBCType2RealColumnTypeName.get(dataType);
+		ColumnType columnType = JDBC.mapJDBCType2RealColumnTypeName.get(dataType);
 
 		if (!ignoreSize(dataType)) {
 			definition = columnType.name + size(columnSize, decimalDigits);
@@ -239,21 +239,21 @@ public class JDBCConfiguration {
 
 	static {
 		// @formatter:off
-		JDBCConfiguration.registerSQL("ALTER TABLE ${tablename} ADD COLUMN ${columnname} ${columndefinition}","ALTER TABLE %1$s ADD COLUMN %2$s %3$s");
-		JDBCConfiguration.registerSQL("ALTER TABLE ${tablename} ALTER COLUMN ${columnname} ${columndefinition}", "ALTER TABLE %1$s ALTER COLUMN %2$s %3$s");
-		JDBCConfiguration.registerSQL("ALTER TABLE ${tablename} ALTER COLUMN ${oldname} RENAME TO ${newname}", "ALTER TABLE %1$s ALTER COLUMN %2$s RENAME TO %3$s");
-		JDBCConfiguration.registerSQL("ALTER TABLE ${tablename} ALTER COLUMN ${oldname} SET ${nullable}", "ALTER TABLE %1$s ALTER COLUMN %2$s SET %3$s");
-		JDBCConfiguration.registerSQL("ALTER TABLE ${tablename} ALTER COLUMN ${columnname} REMARKS ${remarks}", "COMMENT ON COLUMN %1$s.%2$s IS '%3$s'");
-		JDBCConfiguration.registerSQL("ALTER TABLE ${tablename} ADD PRIMARY KEY ${columnname}", "ALTER TABLE %1$s ADD PRIMARY KEY (%2$s)");
-		JDBCConfiguration.registerSQL("ALTER TABLE ${tablename} DROP COLUMN ${columnname}", "ALTER TABLE %1$s DROP COLUMN %2$s");
+		JDBC.registerSQL("ALTER TABLE ${tablename} ADD COLUMN ${columnname} ${columndefinition}","ALTER TABLE %1$s ADD COLUMN %2$s %3$s");
+		JDBC.registerSQL("ALTER TABLE ${tablename} ALTER COLUMN ${columnname} ${columndefinition}", "ALTER TABLE %1$s ALTER COLUMN %2$s %3$s");
+		JDBC.registerSQL("ALTER TABLE ${tablename} ALTER COLUMN ${oldname} RENAME TO ${newname}", "ALTER TABLE %1$s ALTER COLUMN %2$s RENAME TO %3$s");
+		JDBC.registerSQL("ALTER TABLE ${tablename} ALTER COLUMN ${oldname} SET ${nullable}", "ALTER TABLE %1$s ALTER COLUMN %2$s SET %3$s");
+		JDBC.registerSQL("ALTER TABLE ${tablename} ALTER COLUMN ${columnname} REMARKS ${remarks}", "COMMENT ON COLUMN %1$s.%2$s IS '%3$s'");
+		JDBC.registerSQL("ALTER TABLE ${tablename} ADD PRIMARY KEY ${columnname}", "ALTER TABLE %1$s ADD PRIMARY KEY (%2$s)");
+		JDBC.registerSQL("ALTER TABLE ${tablename} DROP COLUMN ${columnname}", "ALTER TABLE %1$s DROP COLUMN %2$s");
 
-		JDBCConfiguration.registerSQL("CREATE TABLE ${tablename}(${columndefinitions}))", "CREATE TABLE %1$s(%2$s)");
-		JDBCConfiguration.registerSQL("CREATE TABLE ${tablename}(${columndefinitions},PRIMARY KEY(${keys}))", "CREATE TABLE %1$s(%2$s,PRIMARY KEY(%3$s))");
-		JDBCConfiguration.registerSQL("SELECT ${columns} FROM ${tablename}", "SELECT %1$s FROM %2$s");
-		JDBCConfiguration.registerSQL("SELECT ${columns} FROM ${tablename} WHERE ${causes}", "SELECT %1$s FROM %2$s WHERE %3$s");
-		JDBCConfiguration.registerSQL("INSERT INTO ${tablename}(${columns}) VALUES(${values})","INSERT INTO %1$s(%2$s) VALUES(%3$s)");
-		JDBCConfiguration.registerSQL("UPDATE ${tablename} SET ${setvalues} WHERE ${causes}", "UPDATE %1$s SET %2$s WHERE %3$s");
-		JDBCConfiguration.registerSQL("DELETE ${tablename} WHERE ${causes}", "DELETE %1$s WHERE %2$s");
+		JDBC.registerSQL("CREATE TABLE ${tablename}(${columndefinitions}))", "CREATE TABLE %1$s(%2$s)");
+		JDBC.registerSQL("CREATE TABLE ${tablename}(${columndefinitions},PRIMARY KEY(${keys}))", "CREATE TABLE %1$s(%2$s,PRIMARY KEY(%3$s))");
+		JDBC.registerSQL("SELECT ${columns} FROM ${tablename}", "SELECT %1$s FROM %2$s");
+		JDBC.registerSQL("SELECT ${columns} FROM ${tablename} WHERE ${causes}", "SELECT %1$s FROM %2$s WHERE %3$s");
+		JDBC.registerSQL("INSERT INTO ${tablename}(${columns}) VALUES(${values})","INSERT INTO %1$s(%2$s) VALUES(%3$s)");
+		JDBC.registerSQL("UPDATE ${tablename} SET ${setvalues} WHERE ${causes}", "UPDATE %1$s SET %2$s WHERE %3$s");
+		JDBC.registerSQL("DELETE ${tablename} WHERE ${causes}", "DELETE %1$s WHERE %2$s");
 
 		// @formatter:on
 	}
