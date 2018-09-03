@@ -33,14 +33,24 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 	}
 
 	@Override
-	public List<User> listJdbc(int start, int max) throws SQLException {
-		List<User> datas = new ArrayList<>();
-		String sql = Select.columns("id,name,description").from("user").offset(start).limit(max).toSQL();
-		ResultSet resultSet = this.conn.prepareStatement(sql).executeQuery();
+	public PageList<User> listJdbc(int start, int max) throws SQLException {
+		PageList<User> datas = new PageListImpl<>(start, max);
+
+		String sql = Select.columns("id,name,description").from("user").offset(start).max(max).toSQL();
+
+		ResultSet resultSet = conn.prepareStatement(sql).executeQuery();
 
 		while (resultSet.next()) {
 			datas.add(mapper.map(resultSet));
 		}
+		resultSet.close();
+
+		String sqlCount = Select.columns("count(1)").from("user").toSQL();
+		ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
+		resultSetCount.next();
+		int totalSize = resultSetCount.getInt(1);
+		resultSetCount.close();
+		datas.totalSize(totalSize);
 
 		return datas;
 	}
@@ -50,6 +60,7 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 		PreparedStatement preparedStatement;
 		ResultSet resultSet;
 		List<User> datas = new ArrayList<>();
+
 		preparedStatement = conn.prepareStatement("SELECT id, name, description FROM user WHERE id = ? AND name = ?");
 
 		preparedStatement.setLong(1, ((Long) keys[0]).longValue());
@@ -74,7 +85,7 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 		if (preparedStatement.executeUpdate() > 0) {
 			return this.findById(data.getId(),data.getName());
 		}
-		return null;		
+		return null;
 	}
 
 	@Override
@@ -86,7 +97,7 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 		preparedStatement.setString(3, data.getName());
 
 		if (preparedStatement.executeUpdate() > 0) {
-			return this.findById(data.getId(),data.getName());
+			return findById(data.getId(),data.getName());
 		}
 		return null;
 	}

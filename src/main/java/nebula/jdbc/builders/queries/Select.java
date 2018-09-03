@@ -167,6 +167,11 @@ public class Select implements HasSQLRepresentation {
 		return this;
 	}
 
+	public Select max(int max) {
+		((Rows) parts.get("rows")).max(max);
+		return this;
+	}
+
 	public Select limit(int limit) {
 		((Rows) parts.get("rows")).countTo(limit);
 		return this;

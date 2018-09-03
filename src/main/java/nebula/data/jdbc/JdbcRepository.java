@@ -2,7 +2,6 @@ package nebula.data.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 public interface JdbcRepository<T> extends Repository<T> {
 	void setConnection(Connection conn);
@@ -17,7 +16,7 @@ public interface JdbcRepository<T> extends Repository<T> {
 	}
 
 	@Override
-	default List<T> list(int start, int max) {
+	default PageList<T> list(int start, int max) {
 		try {
 			return listJdbc(start, max);
 		} catch (SQLException e) {
@@ -63,7 +62,7 @@ public interface JdbcRepository<T> extends Repository<T> {
 
 	void initJdbc() throws SQLException;
 
-	List<T> listJdbc(int start, int max) throws SQLException;
+	PageList<T> listJdbc(int start, int max) throws SQLException;
 
 	T findByIdJdbc(Object... keys) throws SQLException;
 

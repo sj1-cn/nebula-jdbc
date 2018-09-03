@@ -6,52 +6,57 @@ package nebula.jdbc.builders.queries;
 import nebula.jdbc.builders.HasSQLRepresentation;
 
 class Rows implements HasSQLRepresentation {
-    private int limit;
-    private int offset;
+	private int limit;
+	private int offset;
 
-    private Rows() {
-        clear();
-    }
+	private Rows() {
+		clear();
+	}
 
-    static Rows all() {
-        return new Rows();
-    }
+	static Rows all() {
+		return new Rows();
+	}
 
-    void clear() {
-        limit = -1;
-        offset = -1;
-    }
+	void clear() {
+		limit = -1;
+		offset = -1;
+	}
 
-    void countTo(int limit) {
-        assertValueIsNotNegative("limit", limit);
-        this.limit = limit;
-    }
+	void max(int max) {
+		assertValueIsNotNegative("max", max);
+		this.limit = max - this.offset + 1;
+	}
 
-    void startingAt(int offset) {
-        assertValueIsNotNegative("offset", offset);
-        this.offset = offset;
-    }
+	void countTo(int limit) {
+		assertValueIsNotNegative("limit", limit);
+		this.limit = limit;
+	}
 
-    private void assertValueIsNotNegative(String label, int value) {
-        if (value >= 0) return;
+	void startingAt(int offset) {
+		assertValueIsNotNegative("offset", offset);
+		this.offset = offset;
+	}
 
-        throw new IllegalArgumentException(String.format("%s cannot be negative", label));
-    }
+	private void assertValueIsNotNegative(String label, int value) {
+		if (value >= 0) return;
 
-    @Override
-    public String toSQL() {
-        return String.format("%s %s", limitToSQL(), offsetToSQL()).trim();
-    }
+		throw new IllegalArgumentException(String.format("%s cannot be negative", label));
+	}
 
-    private String offsetToSQL() {
-        if (offset < 0) return "";
+	@Override
+	public String toSQL() {
+		return String.format("%s %s", limitToSQL(), offsetToSQL()).trim();
+	}
 
-        return String.format("OFFSET %d", offset);
-    }
+	private String offsetToSQL() {
+		if (offset < 0 || limit == 0) return "";
 
-    private String limitToSQL() {
-        if (limit < 0) return "";
+		return String.format("OFFSET %d", offset);
+	}
 
-        return String.format("LIMIT %d", limit);
-    }
+	private String limitToSQL() {
+		if (limit <= 0) return "";
+
+		return String.format("LIMIT %d", limit);
+	}
 }

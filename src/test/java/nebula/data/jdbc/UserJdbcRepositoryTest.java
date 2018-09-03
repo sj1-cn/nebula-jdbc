@@ -58,6 +58,46 @@ public class UserJdbcRepositoryTest extends TestBase {
 //	}
 
 	@Test
+	public void testUserPagination() throws IOException, InstantiationException, IllegalAccessException, NoSuchMethodException,
+			SecurityException, IllegalArgumentException, InvocationTargetException {
+
+		// 利用反射创建对象
+		JdbcRepository<User> userRepository = new UserJdbcRepository();
+		userRepository.setConnection(connection);
+
+		userRepository.init();
+		userRepository.init();
+
+		PageList<User> users = userRepository.list(0, 10);
+
+		for (int i = 1; i < 101; i++) {
+			User a0 = new User(i, "name_a10", "description_a10");
+			userRepository.insert(a0);
+		}
+
+		{
+			users = userRepository.list(0, 0);
+			assertEquals(100, users.getTotalSize());
+			assertEquals(1, users.get(0).getId());
+		}
+
+		{
+			users = userRepository.list(0, 9);
+			assertEquals(10, users.size());
+			assertEquals(1, users.get(0).getId());
+			assertEquals(10, users.get(9).getId());
+			assertEquals(100, users.getTotalSize());
+		}
+		{
+			users = userRepository.list(10, 19);
+			assertEquals(10, users.size());
+			assertEquals(11, users.get(0).getId());
+			assertEquals(20, users.get(9).getId());
+			assertEquals(100, users.getTotalSize());
+		}
+	}
+
+	@Test
 	public void testUser() throws IOException, InstantiationException, IllegalAccessException, NoSuchMethodException, SecurityException,
 			IllegalArgumentException, InvocationTargetException {
 
@@ -68,7 +108,7 @@ public class UserJdbcRepositoryTest extends TestBase {
 		userRepository.init();
 		userRepository.init();
 
-		List<User> users = userRepository.list(0, 10);
+		PageList<User> users = userRepository.list(0, 10);
 
 		User a = new User(10, "name_a10", "description_a10");
 		User b = new User(20, "name_b20", "description_b20");
@@ -77,12 +117,14 @@ public class UserJdbcRepositoryTest extends TestBase {
 			User realuser = userRepository.insert(a);
 			assertEquals("User [id=10, name=name_a10, description=description_a10]", String.valueOf(realuser));
 			users = userRepository.list(0, 10);
+			assertEquals(1, users.getTotalSize());
 			assertEquals("[User [id=10, name=name_a10, description=description_a10]]", users.toString());
 		}
 		{
 			User realuser = userRepository.insert(b);
 			assertEquals("User [id=20, name=name_b20, description=description_b20]", String.valueOf(realuser));
 			users = userRepository.list(0, 10);
+			assertEquals(2, users.getTotalSize());
 			assertEquals(
 					"[User [id=10, name=name_a10, description=description_a10], User [id=20, name=name_b20, description=description_b20]]",
 					users.toString());
@@ -92,6 +134,7 @@ public class UserJdbcRepositoryTest extends TestBase {
 
 			assertEquals("User [id=20, name=name_b20_new, description=description_b20_new]", String.valueOf(realuser));
 			users = userRepository.list(0, 10);
+			assertEquals(2, users.getTotalSize());
 			assertEquals(
 					"[User [id=10, name=name_a10, description=description_a10], User [id=20, name=name_b20_new, description=description_b20_new]]",
 					users.toString());
@@ -99,11 +142,13 @@ public class UserJdbcRepositoryTest extends TestBase {
 		{
 			userRepository.delete(a.getId());
 			users = userRepository.list(0, 10);
+			assertEquals(1, users.getTotalSize());
 			assertEquals("[User [id=20, name=name_b20_new, description=description_b20_new]]", users.toString());
 		}
 		{
 			userRepository.delete(b.getId());
 			users = userRepository.list(0, 10);
+			assertEquals(0, users.getTotalSize());
 			assertEquals("[]", users.toString());
 		}
 	}

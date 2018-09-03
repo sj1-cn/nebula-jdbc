@@ -33,14 +33,24 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 	}
 
 	@Override
-	public List<User> listJdbc(int start, int max) throws SQLException {
-		List<User> datas = new ArrayList<>();
-		String sql = Select.columns("id,name,description").from("user").offset(start).limit(max).toSQL();
+	public PageList<User> listJdbc(int start, int max) throws SQLException {
+		PageList<User> datas = new PageListImpl<>(start, max);
+
+		String sql = Select.columns("id,name,description").from("user").offset(start).max(max).toSQL();
+
 		ResultSet resultSet = conn.prepareStatement(sql).executeQuery();
 
 		while (resultSet.next()) {
 			datas.add(mapper.map(resultSet));
 		}
+		resultSet.close();
+
+		String sqlCount = Select.columns("count(1)").from("user").toSQL();
+		ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
+		resultSetCount.next();
+		int totalSize = resultSetCount.getInt(1);
+		resultSetCount.close();
+		datas.totalSize(totalSize);
 
 		return datas;
 	}
@@ -49,8 +59,8 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 	public User findByIdJdbc(Object... keys) throws SQLException {
 		PreparedStatement preparedStatement;
 		ResultSet resultSet;
-		List<User> datas;
-		datas = new ArrayList<>();
+		List<User> datas = new ArrayList<>();
+
 		preparedStatement = conn.prepareStatement("SELECT id, name, description FROM user WHERE id = ?");
 
 		preparedStatement.setLong(1, ((Long) keys[0]).longValue());

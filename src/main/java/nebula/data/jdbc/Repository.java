@@ -1,7 +1,5 @@
 package nebula.data.jdbc;
 
-import java.util.List;
-
 /**
  * Database access for pets.
  */
@@ -16,7 +14,7 @@ public interface Repository<T> {
 	 * @param max   Max number of rows.
 	 * @return Available pets.
 	 */
-	List<T> list(int start, int max);
+	PageList<T> list(int start, int max);
 
 	/**
 	 * Find a pet by ID.

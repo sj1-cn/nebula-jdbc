@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -148,26 +149,25 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 		cw.method(ACC_PUBLIC, "listJdbc")
 			.parameter("start", int.class)
 			.parameter("max", int.class)
-			.reTurn(List.class, clazzTarget)
+			.reTurn(PageList.class, clazzTarget)
 			.tHrow(SQLException.class)
 			.code(mv -> {
-				mv.define("datas", GenericClazz.generic(List.class, clazzTarget));
+				mv.define("datas", GenericClazz.generic(PageList.class, clazzTarget));
 
-				mv.line().setNew("datas", ArrayList.class);
+				mv.line().NEW(PageListImpl.class);
+				mv.DUP();
+				mv.topInstance().special("<init>").invokeVoid("start", "max");
+				mv.store("datas");
 
 			// @formatter:off
-				mv.line().clazz(Select.class).call("columns").parameter(String.class).reTurn(Select.class)
-					.invoke(p -> p.LOADConst(String.join(",", mappers.map(f -> f.column.getName()))));
-				mv.topInstance().virtual("from").reTurn(Select.class).invoke(p -> p.LOADConst(tablename));
-				mv.topInstance().virtual("offset").reTurn(Select.class).invoke("start");
-				mv.topInstance().virtual("limit").reTurn(Select.class).invoke("max");
-				mv.topInstance().virtual("toSQL").reTurn(String.class).invoke();
-				mv.topInstance().setTo("sql");
-
-//				String sql = Select.columns("id,name,description").from("user").offset(start).limit(max).toSQL();
-//
-//				String sql = JDBC.sql("SELECT ${columns} FROM ${tablename}", String.join(",", mappers.map(f -> f.column.getName())),
-//						tablename);
+				String sqlColumns = String.join(",", mappers.map(f -> f.column.getName()));
+				// String sql = Select.columns("id,name,description").from("user").offset(start).limit(max).toSQL();
+				mv.line().clazz(Select.class).call("columns").parameter(String.class).reTurn(Select.class).invoke(p -> p.LOADConst(sqlColumns))
+					.virtual("from").reTurn(Select.class).invoke(p -> p.LOADConst(tablename))
+					.virtual("offset").reTurn(Select.class).invoke("start")
+					.virtual("max").reTurn(Select.class).invoke("max")
+					.virtual("toSQL").reTurn(String.class).invoke()
+					.setTo("sql");
 
 				mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke("sql")
 					.inter("executeQuery").reTurn(ResultSet.class).invoke()
@@ -178,6 +178,31 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 						.invoke(p -> p.load("mapper").virtual("map").reTurn(this.clazzTarget).invoke("resultSet"))
 						.pop();
 				});
+				mv.line().load("resultSet").inter("close").invokeVoid();
+
+				//String sqlCount = Select.columns("count(1)").from("user").toSQL();
+				mv.line().clazz(Select.class).call("columns").parameter(String.class).reTurn(Select.class).invoke(p -> p.LOADConst("count(1)"))
+					.virtual("from").reTurn(Select.class).invoke(p -> p.LOADConst(tablename))
+					.virtual("toSQL").reTurn(String.class).invoke()
+					.setTo("sqlCount");
+				
+
+				// ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
+				mv.line().load("conn").inter("createStatement").reTurn(Statement.class).invoke()
+					.inter("executeQuery").reTurn(ResultSet.class).invoke("sqlCount")
+					.setTo("resultSetCount");
+				
+				// resultSetCount.next();
+				mv.line().load("resultSetCount").inter("next").reTurn(boolean.class).invoke().pop();
+
+				// int totalSize = resultSetCount.getInt(1);
+				mv.line().load("resultSetCount").inter("getInt").reTurn(int.class).invoke(p->p.LOADConst(1)).setTo("totalSize");
+				
+				// resultSetCount.close();
+				mv.line().load("resultSetCount").inter("close").invokeVoid();
+
+				//datas.totalSize(totalSize);
+				mv.line().load("datas").inter("totalSize").invokeVoid("totalSize");
 
 				mv.line().returnVar("datas");
 

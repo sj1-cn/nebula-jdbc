@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import nebula.jdbc.builders.queries.Select;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
 import nebula.jdbc.builders.schema.JDBC;
@@ -32,14 +33,24 @@ public class UserJdbcSelectRepository implements JdbcRepository<User> {
 	}
 
 	@Override
-	public List<User> listJdbc(int start, int max) throws SQLException {
-		List<User> datas = new ArrayList<>();
-				
-		ResultSet resultSet = conn.prepareStatement("SELECT id,name,description FROM user").executeQuery();
+	public PageList<User> listJdbc(int start, int max) throws SQLException {
+		PageList<User> datas = new PageListImpl<>(start, max);
+
+		String sql = Select.columns("id,name,description").from("user").offset(start).limit(max).toSQL();
+
+		ResultSet resultSet = conn.prepareStatement(sql).executeQuery();
 
 		while (resultSet.next()) {
 			datas.add(mapper.map(resultSet));
 		}
+		resultSet.close();
+
+		String sqlCount = Select.columns("count(1)").from("user").toSQL();
+		ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
+		resultSetCount.next();
+		int totalSize = resultSetCount.getInt(1);
+		resultSetCount.close();
+		datas.totalSize(totalSize);
 
 		return datas;
 	}

@@ -44,14 +44,24 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 	}
 
 	@Override
-	public List<UserMoreComplex> listJdbc(int start, int max) throws SQLException {
-		List<UserMoreComplex> datas = new ArrayList<>();
-		String sql = Select.columns("id,string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp").from("UserMoreComplex").offset(start).limit(max).toSQL();
+	public PageList<UserMoreComplex> listJdbc(int start, int max) throws SQLException {
+		PageList<UserMoreComplex> datas = new PageListImpl<>(start, max);
+
+		String sql = Select.columns("id,string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp").from("UserMoreComplex").offset(start).max(max).toSQL();
+
 		ResultSet resultSet = this.conn.prepareStatement(sql).executeQuery();
 
 		while (resultSet.next()) {
 			datas.add(mapper.map(resultSet));
 		}
+		resultSet.close();
+
+		String sqlCount = Select.columns("count(1)").from("UserMoreComplex").toSQL();
+		ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
+		resultSetCount.next();
+		int totalSize = resultSetCount.getInt(1);
+		resultSetCount.close();
+		datas.totalSize(totalSize);
 
 		return datas;
 	}
@@ -61,7 +71,8 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 		PreparedStatement preparedStatement;
 		ResultSet resultSet;
 		List<UserMoreComplex> datas = new ArrayList<>();
-		preparedStatement = this.conn.prepareStatement("SELECT id, string, bigDecimal, z, c, b, s, i, l, f, d, date, time, timestamp FROM UserMoreComplex WHERE id = ?");
+
+		preparedStatement = conn.prepareStatement("SELECT id, string, bigDecimal, z, c, b, s, i, l, f, d, date, time, timestamp FROM UserMoreComplex WHERE id = ?");
 
 		preparedStatement.setLong(1, ((Long) keys[0]).longValue());
 
@@ -100,7 +111,7 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 		}
 		return null;
 	}
-	
+
 	@Override
 	public UserMoreComplex updateJdbc(UserMoreComplex data) throws SQLException {
 		PreparedStatement preparedStatement = this.conn.prepareStatement("UPDATE UserMoreComplex SET string=?,bigDecimal=?,z=?,c=?,b=?,s=?,i=?,l=?,f=?,d=?,date=?,time=?,timestamp=? WHERE id=?");
@@ -121,7 +132,7 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 		preparedStatement.setLong(14, data.getId());
 
 		if (preparedStatement.executeUpdate() > 0) {
-			return this.findById(data.getId());
+			return findById(data.getId());
 		}
 		return null;
 	}
@@ -134,8 +145,5 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 
 		return preparedStatement.executeUpdate();
 	}
-
-
-
 
 }
