@@ -19,7 +19,7 @@ import nebula.jdbc.builders.schema.Column;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
 import nebula.jdbc.builders.schema.JDBC;
-import nebula.jdbc.builders.schema.JDBC.TypeMapping;
+import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.data.ClassBody;
 import nebula.tinyasm.data.ListMap;
@@ -219,21 +219,15 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 				int j = 0;
 				for (FieldMapper fieldMapper : mappers) {
 					if (fieldMapper.primaryKey) {
-						TypeMapping jdbcType = JDBC.mapJavaClazz2JdbcTypes.get(fieldMapper.pojoClazz.getName());
+						JdbcMapping jdbc = JDBC.map(fieldMapper.pojoClazz);
 
 						mv.line().load("keys").loadElement(j++).setTo("key");
-						mv.line().load("preparedStatement").inter(jdbcType.setname).invokeVoid(Const(i++),p->{
+						mv.line().load("preparedStatement").inter(jdbc.setname).invokeVoid(Const(i++),p->{
 
-							if (fieldMapper.pojoClazz.isPrimitive()) {
-								Class<?> objectclass = mapPrimaryToObject.get(fieldMapper.pojoClazz);
-								mv.load("key").checkcast(objectclass);
-								arguments.getConvert(objectclass, fieldMapper.pojoClazz).apply(mv);
-							} else {
-								mv.load("key").checkcast(fieldMapper.pojoClazz);
-							}
-
-							if (fieldMapper.pojoClazz != jdbcType.jdbcClazz) {
-								arguments.getConvert(fieldMapper.pojoClazz, jdbcType.jdbcClazz).apply(mv);
+							mv.load("key").checkcastAndUnbox(fieldMapper.pojoClazz);
+							
+							if (fieldMapper.pojoClazz != jdbc.jdbcClazz) {
+								arguments.getConvert(fieldMapper.pojoClazz, jdbc.jdbcClazz).apply(mv);
 							}							
 						});
 
@@ -243,12 +237,12 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 				mv.line().load("preparedStatement").inter("executeQuery").reTurn(ResultSet.class).invoke().setTo("resultSet");
 
 				mv.line().wHile(f -> mv.load("resultSet").inter("next").reTurn(boolean.class).invoke(), b -> {
-					mv.line().load("datas").inter("add").parameter(Object.class).reTurn(boolean.class)
-						.invoke(p0 -> mv.load("mapper").virtual("map").reTurn(clazzTarget).invoke("resultSet"))
+					mv.line().load("datas").inter("add").parameter(Object.class).reTurn(boolean.class).invoke(
+							p0 -> mv.load("mapper").virtual("map").reTurn(clazzTarget).invoke("resultSet"))
 						.pop();
 				});
 
-				mv.line().load("datas").inter("get").reTurn(Object.class).invoke(m -> m.LOADConst(0))
+				mv.line().load("datas").inter("get").reTurn(Object.class).invoke(Const(0))
 					.checkcast(clazzTarget).returnValue();
 			});
 	}
@@ -276,7 +270,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 					String sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", tablename, String.join(",", names),
 							String.join(",", values));
 
-					mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke(Const(sql), m -> m.LOADConst(PreparedStatement.RETURN_GENERATED_KEYS))
+					mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke(Const(sql),Const(PreparedStatement.RETURN_GENERATED_KEYS))
 						.setTo("preparedStatement");
 
 					int i = 1;
@@ -299,10 +293,10 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 								m.newarray(Object.class, 1);
 
 								m.dup().setElement(0, e -> {
-									TypeMapping jdbcType = JDBC.mapJavaClazz2JdbcTypes.get(keyMapper.pojoClazz.getName());
+									JdbcMapping jdbcType = JDBC.mapJavaClazz2JdbcTypes.get(keyMapper.pojoClazz.getName());
 
 									// rs.getLong(1)
-									m.load("rs").inter(jdbcType.getname).parameter(int.class).reTurn(jdbcType.jdbcClazz).invoke(r -> r.LOADConst(1));
+									m.load("rs").inter(jdbcType.getname).parameter(int.class).reTurn(jdbcType.jdbcClazz).invoke(Const(1));
 
 									revertFromJdbc(m, keyMapper.pojoClazz, jdbcType.jdbcClazz);
 
@@ -420,28 +414,21 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 				int i = 1;
 				int j = 0;
-				for (FieldMapper fieldMapper : keys) {
-					mv.line();
-					mv.LOAD("preparedStatement");
-					mv.LOADConst(i++);
-					mv.load("keys").loadElement(j++);// .boxWhenNeed().checkcast();
+				for (FieldMapper fieldMapper : mappers) {
+					if (fieldMapper.primaryKey) {
+						JdbcMapping jdbc = JDBC.map(fieldMapper.pojoClazz);
 
-					if (fieldMapper.pojoClazz.isPrimitive()) {
-						Class<?> objectclass = mapPrimaryToObject.get(fieldMapper.pojoClazz);
-						mv.CHECKCAST(objectclass);
-						arguments.getConvert(objectclass, fieldMapper.pojoClazz).apply(mv);
-					} else {
-						mv.CHECKCAST(fieldMapper.pojoClazz);
+						mv.line().load("keys").loadElement(j++).setTo("key");
+						mv.line().load("preparedStatement").inter(jdbc.setname).invokeVoid(Const(i++),p->{
+
+							mv.load("key").checkcastAndUnbox(fieldMapper.pojoClazz);
+							
+							if (fieldMapper.pojoClazz != jdbc.jdbcClazz) {
+								arguments.getConvert(fieldMapper.pojoClazz, jdbc.jdbcClazz).apply(mv);
+							}							
+						});
+
 					}
-
-					TypeMapping jdbcType = JDBC.mapJavaClazz2JdbcTypes.get(fieldMapper.pojoClazz.getName());
-
-					if (fieldMapper.pojoClazz != jdbcType.jdbcClazz) {
-						arguments.getConvert(fieldMapper.pojoClazz, jdbcType.jdbcClazz).apply(mv);
-					}
-
-					mv.INTERFACE(PreparedStatement.class, jdbcType.setname).parameter(int.class, jdbcType.jdbcClazz).INVOKE();
-
 				}
 
 				mv.line().load("preparedStatement").inter("executeUpdate").reTurn(int.class).invoke()

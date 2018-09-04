@@ -143,7 +143,8 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 	public int deleteJdbc(Object... keys) throws SQLException {
 		PreparedStatement preparedStatement = conn.prepareStatement("DELETE UserMoreComplex WHERE id=?");
 
-		preparedStatement.setLong(1, ((Long) keys[0]).longValue());
+		Object key = keys[0];
+		preparedStatement.setLong(1, ((Long)key).longValue());
 
 		return preparedStatement.executeUpdate();
 	}
