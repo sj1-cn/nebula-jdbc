@@ -5,8 +5,8 @@ import nebula.jdbc.builders.schema.ColumnDefinition;
 public class FieldMapper {
 	final boolean primaryKey;
 	final String fieldName;
-	final String pojo_getname;
-	final Class<?> pojoClazz;
+	final String getName;
+	final Class<?> clazz;
 	final ColumnDefinition column;
 
 	public boolean isPrimaryKey() {
@@ -18,11 +18,11 @@ public class FieldMapper {
 	}
 
 	public String getGetname() {
-		return pojo_getname;
+		return getName;
 	}
 
 	public Class<?> getPojoClazz() {
-		return pojoClazz;
+		return clazz;
 	}
 
 	public ColumnDefinition getColumn() {
@@ -34,8 +34,8 @@ public class FieldMapper {
 		super();
 		this.primaryKey = primaryKey;
 		this.fieldName = javaname;
-		this.pojoClazz = fieldClazz;
-		this.pojo_getname = getname;
+		this.clazz = fieldClazz;
+		this.getName = getname;
 		this.column = column;
 		if(primaryKey) this.column.primarykey();
 	}

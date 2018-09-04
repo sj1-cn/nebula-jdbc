@@ -70,8 +70,7 @@ public class RepositoryFactory {
 
 		try {
 			@SuppressWarnings("unchecked")
-			Class<JdbcRepository<T>> clazzJdbcRepository = (Class<JdbcRepository<T>>) myClassLoader
-				.defineClassByName(clazz, code);
+			Class<JdbcRepository<T>> clazzJdbcRepository = (Class<JdbcRepository<T>>) myClassLoader.defineClassByName(clazz, code);
 			JdbcRepository<T> jdbcRepository = clazzJdbcRepository.newInstance();
 			jdbcRepository.setConnection(this.conn);
 			return jdbcRepository;
@@ -89,7 +88,7 @@ public class RepositoryFactory {
 					&& !Modifier.isNative(modifier)) {
 				String fieldname = field.getName();
 				Class<?> fieldClazz = field.getType();
-				JDBCType jdbctype = JDBC.mapJavaClass2JDBCType.get(fieldClazz.getName());
+				JDBCType jdbctype = JDBC.jdbcType(fieldClazz);
 				assert jdbctype != null : field.getName() + "'s class " + fieldClazz.getName() + " hasn't exist!";
 				ColumnDefinition column = ColumnDefinition.Column(jdbctype, fieldname);
 				String getname = getGetName(field.getName(), field.getType());
@@ -127,8 +126,7 @@ public class RepositoryFactory {
 
 		try {
 			@SuppressWarnings("unchecked")
-			Class<JdbcRowMapper<T>> rowMapperClazz = (Class<JdbcRowMapper<T>>) myClassLoader.defineClassByName(clazz,
-					code);
+			Class<JdbcRowMapper<T>> rowMapperClazz = (Class<JdbcRowMapper<T>>) myClassLoader.defineClassByName(clazz, code);
 			JdbcRowMapper<T> rowMapper = rowMapperClazz.newInstance();
 			return rowMapper;
 		} catch (InstantiationException e) {

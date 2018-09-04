@@ -1,21 +1,45 @@
 package nebula.jdbc.builders.schema;
 
+import static java.sql.JDBCType.BIGINT;
+import static java.sql.JDBCType.BINARY;
+import static java.sql.JDBCType.BIT;
+import static java.sql.JDBCType.BOOLEAN;
+import static java.sql.JDBCType.CHAR;
+import static java.sql.JDBCType.DATE;
+import static java.sql.JDBCType.DECIMAL;
+import static java.sql.JDBCType.DOUBLE;
+import static java.sql.JDBCType.FLOAT;
+import static java.sql.JDBCType.INTEGER;
+import static java.sql.JDBCType.LONGVARBINARY;
+import static java.sql.JDBCType.LONGVARCHAR;
+import static java.sql.JDBCType.NUMERIC;
+import static java.sql.JDBCType.REAL;
+import static java.sql.JDBCType.SMALLINT;
+import static java.sql.JDBCType.TIME;
+import static java.sql.JDBCType.TIMESTAMP;
+import static java.sql.JDBCType.TINYINT;
+import static java.sql.JDBCType.VARBINARY;
+import static java.sql.JDBCType.VARCHAR;
+
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.JDBCType;
+import java.sql.SQLException;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
-import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
-
-import java.sql.Connection;
-import java.sql.JDBCType;
-import java.sql.SQLException;
-
-import static java.sql.JDBCType.*;
-
 public class JDBC {
-	public static EnumMap<JDBCType, String> mapJDBCType2JavaClazz = new EnumMap<>(JDBCType.class);
-	public static Map<String, JDBCType> mapJavaClass2JDBCType = new HashMap<>();
+	private static EnumMap<JDBCType, String> mapJDBCType2JavaClazz = new EnumMap<>(JDBCType.class);
+	static Map<String, JDBCType> mapJavaClass2JDBCType = new HashMap<>();
+	
+	public static JDBCType jdbcType(String clazz) {
+		return mapJavaClass2JDBCType.get(clazz);
+	}
+	public static JDBCType jdbcType(Class<?> clazz) {
+		return mapJavaClass2JDBCType.get(clazz.getName());
+	}
+	
 	static {
 		mapJDBCType2JavaClazz.put(CHAR, "java.lang.String");
 		mapJDBCType2JavaClazz.put(VARCHAR, "java.lang.String");
@@ -67,7 +91,7 @@ public class JDBC {
 	}
 
 	public static JdbcMapping map(Class<?> pojoClazz) {
-		return mapJavaClazz2JdbcTypes.get(pojoClazz.getName());
+		return mapJavaClazz2JdbcMapping.get(pojoClazz.getName());
 	}
 
 	static class ColumnType {
@@ -179,25 +203,25 @@ public class JDBC {
 	public static class JdbcMapping {
 		public String typename;
 		public String getname;
-		public String setname;
+		public String setName;
 		public Class<?> jdbcClazz;
 
 		public JdbcMapping(String typename, String getname, String setname, Class<?> getclazz) {
 			this.typename = typename;
 			this.getname = getname;
-			this.setname = setname;
+			this.setName = setname;
 			this.jdbcClazz = getclazz;
 		}
 	}
 
-	public static Map<String, JdbcMapping> mapJavaClazz2JdbcTypes = new HashMap<>();
+	public static Map<String, JdbcMapping> mapJavaClazz2JdbcMapping = new HashMap<>();
 
 	static void rigester(Class<?> clazz, JdbcMapping jdbctype) {
-		mapJavaClazz2JdbcTypes.put(clazz.getName(), jdbctype);
+		mapJavaClazz2JdbcMapping.put(clazz.getName(), jdbctype);
 	}
 
 	static void rigester(String clazz, JdbcMapping jdbctype) {
-		mapJavaClazz2JdbcTypes.put(clazz, jdbctype);
+		mapJavaClazz2JdbcMapping.put(clazz, jdbctype);
 	}
 
 	static {
