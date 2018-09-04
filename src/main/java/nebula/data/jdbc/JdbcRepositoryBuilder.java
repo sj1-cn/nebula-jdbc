@@ -140,8 +140,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.friendly(mv -> {
 				mv.define("datas", generic(PageList.class, clazzTarget));
 
-				mv.line().init(PageListImpl.class,"start", "max");
-				mv.store("datas");
+				mv.line().init(PageListImpl.class,"start", "max").setTo("datas");
 
 				String sqlColumns = String.join(",", mappers.map(f -> f.column.getName()));
 				// String sql = Select.columns("id,name,description").from("user").offset(start).limit(max).toSQL();
@@ -250,7 +249,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.friendly(mv -> {
 
 				boolean hasAutoIncrment = mappers.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
-				FieldMapper keyMapper = mappers.filter(f -> f.isPrimaryKey()).get(0);
+				FieldMapper keyField = mappers.filter(f -> f.isPrimaryKey()).get(0);
 
 				if (hasAutoIncrment) {
 					List<String> names = mappers.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.getName());
@@ -270,16 +269,14 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 					int i = 1;
 					for (FieldMapper fieldMapper : mappers) {
-						if (!"YES".equals(fieldMapper.column.getAutoIncrment())) {
-							{
-								Class<?> jdbcClazz = fieldMapper.clazz;
-								JdbcMapping jdbcType = JDBC.mapJavaClazz2JdbcMapping.get(jdbcClazz.getName());
-							
-								mv.line().load("preparedStatement").inter(jdbcType.setName).invokeVoid(Const(i++), p -> {
-									p.load("data").virtual(fieldMapper.getName).reTurn(fieldMapper.clazz).invoke();
-									arguments.toJdbcClazz(jdbcClazz, jdbcType.jdbcClazz).accept(p);
-								});
-							}
+						if (!"YES".equals(fieldMapper.column.getAutoIncrment())) {							
+							Class<?> jdbcClazz = fieldMapper.clazz;
+							JdbcMapping jdbcMapping = JDBC.map(jdbcClazz);
+						
+							mv.line().load("preparedStatement").inter(jdbcMapping.setName).invokeVoid(Const(i++), p -> {
+								p.load("data").virtual(fieldMapper.getName).reTurn(fieldMapper.clazz).invoke();
+								arguments.toJdbcClazz(jdbcClazz, jdbcMapping.jdbcClazz).accept(p);
+							});							
 						}
 					}
 
@@ -296,12 +293,12 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 								m.newarray(Object.class, 1);
 
 								m.dup().setElement(0, e -> {
-									JdbcMapping jdbcType = JDBC.mapJavaClazz2JdbcMapping.get(keyMapper.clazz.getName());
+									JdbcMapping jdbcMapping = JDBC.map(keyField.clazz);
 
 									// rs.getLong(1)
-									m.load("rs").inter(jdbcType.getname).parameter(int.class).reTurn(jdbcType.jdbcClazz).invoke(Const(1));
+									m.load("rs").inter(jdbcMapping.getname).parameter(int.class).reTurn(jdbcMapping.jdbcClazz).invoke(Const(1));
 
-									arguments.fromJdbcClazz(keyMapper.clazz, jdbcType.jdbcClazz).accept(m);
+									arguments.fromJdbcClazz(keyField.clazz, jdbcMapping.jdbcClazz).accept(m);
 									
 									mv.topInstance().boxWhenNeed();
 								});
@@ -323,13 +320,12 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 						.setTo("preparedStatement");
 
 					int i = 1;
-					for (FieldMapper fieldMapper : mappers) {
-							Class<?> jdbcClazz = fieldMapper.clazz;
-							JdbcMapping jdbcType = JDBC.mapJavaClazz2JdbcMapping.get(jdbcClazz.getName());
+					for (FieldMapper field : mappers) {
+							JdbcMapping jdbcMapping = JDBC.map(field.clazz);
 						
-							mv.line().load("preparedStatement").inter(jdbcType.setName).invokeVoid(Const(i++), p -> {
-								p.load("data").virtual(fieldMapper.getName).reTurn(fieldMapper.clazz).invoke();
-								arguments.toJdbcClazz(jdbcClazz, jdbcType.jdbcClazz).accept(p);
+							mv.line().load("preparedStatement").inter(jdbcMapping.setName).invokeVoid(Const(i++), p -> {
+								p.load("data").virtual(field.getName).reTurn(field.clazz).invoke();
+								arguments.toJdbcClazz(field.clazz, jdbcMapping.jdbcClazz).accept(p);
 							});
 					}
 

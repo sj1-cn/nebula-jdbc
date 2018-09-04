@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class JDBC {
 	private static EnumMap<JDBCType, String> mapJDBCType2JavaClazz = new EnumMap<>(JDBCType.class);
-	static Map<String, JDBCType> mapJavaClass2JDBCType = new HashMap<>();
+	private static Map<String, JDBCType> mapJavaClass2JDBCType = new HashMap<>();
 	
 	public static JDBCType jdbcType(String clazz) {
 		return mapJavaClass2JDBCType.get(clazz);
@@ -214,7 +214,7 @@ public class JDBC {
 		}
 	}
 
-	public static Map<String, JdbcMapping> mapJavaClazz2JdbcMapping = new HashMap<>();
+	private static Map<String, JdbcMapping> mapJavaClazz2JdbcMapping = new HashMap<>();
 
 	static void rigester(Class<?> clazz, JdbcMapping jdbctype) {
 		mapJavaClazz2JdbcMapping.put(clazz.getName(), jdbctype);

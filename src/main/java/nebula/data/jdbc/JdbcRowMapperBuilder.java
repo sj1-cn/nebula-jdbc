@@ -34,10 +34,10 @@ public class JdbcRowMapperBuilder {
 				for (int i = 0; i < maps.size(); i++) {
 					FieldMapper fieldMapper = maps.get(i);
 					String name = fieldMapper.fieldName;
-					JdbcMapping javatype = JDBC.mapJavaClazz2JdbcMapping.get(fieldMapper.clazz.getName());
-					assert javatype != null : name + "'s type [" + fieldMapper.clazz.getName() + "] has not jdbc type";
-					String getname = javatype.getname;
-					Class<?> jdbcClazz = javatype.jdbcClazz;
+					JdbcMapping jdbcMapping = JDBC.map(fieldMapper.clazz);
+					assert jdbcMapping != null : name + "'s type [" + fieldMapper.clazz.getName() + "] has not jdbc type";
+					String getname = jdbcMapping.getname;
+					Class<?> jdbcClazz = jdbcMapping.jdbcClazz;
 					Class<?> pojoClazz = fieldMapper.clazz;
 					clazzes[i] = pojoClazz;
 
