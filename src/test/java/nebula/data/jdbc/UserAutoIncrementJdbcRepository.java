@@ -63,7 +63,8 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 
 		preparedStatement = conn.prepareStatement("SELECT id, name, description FROM user WHERE id = ?");
 
-		preparedStatement.setLong(1, ((Long) keys[0]).longValue());
+		Object key = keys[0];
+		preparedStatement.setLong(1, ((Long)key).longValue());
 
 		resultSet = preparedStatement.executeQuery();
 

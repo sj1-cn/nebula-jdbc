@@ -1,9 +1,10 @@
 package nebula.data.jdbc;
 
-import static org.objectweb.asm.Opcodes.ACC_BRIDGE;
+import static nebula.tinyasm.data.CodeHelper.Const;
+import static nebula.tinyasm.data.CodeHelper.Var;
+import static nebula.tinyasm.data.GenericClazz.generic;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +22,6 @@ import nebula.jdbc.builders.schema.JDBC;
 import nebula.jdbc.builders.schema.JDBC.TypeMapping;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.data.ClassBody;
-import nebula.tinyasm.data.GenericClazz;
 import nebula.tinyasm.data.ListMap;
 
 public class JdbcRepositoryBuilder extends RepositoryBuilder {
@@ -50,7 +50,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 		cw.field(ACC_PRIVATE, "conn", Connection.class);
 
-		cw.field(ACC_PRIVATE, "mapper", this.clazzRowMapper);
+		cw.field(ACC_PRIVATE, "mapper", clazzRowMapper);
 
 		constructor();
 
@@ -76,10 +76,11 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 		return cw.end().toByteArray();
 	}
 
+	// @formatter:off
 	private void constructor() {
 		cw.method(ACC_PUBLIC, "<init>").code(mv -> {
 			mv.line().initThis();
-			mv.line().setNew("mapper", clazzRowMapper);
+			mv.line().setInit("mapper", clazzRowMapper);
 			mv.returnVoid();
 		});
 	}
@@ -100,19 +101,12 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			for (FieldMapper field : mappers) {
 				// columnList.push(ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY"));
 				mv.line().load("columnList").virtual("push").parameter(Object.class).invokeVoid(p -> {
-					p.clazz(ColumnDefinition.class)
-						.call("valueOf")
-						.reTurn(ColumnDefinition.class)
-						.invoke(p0 -> p0.LOADConst(field.column.toString()));
+					p.clazz(ColumnDefinition.class).call("valueOf").reTurn(ColumnDefinition.class).invoke(Const(field.column.toString()));
 				});
 			}
 
-			// JDBCConfiguration.mergeIfExists(conn, "user", columnList)
-			mv.line()
-				.clazz(JDBC.class)
-				.call("mergeIfExists")
-				.reTurn(boolean.class)
-				.invoke(m -> m.load("conn"), m -> m.LOADConst(tablename), m -> m.LOAD("columnList"));
+			// JDBC.mergeIfExists(conn, "user", columnList)
+			mv.line().clazz(JDBC.class).call("mergeIfExists").reTurn(boolean.class).invoke(Var("conn"), Const(tablename), Var("columnList"));
 
 			mv.ifFalse(b -> {// if (!) {
 				boolean hasAutoIncrment = mappers.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
@@ -129,16 +123,9 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 				}
 
 				// PreparedStatement preparedStatement = conn.prepareStatement(sql);
-				mv.line()
-					.load("conn")
-					.inter("prepareStatement")
-					.reTurn(PreparedStatement.class)
-					.invoke(m -> m.LOADConst(sql))
-					.inter("execute")
-					.reTurn(boolean.class)
-					.invoke();
-
-				mv.POP();
+				mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke(Const(sql))
+					.inter("execute").reTurn(boolean.class).invoke()
+					.pop();
 			});
 			mv.line().returnVoid();
 
@@ -152,18 +139,15 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.reTurn(PageList.class, clazzTarget)
 			.tHrow(SQLException.class)
 			.code(mv -> {
-				mv.define("datas", GenericClazz.generic(PageList.class, clazzTarget));
+				mv.define("datas", generic(PageList.class, clazzTarget));
 
-				mv.line().NEW(PageListImpl.class);
-				mv.DUP();
-				mv.topInstance().special("<init>").invokeVoid("start", "max");
+				mv.line().init(PageListImpl.class,"start", "max");
 				mv.store("datas");
 
-			// @formatter:off
 				String sqlColumns = String.join(",", mappers.map(f -> f.column.getName()));
 				// String sql = Select.columns("id,name,description").from("user").offset(start).limit(max).toSQL();
-				mv.line().clazz(Select.class).call("columns").parameter(String.class).reTurn(Select.class).invoke(p -> p.LOADConst(sqlColumns))
-					.virtual("from").reTurn(Select.class).invoke(p -> p.LOADConst(tablename))
+				mv.line().clazz(Select.class).call("columns").parameter(String.class).reTurn(Select.class).invoke(Const(sqlColumns))
+					.virtual("from").reTurn(Select.class).invoke(Const(tablename))
 					.virtual("offset").reTurn(Select.class).invoke("start")
 					.virtual("max").reTurn(Select.class).invoke("max")
 					.virtual("toSQL").reTurn(String.class).invoke()
@@ -175,14 +159,14 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 				mv.line().wHile(cause -> mv.load("resultSet").inter("next").reTurn(boolean.class).invoke(), block -> {
 					mv.line().load("datas").inter("add").parameter(Object.class).reTurn(boolean.class)
-						.invoke(p -> p.load("mapper").virtual("map").reTurn(this.clazzTarget).invoke("resultSet"))
+						.invoke(p -> p.load("mapper").virtual("map").reTurn(clazzTarget).invoke("resultSet"))
 						.pop();
 				});
 				mv.line().load("resultSet").inter("close").invokeVoid();
 
 				//String sqlCount = Select.columns("count(1)").from("user").toSQL();
-				mv.line().clazz(Select.class).call("columns").parameter(String.class).reTurn(Select.class).invoke(p -> p.LOADConst("count(1)"))
-					.virtual("from").reTurn(Select.class).invoke(p -> p.LOADConst(tablename))
+				mv.line().clazz(Select.class).call("columns").parameter(String.class).reTurn(Select.class).invoke(Const("count(1)"))
+					.virtual("from").reTurn(Select.class).invoke(Const(tablename))
 					.virtual("toSQL").reTurn(String.class).invoke()
 					.setTo("sqlCount");
 				
@@ -196,7 +180,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 				mv.line().load("resultSetCount").inter("next").reTurn(boolean.class).invoke().pop();
 
 				// int totalSize = resultSetCount.getInt(1);
-				mv.line().load("resultSetCount").inter("getInt").reTurn(int.class).invoke(p->p.LOADConst(1)).setTo("totalSize");
+				mv.line().load("resultSetCount").inter("getInt").reTurn(int.class).invoke(Const(1)).setTo("totalSize");
 				
 				// resultSetCount.close();
 				mv.line().load("resultSetCount").inter("close").invokeVoid();
@@ -213,13 +197,13 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 		cw.method("findByIdJdbc")
 			.ACC_PUBLIC()
 			.ACC_VARARGS()
-			.parameter("keys", GenericClazz.generic(Object.class, true))
-			.reTurn(this.clazzTarget)
+			.parameter("keys", generic(Object.class, true))
+			.reTurn(clazzTarget)
 			.tHrow(SQLException.class)
 			.code(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
 				mv.define("resultSet", ResultSet.class);
-				mv.define("datas", GenericClazz.generic(List.class, clazzTarget));
+				mv.define("datas", generic(List.class, clazzTarget));
 
 				mv.line().setNew("datas", ArrayList.class);
 
@@ -228,34 +212,31 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 				String sql = Select.columns(ColumnList.namesOf(all)).from(tablename).where(ColumnList.namesOf(keys)).toSQL();
 
-				mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke(m -> m.LOADConst(sql))
+				mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke(Const(sql))
 					.setTo("preparedStatement");
 
 				int i = 1;
 				int j = 0;
 				for (FieldMapper fieldMapper : mappers) {
 					if (fieldMapper.primaryKey) {
-						mv.line();
-						mv.LOAD("preparedStatement");
-						mv.LOADConst(i++);
-
-						mv.load("keys").loadElement(j++);
-
-						if (fieldMapper.pojoClazz.isPrimitive()) {
-							Class<?> objectclass = mapPrimaryToObject.get(fieldMapper.pojoClazz);
-							mv.CHECKCAST(objectclass);
-							arguments.getConvert(objectclass, fieldMapper.pojoClazz).apply(mv);
-						} else {
-							mv.CHECKCAST(fieldMapper.pojoClazz);
-						}
-
 						TypeMapping jdbcType = JDBC.mapJavaClazz2JdbcTypes.get(fieldMapper.pojoClazz.getName());
 
-						if (fieldMapper.pojoClazz != jdbcType.jdbcClazz) {
-							arguments.getConvert(fieldMapper.pojoClazz, jdbcType.jdbcClazz).apply(mv);
-						}
+						mv.line().load("keys").loadElement(j++).setTo("key");
+						mv.line().load("preparedStatement").inter(jdbcType.setname).invokeVoid(Const(i++),p->{
 
-						mv.INTERFACE(PreparedStatement.class, jdbcType.setname).parameter(int.class, jdbcType.jdbcClazz).INVOKE();
+							if (fieldMapper.pojoClazz.isPrimitive()) {
+								Class<?> objectclass = mapPrimaryToObject.get(fieldMapper.pojoClazz);
+								mv.load("key").checkcast(objectclass);
+								arguments.getConvert(objectclass, fieldMapper.pojoClazz).apply(mv);
+							} else {
+								mv.load("key").checkcast(fieldMapper.pojoClazz);
+							}
+
+							if (fieldMapper.pojoClazz != jdbcType.jdbcClazz) {
+								arguments.getConvert(fieldMapper.pojoClazz, jdbcType.jdbcClazz).apply(mv);
+							}							
+						});
+
 					}
 				}
 
@@ -263,24 +244,19 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 				mv.line().wHile(f -> mv.load("resultSet").inter("next").reTurn(boolean.class).invoke(), b -> {
 					mv.line().load("datas").inter("add").parameter(Object.class).reTurn(boolean.class)
-						.invoke(p0 -> mv.load("mapper").virtual("map").reTurn(this.clazzTarget).invoke("resultSet"))
+						.invoke(p0 -> mv.load("mapper").virtual("map").reTurn(clazzTarget).invoke("resultSet"))
 						.pop();
 				});
 
-				mv.line()
-					.load("datas")
-					.inter("get")
-					.reTurn(Object.class)
-					.invoke(m -> m.LOADConst(0))
-					.checkcast(this.clazzTarget)
-					.returnValue();
+				mv.line().load("datas").inter("get").reTurn(Object.class).invoke(m -> m.LOADConst(0))
+					.checkcast(clazzTarget).returnValue();
 			});
 	}
 
 	private void insertJdbc(FieldList mappers, String tablename) {
 		cw.method(ACC_PUBLIC, "insertJdbc")
-			.parameter("data", this.clazzTarget)
-			.reTurn(this.clazzTarget)
+			.parameter("data", clazzTarget)
+			.reTurn(clazzTarget)
 			.tHrow(SQLException.class)
 			.code(mv -> {
 
@@ -300,11 +276,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 					String sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", tablename, String.join(",", names),
 							String.join(",", values));
 
-					mv.line()
-						.load("conn")
-						.inter("prepareStatement")
-						.reTurn(PreparedStatement.class)
-						.invoke(m -> m.LOADConst(sql), m -> m.LOADConst(PreparedStatement.RETURN_GENERATED_KEYS))
+					mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke(Const(sql), m -> m.LOADConst(PreparedStatement.RETURN_GENERATED_KEYS))
 						.setTo("preparedStatement");
 
 					int i = 1;
@@ -323,32 +295,21 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 						m.line().load("rs").inter("next").reTurn(boolean.class).invoke().pop();
 
 						// findById(new Object[] { rs.getLong(1) });
-						m.line()
-							.load("this")
-							.virtual("findById")
-							.parameter(GenericClazz.generic(Object.class, true))
-							.reTurn(Object.class)
-							.invoke(p -> {
-
+						m.line().load("this").virtual("findById").parameter(Object.class, true).reTurn(Object.class).invoke(p -> {
 								m.newarray(Object.class, 1);
 
 								m.dup().setElement(0, e -> {
 									TypeMapping jdbcType = JDBC.mapJavaClazz2JdbcTypes.get(keyMapper.pojoClazz.getName());
 
 									// rs.getLong(1)
-									m.load("rs")
-										.inter(jdbcType.getname)
-										.parameter(int.class)
-										.reTurn(jdbcType.jdbcClazz)
-										.invoke(r -> r.LOADConst(1));
+									m.load("rs").inter(jdbcType.getname).parameter(int.class).reTurn(jdbcType.jdbcClazz).invoke(r -> r.LOADConst(1));
 
 									revertFromJdbc(m, keyMapper.pojoClazz, jdbcType.jdbcClazz);
 
 									box(m, keyMapper.pojoClazz);
 								});
 							})
-							.checkcast(this.clazzTarget)
-							.returnValue();
+							.checkcast(clazzTarget).returnValue();
 					});
 
 					mv.line().returnNull();
@@ -362,7 +323,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 					String sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", tablename, String.join(",", names),
 							String.join(",", values));
 
-					mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke(m -> m.LOADConst(sql))
+					mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke(Const(sql))
 						.setTo("preparedStatement");
 
 					int i = 1;
@@ -373,35 +334,26 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 					mv.line().load("preparedStatement").inter("executeUpdate").reTurn(int.class).invoke();
 
 					mv.ifGreatThan(m -> {
-						m.line();
-						m.load("this")
-							.virtual("findById")
-							.parameter(GenericClazz.generic(Object.class, true))
-							.reTurn(Object.class)
-							.invoke(p -> {
+						m.line().load("this").virtual("findById").parameter(Object.class, true).reTurn(Object.class).invoke(p -> {
 								p.newarray(Object.class, mappers.filter(f -> f.primaryKey).size());
 								int j = 0;
-
+	
 								for (FieldMapper field : mappers) {
 									if (field.primaryKey) {
-										p.dup().setElement(j++,
-											p0 -> m.load("data").virtual(field.pojo_getname).reTurn(field.pojoClazz).invoke().boxWhenNeed());
+										p.dup().setElement(j++,	p0 -> m.load("data").virtual(field.pojo_getname).reTurn(field.pojoClazz).invoke().boxWhenNeed());
 									}
 								}
-							})
-							.checkcast(clazzTarget).returnValue();
+							}).checkcast(clazzTarget).returnValue();
 					});
 					mv.line().returnNull();
 				}
-
 			});
-
 	}
 
 	private void updateJdbc(FieldList mappers, String tablename) {
 		cw.method(ACC_PUBLIC, "updateJdbc")
-			.parameter("data", this.clazzTarget)
-			.reTurn(this.clazzTarget)
+			.parameter("data", clazzTarget)
+			.reTurn(clazzTarget)
 			.tHrow(SQLException.class)
 			.code(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
@@ -413,11 +365,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 				// PreparedStatement preparedStatement = conn.prepareStatement("UPDATE user SET
 				// name=?,description=? WHERE id=?");
-				mv.line()
-					.load("conn")
-					.inter("prepareStatement")
-					.reTurn(PreparedStatement.class)
-					.invoke(m -> m.LOADConst(sql))
+				mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke(Const(sql))
 					.setTo("preparedStatement");
 
 				// preparedStatement.setString(1, data.getName());
@@ -436,27 +384,15 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 				mv.ifGreatThan(m -> {// if (preparedStatement.executeUpdate() > 0) {
 					// return findById(data.getId());
-					m.line()
-						.load("this")
-						.virtual("findById")
-						.parameter(GenericClazz.generic(Object.class, true))
-						.reTurn(Object.class)
-						.invoke(p -> {
+					m.line().load("this").virtual("findById").parameter(Object.class, true).reTurn(Object.class).invoke(p -> {
 							// (data.getId())
 							mv.newarray(Object.class, keys.size());
 							int j = 0;
 							for (FieldMapper fieldMapper : keys) {
-								mv.dup()
-									.setElement(j++,
-											x -> mv.load("data")
-												.virtual(fieldMapper.pojo_getname)
-												.reTurn(fieldMapper.pojoClazz)
-												.invoke()
-												.boxWhenNeed());
+								mv.dup().setElement(j++,
+									x -> mv.load("data").virtual(fieldMapper.pojo_getname).reTurn(fieldMapper.pojoClazz).invoke().boxWhenNeed());
 							}
-						})
-						.checkcast(this.clazzTarget)
-						.returnValue();
+						}).checkcast(clazzTarget).returnValue();
 				});
 				// return null;
 				mv.line().returnNull();
@@ -465,10 +401,8 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 	}
 
 	private void deleteJdbc(Class<Long> clazzID, FieldList mappers, String tablename) {
-		cw.method(ACC_PUBLIC, "deleteJdbc")
-			.ACC_PUBLIC()
-			.ACC_VARARGS()
-			.parameter("keys", GenericClazz.generic(Object.class, true))
+		cw.method(ACC_PUBLIC, "deleteJdbc").ACC_PUBLIC().ACC_VARARGS()
+			.parameter("keys", generic(Object.class, true))
 			.reTurn(int.class)
 			.tHrow(SQLException.class)
 			.code(mv -> {
@@ -481,11 +415,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 				// PreparedStatement preparedStatement = conn.prepareStatement("DELETE user
 				// WHERE id=?");
-				mv.line()
-					.load("conn")
-					.inter("prepareStatement")
-					.reTurn(PreparedStatement.class)
-					.invoke(m -> m.LOADConst(sql))
+				mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke(Const(sql))
 					.setTo("preparedStatement");
 
 				int i = 1;
@@ -514,50 +444,39 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 				}
 
-				mv.line().load("preparedStatement").inter("executeUpdate").reTurn(int.class).invoke();
-				mv.RETURNTop();
+				mv.line().load("preparedStatement").inter("executeUpdate").reTurn(int.class).invoke()
+					.returnValue();
 
 			});
 	}
 
 	private void insertJdbcBridge() {
-		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "insertJdbc")
+		cw.method("insertJdbc").bridge()
 			.parameter("data", Object.class)
 			.reTurn(Object.class)
 			.tHrow(SQLException.class)
 			.code(mv -> {
-				mv.line()
-					.load("this")
-					.virtual("insertJdbc")
-					.reTurn(this.clazzTarget)
-					.invoke(f -> f.load("data").checkcast(this.clazzTarget));
-				mv.RETURNTop();
+				mv.line().load("this").virtual("insertJdbc").reTurn(clazzTarget).invoke(f -> f.load("data").checkcast(clazzTarget)).returnValue();
 			});
 	}
 
 	private void updateJdbcBridge() {
-		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "updateJdbc")
+		cw.method("updateJdbc").bridge()
 			.parameter("data", Object.class)
 			.reTurn(Object.class)
 			.tHrow(SQLException.class)
 			.code(mv -> {
-				mv.line()
-					.load("this")
-					.virtual("updateJdbc")
-					.reTurn(this.clazzTarget)
-					.invoke(f -> f.load("data").checkcast(this.clazzTarget));
-				mv.RETURNTop();
+				mv.line().load("this").virtual("updateJdbc").reTurn(clazzTarget).invoke(f -> f.load("data").checkcast(clazzTarget)).returnValue();
 			});
 	}
 
 	private void findByIdJdbcBridge(Class<Long> clazzID) {
-		cw.method(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "findByIdJdbc")
-			.parameter("keys", GenericClazz.generic(Object.class, true))
+		cw.method("findByIdJdbc").bridge()
+			.parameter("keys", generic(Object.class, true))
 			.reTurn(Object.class)
 			.tHrow(SQLException.class)
 			.code(mv -> {
-				mv.line().load("this").virtual("findByIdJdbc").reTurn(this.clazzTarget).invoke(f -> f.load("keys"));
-				mv.RETURNTop();
+				mv.line().load("this").virtual("findByIdJdbc").reTurn(clazzTarget).invoke(f -> f.load("keys")).returnValue();
 			});
 	}
 }

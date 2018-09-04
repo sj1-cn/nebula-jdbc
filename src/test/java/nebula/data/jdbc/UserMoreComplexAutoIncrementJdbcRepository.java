@@ -21,6 +21,7 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 		this.conn = conn;
 	}
 
+	// @formatter:off
 	@Override
 	public void initJdbc() throws SQLException {
 		ColumnList columnList = new ColumnList();
@@ -48,7 +49,7 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 		PageList<UserMoreComplex> datas = new PageListImpl<>(start, max);
 
 		String sql = Select.columns("id,string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp").from("UserMoreComplex").offset(start).max(max).toSQL();
-
+		
 		ResultSet resultSet = this.conn.prepareStatement(sql).executeQuery();
 
 		while (resultSet.next()) {
@@ -74,7 +75,8 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 
 		preparedStatement = conn.prepareStatement("SELECT id, string, bigDecimal, z, c, b, s, i, l, f, d, date, time, timestamp FROM UserMoreComplex WHERE id = ?");
 
-		preparedStatement.setLong(1, ((Long) keys[0]).longValue());
+		Object key = keys[0];
+		preparedStatement.setLong(1, ((Long)key).longValue());
 
 		resultSet = preparedStatement.executeQuery();
 
@@ -88,7 +90,7 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 	public UserMoreComplex insertJdbc(UserMoreComplex data) throws SQLException {
 		PreparedStatement preparedStatement = null;
 		ResultSet rs = null;
-		preparedStatement = this.conn.prepareStatement("INSERT INTO UserMoreComplex(string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",1);
+		preparedStatement = this.conn.prepareStatement("INSERT INTO UserMoreComplex(string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)", 1);
 
 		preparedStatement.setString(1, data.getString());
 		preparedStatement.setBigDecimal(2, data.getBigDecimal());
@@ -136,7 +138,7 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 		}
 		return null;
 	}
-	
+
 	@Override
 	public int deleteJdbc(Object... keys) throws SQLException {
 		PreparedStatement preparedStatement = conn.prepareStatement("DELETE UserMoreComplex WHERE id=?");
