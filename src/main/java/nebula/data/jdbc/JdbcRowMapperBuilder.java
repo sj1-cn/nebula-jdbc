@@ -22,7 +22,7 @@ public class JdbcRowMapperBuilder {
 
 	public byte[] make(String clazz, String targetClazz, FieldList maps) {
 
-		ClassBody cw = ClassBuilder.make(clazz).imPlements(JdbcRowMapper.class, targetClazz).body();
+		ClassBody cw = ClassBuilder.make(clazz).implement(JdbcRowMapper.class, targetClazz).body();
 
 		cw.constructerEmpty();
 		{

@@ -23,6 +23,7 @@ import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.data.ClassBody;
 import nebula.tinyasm.data.ListMap;
+import nebula.tinyasm.data.MethodCode;
 
 public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
@@ -46,7 +47,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 		Class<Long> clazzID = long.class;
 
-		cw = ClassBuilder.make(clazz).imPlements(JdbcRepository.class, clazzTarget).body();
+		cw = ClassBuilder.make(clazz).implement(JdbcRepository.class, clazzTarget).body();
 
 		cw.field(ACC_PRIVATE, "conn", Connection.class);
 
@@ -80,23 +81,23 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 	private void constructor() {
 		cw.method(ACC_PUBLIC, "<init>").code(mv -> {
 			mv.line().initThis();
-			mv.line().setInit("mapper", clazzRowMapper);
+			mv.line().initTo(clazzRowMapper, "mapper");
 			mv.returnVoid();
 		});
 	}
 
 	private void setConnection() {
-		cw.method(ACC_PUBLIC, "setConnection").parameter("conn", Connection.class).code(mv -> {
+		cw.method(ACC_PUBLIC, "setConnection").parameter("conn", Connection.class).friendly(mv -> {
 			mv.line().putThisFieldWithVar("conn", "conn");
 			mv.line().returnVoid();
 		});
 	}
 
 	private void initJdbc(String tablename, FieldList mappers) {
-		cw.method("initJdbc").tHrow(SQLException.class).code(mv -> {
+		cw.method("initJdbc").tHrow(SQLException.class).friendly(mv -> {
 			mv.define("columnList", ColumnList.class);
 			// ColumnList columnList = new ColumnList();
-			mv.line().init(ColumnList.class).setTo("columnList");
+			mv.line().initTo(ColumnList.class,"columnList");
 
 			for (FieldMapper field : mappers) {
 				// columnList.push(ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY"));
@@ -128,7 +129,6 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 					.pop();
 			});
 			mv.line().returnVoid();
-
 		});
 	}
 
@@ -138,7 +138,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.parameter("max", int.class)
 			.reTurn(PageList.class, clazzTarget)
 			.tHrow(SQLException.class)
-			.code(mv -> {
+			.friendly(mv -> {
 				mv.define("datas", generic(PageList.class, clazzTarget));
 
 				mv.line().init(PageListImpl.class,"start", "max");
@@ -200,7 +200,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.parameter("keys", generic(Object.class, true))
 			.reTurn(clazzTarget)
 			.tHrow(SQLException.class)
-			.code(mv -> {
+			.friendly(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
 				mv.define("resultSet", ResultSet.class);
 				mv.define("datas", generic(List.class, clazzTarget));
@@ -227,10 +227,9 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 							mv.load("key").checkcastAndUnbox(fieldMapper.pojoClazz);
 							
 							if (fieldMapper.pojoClazz != jdbc.jdbcClazz) {
-								arguments.getConvert(fieldMapper.pojoClazz, jdbc.jdbcClazz).apply(mv);
+								arguments.getConvert(fieldMapper.pojoClazz, jdbc.jdbcClazz).apply((MethodCode)mv);
 							}							
 						});
-
 					}
 				}
 
@@ -252,7 +251,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.parameter("data", clazzTarget)
 			.reTurn(clazzTarget)
 			.tHrow(SQLException.class)
-			.code(mv -> {
+			.friendly(mv -> {
 
 				boolean hasAutoIncrment = mappers.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
 				FieldMapper keyMapper = mappers.filter(f -> f.isPrimaryKey()).get(0);
@@ -276,7 +275,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 					int i = 1;
 					for (FieldMapper fieldMapper : mappers) {
 						if (!"YES".equals(fieldMapper.column.getAutoIncrment())) {
-							bindField(mv, i++, clazzTarget, fieldMapper);
+							bindField((MethodCode)mv, i++, clazzTarget, fieldMapper);
 						}
 					}
 
@@ -302,8 +301,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 									box(m, keyMapper.pojoClazz);
 								});
-							})
-							.checkcast(clazzTarget).returnValue();
+							}).checkcast(clazzTarget).returnValue();
 					});
 
 					mv.line().returnNull();
@@ -322,7 +320,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 					int i = 1;
 					for (FieldMapper fieldMapper : mappers) {
-						bindField(mv, i++, clazzTarget, fieldMapper);
+						bindField((MethodCode)mv, i++, clazzTarget, fieldMapper);
 					}
 
 					mv.line().load("preparedStatement").inter("executeUpdate").reTurn(int.class).invoke();
@@ -349,7 +347,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.parameter("data", clazzTarget)
 			.reTurn(clazzTarget)
 			.tHrow(SQLException.class)
-			.code(mv -> {
+			.friendly(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
 				ListMap<String, FieldMapper> keys = mappers.filter(f -> f.primaryKey);
 				ListMap<String, FieldMapper> others = mappers.filter(f -> !f.primaryKey);
@@ -365,12 +363,12 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 				// preparedStatement.setString(1, data.getName());
 				int i = 1;
 				for (FieldMapper field : others) {
-					bindField(mv, i++, clazzTarget, field);
+					bindField((MethodCode)mv, i++, clazzTarget, field);
 				}
 
 				// preparedStatement.setLong(3, data.getId());
 				for (FieldMapper field : keys) {
-					bindField(mv, i++, clazzTarget, field);
+					bindField((MethodCode)mv, i++, clazzTarget, field);
 				}
 
 				// preparedStatement.executeUpdate()
@@ -399,7 +397,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.parameter("keys", generic(Object.class, true))
 			.reTurn(int.class)
 			.tHrow(SQLException.class)
-			.code(mv -> {
+			.friendly(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
 
 				ListMap<String, FieldMapper> keys = mappers.filter(f -> f.primaryKey);
@@ -424,7 +422,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 							mv.load("key").checkcastAndUnbox(fieldMapper.pojoClazz);
 							
 							if (fieldMapper.pojoClazz != jdbc.jdbcClazz) {
-								arguments.getConvert(fieldMapper.pojoClazz, jdbc.jdbcClazz).apply(mv);
+								arguments.getConvert(fieldMapper.pojoClazz, jdbc.jdbcClazz).apply((MethodCode)mv);
 							}							
 						});
 
@@ -442,7 +440,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.parameter("data", Object.class)
 			.reTurn(Object.class)
 			.tHrow(SQLException.class)
-			.code(mv -> {
+			.friendly(mv -> {
 				mv.line().load("this").virtual("insertJdbc").reTurn(clazzTarget).invoke(f -> f.load("data").checkcast(clazzTarget)).returnValue();
 			});
 	}
@@ -452,7 +450,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.parameter("data", Object.class)
 			.reTurn(Object.class)
 			.tHrow(SQLException.class)
-			.code(mv -> {
+			.friendly(mv -> {
 				mv.line().load("this").virtual("updateJdbc").reTurn(clazzTarget).invoke(f -> f.load("data").checkcast(clazzTarget)).returnValue();
 			});
 	}
@@ -462,7 +460,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.parameter("keys", generic(Object.class, true))
 			.reTurn(Object.class)
 			.tHrow(SQLException.class)
-			.code(mv -> {
+			.friendly(mv -> {
 				mv.line().load("this").virtual("findByIdJdbc").reTurn(clazzTarget).invoke(f -> f.load("keys")).returnValue();
 			});
 	}

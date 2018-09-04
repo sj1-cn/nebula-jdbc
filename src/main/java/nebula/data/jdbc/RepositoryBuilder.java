@@ -1,6 +1,7 @@
 package nebula.data.jdbc;
 
-import java.sql.PreparedStatement;
+import static nebula.tinyasm.data.CodeHelper.Const;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,26 +65,17 @@ public class RepositoryBuilder {
 
 	protected void bindField(MethodCode mv, int index, String clazzTarget, FieldMapper field) {
 		{
+			Class<?> jdbcClazz = field.pojoClazz;
+			JdbcMapping jdbcType = JDBC.mapJavaClazz2JdbcTypes.get(jdbcClazz.getName());
+
 			mv.line();
-			mv.LOAD("preparedStatement");
-			mv.LOADConst(index);
-			Class<?> jdbcClazz = loadObjectField(mv, clazzTarget, field);
-			setParam(mv, index, jdbcClazz);
+			mv.load("preparedStatement").inter(jdbcType.setname).invokeVoid(Const(index), p -> {
+				mv.load("data").virtual(field.pojo_getname).reTurn(field.pojoClazz).invoke();
+				if (jdbcClazz != jdbcType.jdbcClazz) {
+					arguments.getConvert(jdbcClazz, jdbcType.jdbcClazz).apply(mv);
+				}
+			});
 		}
-	}
-
-	protected Class<?> loadObjectField(MethodCode mv, String clazzTarget, FieldMapper field) {
-		mv.LOAD("data");
-		mv.VIRTUAL(clazzTarget, field.pojo_getname).reTurn(field.pojoClazz).INVOKE();
-		return field.pojoClazz;
-	}
-
-	private void setParam(MethodCode mv, int index, Class<?> pojoClazz) {
-		JdbcMapping jdbcType = JDBC.mapJavaClazz2JdbcTypes.get(pojoClazz.getName());
-		if (pojoClazz != jdbcType.jdbcClazz) {
-			arguments.getConvert(pojoClazz, jdbcType.jdbcClazz).apply(mv);
-		}
-		mv.INTERFACE(PreparedStatement.class, jdbcType.setname).parameter(int.class, jdbcType.jdbcClazz).INVOKE();
 	}
 
 }
