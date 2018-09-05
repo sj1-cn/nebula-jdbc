@@ -20,15 +20,15 @@ public class JdbcRowMapperBuilder {
 		this.arguments = arguments;
 	}
 
-	public byte[] make(String clazz, String targetClazz, FieldList maps) {
+	public byte[] make(String clazz, String clazzExtend, FieldList maps) {
 
-		ClassBody cw = ClassBuilder.make(clazz).implement(JdbcRowMapper.class, targetClazz).body();
+		ClassBody cw = ClassBuilder.make(clazz).implement(JdbcRowMapper.class, clazzExtend).body();
 
 		cw.constructerEmpty();
 		{
-			cw.method("map").parameter("rs", ResultSet.class).reTurn(targetClazz).tHrow(SQLException.class).code(mv -> {
+			cw.method("map").parameter("rs", ResultSet.class).reTurn(clazzExtend).tHrow(SQLException.class).code(mv -> {
 				mv.line();
-				mv.NEW(targetClazz);
+				mv.NEW(clazzExtend);
 				mv.DUP();
 				Class<?>[] clazzes = new Class<?>[maps.size()];
 				for (int i = 0; i < maps.size(); i++) {
@@ -43,7 +43,7 @@ public class JdbcRowMapperBuilder {
 
 					map(mv, name, getname, pojoClazz, jdbcClazz);
 				}
-				mv.SPECIAL(targetClazz, "<init>").parameter(clazzes).INVOKE();
+				mv.SPECIAL(clazzExtend, "<init>").parameter(clazzes).INVOKE();
 				mv.line();
 				mv.RETURNTop();
 			});
@@ -57,7 +57,7 @@ public class JdbcRowMapperBuilder {
 					mv.line();
 					mv.LOAD(0);
 					mv.LOAD(1);
-					mv.VIRTUAL(clazz, "map").parameter(ResultSet.class).reTurn(targetClazz).INVOKE();
+					mv.VIRTUAL(clazz, "map").parameter(ResultSet.class).reTurn(clazzExtend).INVOKE();
 					mv.RETURNTop();
 				});
 		}

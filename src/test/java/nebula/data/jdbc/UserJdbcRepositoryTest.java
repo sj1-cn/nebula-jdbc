@@ -112,7 +112,6 @@ public class UserJdbcRepositoryTest extends TestBase {
 
 		User a = new User(10, "name_a10", "description_a10");
 		User b = new User(20, "name_b20", "description_b20");
-		User b2 = new User(20, "name_b20_new", "description_b20_new");
 		{
 			User realuser = userRepository.insert(a);
 			assertEquals("User [id=10, name=name_a10, description=description_a10]", String.valueOf(realuser));
@@ -128,9 +127,12 @@ public class UserJdbcRepositoryTest extends TestBase {
 			assertEquals(
 					"[User [id=10, name=name_a10, description=description_a10], User [id=20, name=name_b20, description=description_b20]]",
 					users.toString());
-		}
-		{
-			User realuser = userRepository.update(b2);
+
+			User updateUser = realuser;
+			updateUser.setName("name_b20_new");
+			updateUser.setDescription("description_b20_new");
+
+			realuser = userRepository.update(updateUser);
 
 			assertEquals("User [id=20, name=name_b20_new, description=description_b20_new]", String.valueOf(realuser));
 			users = userRepository.list(0, 10);
@@ -167,21 +169,20 @@ public class UserJdbcRepositoryTest extends TestBase {
 
 		User a = new User(10, "name_a10", "description_a10");
 		User b = new User(20, "name_b20", "description_b20");
-		User b2 = new User(20, "name_b20_new", "description_b20_new");
 		{
 			userRepository.insert(a);
 			users1 = userRepository.list(0, 10);
 			assertEquals("[User [id=10, name=name_a10, description=description_a10]]", users1.toString());
 		}
 		{
-			userRepository.insert(b);
+			b=userRepository.insert(b);
 			users1 = userRepository.list(0, 10);
 			assertEquals(
 					"[User [id=10, name=name_a10, description=description_a10], User [id=20, name=name_b20, description=description_b20]]",
 					users1.toString());
-		}
-		{
-			userRepository.update(b2);
+			b.setName("name_b20_new");
+			b.setDescription("description_b20_new");
+			userRepository.update(b);
 
 			users1 = userRepository.list(0, 10);
 			assertEquals(
