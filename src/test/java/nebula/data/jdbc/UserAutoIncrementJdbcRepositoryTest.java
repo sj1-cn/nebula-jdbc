@@ -71,7 +71,7 @@ public class UserAutoIncrementJdbcRepositoryTest extends TestBase {
 
 		User a = new User(0, "name_a10", "description_a10");
 		User b = new User(0, "name_b20", "description_b20");
-		User b2 = new User(2, "name_b20_new", "description_b20_new");
+		User b2;
 		{
 			a = userRepository.insert(a);
 			assertEquals("User [id=1, name=name_a10, description=description_a10]", String.valueOf(a));
@@ -86,6 +86,9 @@ public class UserAutoIncrementJdbcRepositoryTest extends TestBase {
 					"[User [id=1, name=name_a10, description=description_a10], User [id=2, name=name_b20, description=description_b20]]",
 					users1.toString());
 		}
+		b2 = b;
+		b2.setName("name_b20_new");
+		b2.setDescription("description_b20_new");
 		{
 			b = userRepository.update(b2);
 			assertEquals("User [id=2, name=name_b20_new, description=description_b20_new]", String.valueOf(b));

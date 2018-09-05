@@ -244,6 +244,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 				FieldList fields = clazzDefinition.fields;
 
 				boolean hasAutoIncrment = fields.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
+				FieldMapper keyField = fields.filter(f -> f.isPrimaryKey()).get(0);
 
 				if (hasAutoIncrment) {
 					List<String> names = clazzDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.getName());
@@ -273,6 +274,8 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 							});							
 						}
 					}
+					//bindInsertExtend(preparedStatement, 4);
+					mv.line().loadThis().virtual("bindInsertExtend").reTurn(int.class).invoke(Var("preparedStatement"),Const(i)).pop();
 
 					mv.line().load("preparedStatement").inter("executeUpdate").reTurn(int.class).invoke();
 
@@ -283,7 +286,20 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 						m.line().load("rs").inter("next").reTurn(boolean.class).invoke().pop();
 
 						// findById(new Object[] { rs.getLong(1) });
-						invokeFindByid(mv, clazzDefinition, clazzTarget,"data").returnValue();
+						m.line().load("this").virtual("findByIdJdbc").parameter(Object.class, true).reTurn(clazzTarget).invoke(p -> {
+								m.newarray(Object.class, 1);
+
+								m.dup().setElement(0, e -> {
+									JdbcMapping jdbcMapping = JDBC.map(keyField.clazz);
+
+									// rs.getLong(1)
+									m.load("rs").inter(jdbcMapping.getname).parameter(int.class).reTurn(jdbcMapping.jdbcClazz).invoke(Const(1));
+
+									arguments.fromJdbcClazz(keyField.clazz, jdbcMapping.jdbcClazz).accept(m);
+									
+									mv.topInstance().boxWhenNeed();
+								});
+							}).returnValue();
 					});
 
 					mv.line().returnNull();

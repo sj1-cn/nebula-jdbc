@@ -95,7 +95,7 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 		bindInsertExtend(preparedStatement, 4);
 
 		if (preparedStatement.executeUpdate() > 0) {
-			return this.findByIdJdbc(data.getId());
+			return findByIdJdbc(data.getId());
 		}
 		return null;
 	}
@@ -110,6 +110,7 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 		// @formatter:off
 		PreparedStatement preparedStatement = conn.prepareStatement("UPDATE USER SET name=?,description=?,updateAt=? WHERE id=?");
 		// @formatter:on
+
 		preparedStatement.setString(1, data.getName());
 		preparedStatement.setString(2, data.getDescription());
 		bindUpdateExtend(preparedStatement, 3);
@@ -118,7 +119,6 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 		if (preparedStatement.executeUpdate() > 0) {
 			return findByIdJdbc(data.getId());
 		}
-		
 		return null;
 	}
 
@@ -129,7 +129,7 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 		// @formatter:on
 
 		Object key = keys[0];
-		preparedStatement.setLong(1, ((Long) key).longValue());
+		preparedStatement.setLong(1, ((Long)key).longValue());
 
 		return preparedStatement.executeUpdate();
 	}

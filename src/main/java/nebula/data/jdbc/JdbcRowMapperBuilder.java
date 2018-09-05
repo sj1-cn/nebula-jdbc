@@ -20,9 +20,9 @@ public class JdbcRowMapperBuilder {
 		this.arguments = arguments;
 	}
 
-	public byte[] make(String clazz, String clazzExtend, FieldList maps) {
+	public byte[] make(String clazzRowMapper, String clazzExtend, FieldList maps) {
 
-		ClassBody cw = ClassBuilder.make(clazz).implement(JdbcRowMapper.class, clazzExtend).body();
+		ClassBody cw = ClassBuilder.make(clazzRowMapper).implement(JdbcRowMapper.class, clazzExtend).body();
 
 		cw.constructerEmpty();
 		{
@@ -57,7 +57,7 @@ public class JdbcRowMapperBuilder {
 					mv.line();
 					mv.LOAD(0);
 					mv.LOAD(1);
-					mv.VIRTUAL(clazz, "map").parameter(ResultSet.class).reTurn(clazzExtend).INVOKE();
+					mv.VIRTUAL(clazzRowMapper, "map").parameter(ResultSet.class).reTurn(clazzExtend).INVOKE();
 					mv.RETURNTop();
 				});
 		}

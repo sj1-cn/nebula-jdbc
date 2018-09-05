@@ -58,21 +58,21 @@ public class RepositoryFactory {
 	private MyClassLoader myClassLoader = new MyClassLoader();
 
 	public <T> Repository<T> getRepository(Class<T> type) {
-		FieldList mappers = build(type);
+		ClazzDefinition clazzDefinition = build(type);
 
-		getMapper(type);
+		getMapper(clazzDefinition);
 
 		String clazzRepository = type.getName() + "Repository";
 		String clazzTarget = type.getName();
-		String clazzRowMapper = type.getName() + "RowMapper";
 		String clazzExtend = type.getName() + "Extend";
-		ClazzDefinition clazzDefinition = new ClazzDefinition(type.getSimpleName(), type.getSimpleName(), mappers);
+		String clazzRowMapper = clazzExtend + "RowMapper";
 
 		byte[] codeRepository = repositoryBuilder.make(clazzRepository, clazzTarget, clazzExtend, clazzRowMapper, clazzDefinition);
 
 		try {
 			@SuppressWarnings("unchecked")
-			Class<JdbcRepository<T>> clazzJdbcRepository = (Class<JdbcRepository<T>>) myClassLoader.defineClassByName(clazzRepository, codeRepository);
+			Class<JdbcRepository<T>> clazzJdbcRepository = (Class<JdbcRepository<T>>) myClassLoader.defineClassByName(clazzRepository,
+					codeRepository);
 			JdbcRepository<T> jdbcRepository = clazzJdbcRepository.newInstance();
 			jdbcRepository.setConnection(this.conn);
 			return jdbcRepository;
@@ -81,8 +81,11 @@ public class RepositoryFactory {
 		}
 	}
 
-	public FieldList build(Class<?> type) {
-		FieldList mappers = new FieldList();
+	public ClazzDefinition build(Class<?> type) {
+		FieldList fields = new FieldList();
+
+		String name = type.getSimpleName();
+		String tablename = name.toUpperCase();
 
 		for (Field field : type.getDeclaredFields()) {
 			int modifier = field.getModifiers();
@@ -97,14 +100,14 @@ public class RepositoryFactory {
 				boolean primaryKey = "id".equals(fieldname);
 				if (primaryKey) {
 					FieldMapper mapper = new FieldMapper(primaryKey, fieldname, getname, fieldClazz, column.autoIncrement());
-					mappers.push(mapper);
+					fields.push(mapper);
 				} else {
 					FieldMapper mapper = new FieldMapper(primaryKey, fieldname, getname, fieldClazz, column);
-					mappers.push(mapper);
+					fields.push(mapper);
 				}
 			}
 		}
-		return mappers;
+		return new ClazzDefinition(name, type.getName(), tablename, fields);
 	}
 
 	public String getGetName(String fieldname, Class<?> clazz) {
@@ -118,17 +121,16 @@ public class RepositoryFactory {
 	public JdbcRowMapperBuilder rowMapperBuilder = new JdbcRowMapperBuilder(arguments);
 	public JdbcRepositoryBuilder repositoryBuilder = new JdbcRepositoryBuilder(arguments);
 
-	public <T> JdbcRowMapper<T> getMapper(Class<T> type) {
-		FieldList mappers = build(type);
+	public <T> JdbcRowMapper<T> getMapper(ClazzDefinition clazzDefinition) {
 
-		String clazz = type.getName() + "RowMapper";
-		String targetClazz = type.getName();
+		String clazzExtend = clazzDefinition.clazz + "Extend";
+		String clazzRowMapper = clazzExtend + "RowMapper";
 
-		byte[] code = rowMapperBuilder.make(clazz, targetClazz, mappers);
+		byte[] code = rowMapperBuilder.make(clazzRowMapper, clazzExtend, clazzDefinition.fieldsAll);
 
 		try {
 			@SuppressWarnings("unchecked")
-			Class<JdbcRowMapper<T>> rowMapperClazz = (Class<JdbcRowMapper<T>>) myClassLoader.defineClassByName(clazz, code);
+			Class<JdbcRowMapper<T>> rowMapperClazz = (Class<JdbcRowMapper<T>>) myClassLoader.defineClassByName(clazzRowMapper, code);
 			JdbcRowMapper<T> rowMapper = rowMapperClazz.newInstance();
 			return rowMapper;
 		} catch (InstantiationException e) {

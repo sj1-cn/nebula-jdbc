@@ -72,19 +72,21 @@ public class UserKeysJdbcRepositoryTest extends TestBase {
 		User b = new User(20, "name_b20", "description_b20");
 		User b2 = new User(20, "name_b20", "description_b20_new");
 		{
-			User realuser = userRepository.insert(a);
-			assertEquals("User [id=10, name=name_a10, description=description_a10]", String.valueOf(realuser));
+			a = userRepository.insert(a);
+			assertEquals("User [id=10, name=name_a10, description=description_a10]", String.valueOf(a));
 			users = userRepository.list(0, 10);
 			assertEquals("[User [id=10, name=name_a10, description=description_a10]]", users.toString());
 		}
 		{
-			User realuser = userRepository.insert(b);
-			assertEquals("User [id=20, name=name_b20, description=description_b20]", String.valueOf(realuser));
+			b = userRepository.insert(b);
+			assertEquals("User [id=20, name=name_b20, description=description_b20]", String.valueOf(b));
 			users = userRepository.list(0, 10);
 			assertEquals(
 					"[User [id=10, name=name_a10, description=description_a10], User [id=20, name=name_b20, description=description_b20]]",
 					users.toString());
 		}
+		b2 = b;
+		b2.setDescription("description_b20_new");
 		{
 			User realuser =userRepository.update(b2);
 

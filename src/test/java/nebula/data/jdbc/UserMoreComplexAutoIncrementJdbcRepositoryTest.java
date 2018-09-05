@@ -65,6 +65,9 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTest extends TestBase {
 					"[User [id=1, name=name_a10, description=description_a10], User [id=2, name=name_b20, description=description_b20]]",
 					users1.toString());
 		}
+		b2 = b;
+		b2.setName("name_b20_new");
+		b2.setDescription("description_b20_new");
 		{
 			b = userRepository.update(b2);
 			assertEquals("User [id=2, name=name_b20_new, description=description_b20_new]", String.valueOf(b));

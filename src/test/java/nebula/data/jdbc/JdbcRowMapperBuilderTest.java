@@ -63,7 +63,7 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 
 		String targetClazz = User.class.getName();
 		String clazzExtend = targetClazz + "Extend";
-		ClazzDefinition clazzDefinition = new ClazzDefinition(User.class.getSimpleName(), User.class.getSimpleName(),
+		ClazzDefinition clazzDefinition = new ClazzDefinition(User.class.getSimpleName(),User.class.getName(), User.class.getSimpleName(),
 				clazzFields);
 		byte[] codeClazzExtend = clazzExtendBuilder.make(clazzExtend, targetClazz, clazzDefinition);
 		classLoader.defineClassByName(clazzExtend, codeClazzExtend);
@@ -93,7 +93,7 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 
 		String targetClazz = User.class.getName();
 		String clazzExtend = targetClazz + "Extend";
-		ClazzDefinition clazzDefinition = new ClazzDefinition(User.class.getSimpleName(), User.class.getSimpleName(),
+		ClazzDefinition clazzDefinition = new ClazzDefinition(User.class.getSimpleName(), User.class.getName(),User.class.getSimpleName(),
 				clazzFields);
 		byte[] codeClazzExtend = clazzExtendBuilder.make(clazzExtend, targetClazz, clazzDefinition);
 		classLoader.defineClassByName(clazzExtend, codeClazzExtend);
@@ -126,7 +126,7 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 
 		String targetClazz = UserMoreComplex.class.getName();
 		String clazzExtend = targetClazz + "Extend";
-		ClazzDefinition clazzDefinition = new ClazzDefinition(UserMoreComplex.class.getSimpleName(), UserMoreComplex.class.getSimpleName(),
+		ClazzDefinition clazzDefinition = new ClazzDefinition(UserMoreComplex.class.getSimpleName(),User.class.getName(), UserMoreComplex.class.getSimpleName(),
 				clazzFields);
 		byte[] codeClazzExtend = clazzExtendBuilder.make(clazzExtend, targetClazz, clazzDefinition);
 		classLoader.defineClassByName(clazzExtend, codeClazzExtend);

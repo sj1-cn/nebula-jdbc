@@ -77,6 +77,62 @@ public class UserMoreComplex {
 		return timestamp;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setString(String string) {
+		this.string = string;
+	}
+
+	public void setBigDecimal(BigDecimal bigDecimal) {
+		this.bigDecimal = bigDecimal;
+	}
+
+	public void setZ(Boolean z) {
+		this.z = z;
+	}
+
+	public void setC(Character c) {
+		this.c = c;
+	}
+
+	public void setB(Byte b) {
+		this.b = b;
+	}
+
+	public void setS(Short s) {
+		this.s = s;
+	}
+
+	public void setI(Integer i) {
+		this.i = i;
+	}
+
+	public void setL(Long l) {
+		this.l = l;
+	}
+
+	public void setF(Float f) {
+		this.f = f;
+	}
+
+	public void setD(Double d) {
+		this.d = d;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public void setTime(Time time) {
+		this.time = time;
+	}
+
+	public void setTimestamp(Timestamp timestamp) {
+		this.timestamp = timestamp;
+	}
+
 	public UserMoreComplex(Long id, String string, BigDecimal bigDecimal, Boolean z, Character c, Byte b, Short s,
 			Integer i, Long l, Float f, Double d, Date date, Time time, Timestamp timestamp) {
 		this.id = id;

@@ -4,14 +4,16 @@ import static nebula.jdbc.builders.schema.ColumnDefinition.*;
 
 public class ClazzDefinition {
 	final String name;
+	final String clazz;
 	final String tablename;
 	final FieldList fields;
 	final FieldList fieldsExtend;
 	final FieldList fieldsAll;
 
-	public ClazzDefinition(String name, String tablename, FieldList fields) {
+	public ClazzDefinition(String name,String clazz, String tablename, FieldList fields) {
 		super();
 		this.name = name;
+		this.clazz = clazz;
 		this.tablename = tablename.toUpperCase();
 		this.fields = fields;
 		this.fieldsExtend = defaultFieldsExtend;
@@ -26,6 +28,10 @@ public class ClazzDefinition {
 
 	public String getTablename() {
 		return tablename;
+	}
+
+	public String getClazz() {
+		return clazz;
 	}
 
 	public FieldList getFields() {
