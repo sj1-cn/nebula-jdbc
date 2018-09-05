@@ -32,7 +32,7 @@ public class RepositoryFactoryTest extends TestBase {
 	@Test
 	public void test_getMapper() {
 		ClazzDefinition clazzDefinition = repositoryFactory.build(User.class);
-		repositoryFactory.getMapper(clazzDefinition);
+		repositoryFactory.makeJdbcRowMapper(clazzDefinition);
 	}
 
 	@Test
