@@ -113,7 +113,7 @@ public class RepositoryFactory {
 	private <T> Repository<T> makeJdbcRepository(ClazzDefinition clazzDefinition) {
 		String clazzRepositoryName = clazzDefinition.clazz + "Repository";
 		String clazzTargetName = clazzDefinition.clazz;
-		String clazzExtendName = makeClazzExtend(clazzDefinition).getName();
+		String clazzExtendName = getClazzExtend(clazzDefinition).getName();
 		String clazzRowMapperName = makeJdbcRowMapper(clazzDefinition).getName();
 
 		byte[] codeRepository = repositoryBuilder.make(clazzRepositoryName, clazzTargetName, clazzExtendName, clazzRowMapperName,
