@@ -161,7 +161,7 @@ public class UserJdbcRepositoryTest extends TestBase {
 		JdbcRepository<User> userRepository = new UserJdbcRepository();
 		userRepository.setConnection(connection);
 
-		connection.createStatement().execute("CREATE TABLE user (id INTEGER PRIMARY KEY, description VARCHAR)");
+		connection.createStatement().execute("CREATE TABLE USER (id INTEGER PRIMARY KEY, description VARCHAR)");
 
 		userRepository.init();
 

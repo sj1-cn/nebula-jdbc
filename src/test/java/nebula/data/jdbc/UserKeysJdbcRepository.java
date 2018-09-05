@@ -14,7 +14,7 @@ import nebula.jdbc.builders.schema.JDBC;
 
 public class UserKeysJdbcRepository implements JdbcRepository<User> {
 	private Connection conn;
-	private UserJdbcRowMapper mapper = new UserJdbcRowMapper();
+	private UserExtendJdbcRowMapper mapper = new UserExtendJdbcRowMapper();
 
 	@Override
 	public void setConnection(Connection conn) {
@@ -27,8 +27,12 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 		columnList.push(ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY"));
 		columnList.push(ColumnDefinition.valueOf("name VARCHAR(256) PRIMARY KEY"));
 		columnList.push(ColumnDefinition.valueOf("description VARCHAR(256)"));
-		if (!JDBC.mergeIfExists(conn, "user", columnList)) {
-			conn.prepareStatement("CREATE TABLE user(id INTEGER(10),name VARCHAR(256),description VARCHAR(256),PRIMARY KEY(id,name))").execute();
+		columnList.push(ColumnDefinition.valueOf("createAt TIMESTAMP"));
+		columnList.push(ColumnDefinition.valueOf("updateAt TIMESTAMP"));
+		if (!JDBC.mergeIfExists(conn, "USER", columnList)) {
+			// @formatter:off
+			conn.prepareStatement("CREATE TABLE USER(id INTEGER(10),name VARCHAR(256),description VARCHAR(256),createAt TIMESTAMP,updateAt TIMESTAMP,PRIMARY KEY(id,name))").execute();
+			// @formatter:on
 		}
 	}
 
@@ -36,7 +40,9 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 	public PageList<User> listJdbc(int start, int max) throws SQLException {
 		PageList<User> datas = new PageListImpl<>(start, max);
 
-		String sql = Select.columns("id,name,description").from("user").offset(start).max(max).toSQL();
+		// @formatter:off
+		String sql = Select.columns("id,name,description,createAt,updateAt").from("USER").offset(start).max(max).toSQL();
+		// @formatter:on
 
 		ResultSet resultSet = conn.prepareStatement(sql).executeQuery();
 
@@ -45,7 +51,7 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 		}
 		resultSet.close();
 
-		String sqlCount = Select.columns("count(1)").from("user").toSQL();
+		String sqlCount = Select.columns("count(1)").from("USER").toSQL();
 		ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
 		resultSetCount.next();
 		int totalSize = resultSetCount.getInt(1);
@@ -61,7 +67,9 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 		ResultSet resultSet;
 		List<User> datas = new ArrayList<>();
 
-		preparedStatement = conn.prepareStatement("SELECT id, name, description FROM user WHERE id = ? AND name = ?");
+		// @formatter:off
+		preparedStatement = conn.prepareStatement("SELECT id, name, description, createAt, updateAt FROM USER WHERE id = ? AND name = ?");
+		// @formatter:on
 
 		Object key = keys[0];
 		preparedStatement.setLong(1, ((Long)key).longValue());
@@ -78,35 +86,48 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 
 	@Override
 	public User insertJdbc(User data) throws SQLException {
-		PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO user(id,name,description) VALUES(?,?,?)");
+		// @formatter:off
+		PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO USER(id,name,description,createAt,updateAt) VALUES(?,?,?,?,?)");
+		// @formatter:on
 
 		preparedStatement.setLong(1, data.getId());
 		preparedStatement.setString(2, data.getName());
 		preparedStatement.setString(3, data.getDescription());
 
+		bindInsertExtend(preparedStatement, 4);
+
 		if (preparedStatement.executeUpdate() > 0) {
-			return this.findById(data.getId(),data.getName());
+			return this.findByIdJdbc(data.getId(),data.getName());
 		}
 		return null;
 	}
 
 	@Override
 	public User updateJdbc(User data) throws SQLException {
-		PreparedStatement preparedStatement = conn.prepareStatement("UPDATE user SET description=? WHERE id=? AND name=?");
+		ClassExtend extend = (ClassExtend) findByIdJdbc(data.getId(),data.getName());
+		if (extend.getUpdateAt() == ((ClassExtend) data).getUpdateAt()) {
+			return null;
+		}
 
+		// @formatter:off
+		PreparedStatement preparedStatement = conn.prepareStatement("UPDATE USER SET description=?,updateAt=? WHERE id=? AND name=?");
+		// @formatter:on
 		preparedStatement.setString(1, data.getDescription());
-		preparedStatement.setLong(2, data.getId());
-		preparedStatement.setString(3, data.getName());
+		bindUpdateExtend(preparedStatement, 2);
+		preparedStatement.setLong(3, data.getId());
+		preparedStatement.setString(4, data.getName());
 
 		if (preparedStatement.executeUpdate() > 0) {
-			return findById(data.getId(),data.getName());
+			return findByIdJdbc(data.getId(),data.getName());
 		}
 		return null;
 	}
 
 	@Override
 	public int deleteJdbc(Object... keys) throws SQLException {
-		PreparedStatement preparedStatement = conn.prepareStatement("DELETE user WHERE id=? AND name=?");
+		// @formatter:off
+		PreparedStatement preparedStatement = conn.prepareStatement("DELETE USER WHERE id=? AND name=?");
+		// @formatter:on
 
 		Object key = keys[0];
 		preparedStatement.setLong(1, ((Long)key).longValue());

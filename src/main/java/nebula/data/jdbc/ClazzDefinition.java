@@ -12,7 +12,7 @@ public class ClazzDefinition {
 	public ClazzDefinition(String name, String tablename, FieldList fields) {
 		super();
 		this.name = name;
-		this.tablename = tablename;
+		this.tablename = tablename.toUpperCase();
 		this.fields = fields;
 		this.fieldsExtend = defaultFieldsExtend;
 		this.fieldsAll = new FieldList();

@@ -62,15 +62,17 @@ public class RepositoryFactory {
 
 		getMapper(type);
 
-		String clazz = type.getName() + "Repository";
-		String targetClazz = type.getName();
-		String mapClazz = type.getName() + "RowMapper";
+		String clazzRepository = type.getName() + "Repository";
+		String clazzTarget = type.getName();
+		String clazzRowMapper = type.getName() + "RowMapper";
+		String clazzExtend = type.getName() + "Extend";
+		ClazzDefinition clazzDefinition = new ClazzDefinition(type.getSimpleName(), type.getSimpleName(), mappers);
 
-		byte[] code = repositoryBuilder.make(clazz, targetClazz, mapClazz, type.getSimpleName(), mappers);
+		byte[] codeRepository = repositoryBuilder.make(clazzRepository, clazzTarget, clazzExtend, clazzRowMapper, clazzDefinition);
 
 		try {
 			@SuppressWarnings("unchecked")
-			Class<JdbcRepository<T>> clazzJdbcRepository = (Class<JdbcRepository<T>>) myClassLoader.defineClassByName(clazz, code);
+			Class<JdbcRepository<T>> clazzJdbcRepository = (Class<JdbcRepository<T>>) myClassLoader.defineClassByName(clazzRepository, codeRepository);
 			JdbcRepository<T> jdbcRepository = clazzJdbcRepository.newInstance();
 			jdbcRepository.setConnection(this.conn);
 			return jdbcRepository;

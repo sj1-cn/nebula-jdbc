@@ -1,7 +1,11 @@
 package nebula.data.jdbc;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+
+import nebula.jdbc.builders.schema.JDBC;
 
 public interface JdbcRepository<T> extends Repository<T> {
 	void setConnection(Connection conn);
@@ -49,6 +53,19 @@ public interface JdbcRepository<T> extends Repository<T> {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	default int bindInsertExtend(PreparedStatement preparedStatement, int index) throws SQLException {
+		Timestamp timestamp = JDBC.timestamp();
+		preparedStatement.setTimestamp(index++, timestamp);// createAt
+		preparedStatement.setTimestamp(index++, timestamp);// updateAt
+		return index;
+	}
+
+	default int bindUpdateExtend(PreparedStatement preparedStatement, int index) throws SQLException {
+		Timestamp timestamp = JDBC.timestamp();
+		preparedStatement.setTimestamp(index++, timestamp);// updateAt
+		return index;
 	}
 
 	@Override

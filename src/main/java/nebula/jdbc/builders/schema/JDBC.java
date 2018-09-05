@@ -25,21 +25,27 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.JDBCType;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
 public class JDBC {
+	public static Timestamp timestamp() {
+		return new java.sql.Timestamp(System.currentTimeMillis());
+	}
+
 	private static EnumMap<JDBCType, String> mapJDBCType2JavaClazz = new EnumMap<>(JDBCType.class);
 	private static Map<String, JDBCType> mapJavaClass2JDBCType = new HashMap<>();
-	
+
 	public static JDBCType jdbcType(String clazz) {
 		return mapJavaClass2JDBCType.get(clazz);
 	}
+
 	public static JDBCType jdbcType(Class<?> clazz) {
 		return mapJavaClass2JDBCType.get(clazz.getName());
 	}
-	
+
 	static {
 		mapJDBCType2JavaClazz.put(CHAR, "java.lang.String");
 		mapJDBCType2JavaClazz.put(VARCHAR, "java.lang.String");

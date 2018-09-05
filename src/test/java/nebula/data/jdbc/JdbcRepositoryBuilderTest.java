@@ -1,18 +1,20 @@
 package nebula.data.jdbc;
 
-import static java.sql.JDBCType.BIGINT;
-import static java.sql.JDBCType.BOOLEAN;
-import static java.sql.JDBCType.CHAR;
-import static java.sql.JDBCType.DATE;
-import static java.sql.JDBCType.DECIMAL;
-import static java.sql.JDBCType.DOUBLE;
-import static java.sql.JDBCType.FLOAT;
 import static java.sql.JDBCType.INTEGER;
-import static java.sql.JDBCType.SMALLINT;
-import static java.sql.JDBCType.TIME;
-import static java.sql.JDBCType.TIMESTAMP;
-import static java.sql.JDBCType.TINYINT;
 import static java.sql.JDBCType.VARCHAR;
+import static nebula.jdbc.builders.schema.ColumnDefinition.BIGINT;
+import static nebula.jdbc.builders.schema.ColumnDefinition.BIT;
+import static nebula.jdbc.builders.schema.ColumnDefinition.BOOLEAN;
+import static nebula.jdbc.builders.schema.ColumnDefinition.CHAR;
+import static nebula.jdbc.builders.schema.ColumnDefinition.DATE;
+import static nebula.jdbc.builders.schema.ColumnDefinition.DOUBLE;
+import static nebula.jdbc.builders.schema.ColumnDefinition.FLOAT;
+import static nebula.jdbc.builders.schema.ColumnDefinition.INTEGER;
+import static nebula.jdbc.builders.schema.ColumnDefinition.NUMERIC;
+import static nebula.jdbc.builders.schema.ColumnDefinition.SMALLINT;
+import static nebula.jdbc.builders.schema.ColumnDefinition.TIME;
+import static nebula.jdbc.builders.schema.ColumnDefinition.TIMESTAMP;
+import static nebula.jdbc.builders.schema.ColumnDefinition.VARCHAR;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
@@ -30,8 +32,8 @@ import nebula.jdbc.builders.schema.ColumnDefinition;
 
 public class JdbcRepositoryBuilderTest extends TestBase {
 
-	String clazz;
-	FieldList maps;
+	String clazzRepository;
+	ClazzDefinition clazzDefinition;
 	JdbcRowMapperBuilder jdbcRowMapperBuilder;
 
 	JdbcRepositoryBuilder jdbcRepositoryBuilder;
@@ -44,13 +46,14 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 
 		jdbcRowMapperBuilder = new JdbcRowMapperBuilder(arguments);
 		jdbcRepositoryBuilder = new JdbcRepositoryBuilder(arguments);
-		maps = new FieldList();
-		clazz = UserJdbcRowMapper.class.getName();
-		maps.push(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
-		maps.push(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
-		maps.push(new FieldMapper("description", "getDescription", String.class,
-				new ColumnDefinition("description", VARCHAR)));
 
+		FieldList clazzFields = new FieldList();
+
+		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, INTEGER("id")));
+		clazzFields.push(new FieldMapper("name", "getName", String.class, VARCHAR("name")));
+		clazzFields.push(new FieldMapper("description", "getDescription", String.class, VARCHAR("description")));
+
+		clazzDefinition = new ClazzDefinition(User.class.getSimpleName(), User.class.getSimpleName(), clazzFields);
 	}
 
 	@After
@@ -66,21 +69,21 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testUser() throws IOException, InstantiationException, IllegalAccessException, NoSuchMethodException,
-			SecurityException, IllegalArgumentException, InvocationTargetException, SQLException {
+	public void testUser() throws IOException, InstantiationException, IllegalAccessException, NoSuchMethodException, SecurityException,
+			IllegalArgumentException, InvocationTargetException, SQLException {
 
 		String clazzTarget = User.class.getName();
 		String clazzRowMapper = UserJdbcRowMapper.class.getName() + "testUser";
+		String clazzExtend = clazzTarget + "Extend";
 
-		byte[] codeRowMapper = jdbcRowMapperBuilder.make(clazzRowMapper, clazzTarget, maps);
+		byte[] codeRowMapper = jdbcRowMapperBuilder.make(clazzRowMapper, clazzTarget, clazzDefinition.fieldsAll);
 		@SuppressWarnings("unused")
-		Class<JdbcRowMapper<User>> clazzJdbcRowMapper = (Class<JdbcRowMapper<User>>) classLoader
-			.defineClassByName(clazzRowMapper, codeRowMapper);
-		byte[] codeRepository = jdbcRepositoryBuilder.make(clazz, clazzTarget, clazzRowMapper, "user", maps);
-		Class<JdbcRepository<User>> clazzJdbcRepository = (Class<JdbcRepository<User>>) classLoader
-			.defineClassByName(this.clazz, codeRepository);
+		Class<JdbcRowMapper<User>> clazzJdbcRowMapper = (Class<JdbcRowMapper<User>>) classLoader.defineClassByName(clazzRowMapper,
+				codeRowMapper);
+		byte[] codeRepository = jdbcRepositoryBuilder.make(clazzRepository, clazzTarget, clazzExtend, clazzRowMapper, clazzDefinition);
+		Class<JdbcRepository<User>> clazzJdbcRepository = (Class<JdbcRepository<User>>) classLoader.defineClassByName(clazzRepository,
+				codeRepository);
 
-		// 利用反射创建对象
 		JdbcRepository<User> userRepository = clazzJdbcRepository.newInstance();
 		userRepository.setConnection(connection);
 
@@ -128,87 +131,87 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 	@Test
 	public void testUserJdbcRepository() {
 
-		String clazz = UserJdbcRepository.class.getName();
-		String targetClazz = User.class.getName();
-		String mapClazz = UserJdbcRowMapper.class.getName();
+		String clazzRepository = UserJdbcRepository.class.getName();
+		String clazzTarget = User.class.getName();
+		String clazzRowMapper = UserExtendJdbcRowMapper.class.getName();
+		String clazzExtend = clazzTarget + "Extend";
 
-		JdbcRepositoryBuilder builder = new JdbcRepositoryBuilder(new Arguments());
-		byte[] code = builder.make(clazz, targetClazz, mapClazz, "user", maps);
+		byte[] codeRepository = jdbcRepositoryBuilder.make(clazzRepository, clazzTarget, clazzExtend, clazzRowMapper, clazzDefinition);
 
-		String codeActual = toString(code);
-		String codeExpected = toString(clazz);
+		String codeActual = toString(codeRepository);
+		String codeExpected = toString(clazzRepository);
 		assertEquals("Code", codeExpected, codeActual);
 	}
 
 	@Test
 	public void testUserKeysJdbcRepository() {
-		maps = new FieldList();
-		maps.push(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
-		maps.push(new FieldMapper(true, "name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
-		maps.push(new FieldMapper("description", "getDescription", String.class,
-				new ColumnDefinition("description", VARCHAR)));
+		FieldList clazzFields = new FieldList();
+		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, INTEGER("id")));
+		clazzFields.push(new FieldMapper(true, "name", "getName", String.class, VARCHAR("name")));
+		clazzFields.push(new FieldMapper("description", "getDescription", String.class, VARCHAR("description")));
 
-		String clazz = UserKeysJdbcRepository.class.getName();
-		String targetClazz = User.class.getName();
-		String mapClazz = UserJdbcRowMapper.class.getName();
+		clazzDefinition = new ClazzDefinition(User.class.getSimpleName(), User.class.getSimpleName(), clazzFields);
 
-		JdbcRepositoryBuilder builder = new JdbcRepositoryBuilder(new Arguments());
-		byte[] code = builder.make(clazz, targetClazz, mapClazz, "user", maps);
+		String clazzRepository = UserKeysJdbcRepository.class.getName();
+		String clazzTarget = User.class.getName();
+		String clazzRowMapper = UserExtendJdbcRowMapper.class.getName();
+		String clazzExtend = clazzTarget + "Extend";
 
-		String codeActual = toString(code);
-		String codeExpected = toString(clazz);
+		byte[] codeRepository = jdbcRepositoryBuilder.make(clazzRepository, clazzTarget, clazzExtend, clazzRowMapper, clazzDefinition);
+
+		String codeActual = toString(codeRepository);
+		String codeExpected = toString(clazzRepository);
 		assertEquals("Code", codeExpected, codeActual);
 	}
 
 	@Test
 	public void testUserMoreComplexAutoIncrementJdbcRepository() {
-		FieldList maps = new FieldList();
-		maps.push(new FieldMapper(true, "id", "getId", Long.class,
-				new ColumnDefinition("id", BIGINT).primarykey().autoIncrement()));
-		maps.push(new FieldMapper("string", "getString", String.class, new ColumnDefinition("string", VARCHAR)));
-		maps.push(new FieldMapper("bigDecimal", "getBigDecimal", java.math.BigDecimal.class,
-				new ColumnDefinition("bigDecimal", DECIMAL)));
-		maps.push(new FieldMapper("z", "getZ", Boolean.class, new ColumnDefinition("z", BOOLEAN)));
-		maps.push(new FieldMapper("c", "getC", Character.class, new ColumnDefinition("c", CHAR)));
-		maps.push(new FieldMapper("b", "getB", Byte.class, new ColumnDefinition("b", TINYINT)));
-		maps.push(new FieldMapper("s", "getS", Short.class, new ColumnDefinition("s", SMALLINT)));
-		maps.push(new FieldMapper("i", "getI", Integer.class, new ColumnDefinition("i", INTEGER)));
-		maps.push(new FieldMapper("l", "getL", Long.class, new ColumnDefinition("l", BIGINT)));
-		maps.push(new FieldMapper("f", "getF", Float.class, new ColumnDefinition("f", FLOAT)));
-		maps.push(new FieldMapper("d", "getD", Double.class, new ColumnDefinition("d", DOUBLE)));
-		maps.push(new FieldMapper("date", "getDate", java.sql.Date.class, new ColumnDefinition("date", DATE)));
-		maps.push(new FieldMapper("time", "getTime", java.sql.Time.class, new ColumnDefinition("time", TIME)));
-		maps.push(new FieldMapper("timestamp", "getTimestamp", java.sql.Timestamp.class,
-				new ColumnDefinition("timestamp", TIMESTAMP)));
+		FieldList clazzFields = new FieldList();
+		clazzFields.push(new FieldMapper("id", "getId", Long.class, BIGINT("id").primarykey().autoIncrement()));
+		clazzFields.push(new FieldMapper("string", "getString", String.class, VARCHAR("string")));
+		clazzFields.push(new FieldMapper("bigDecimal", "getBigDecimal", java.math.BigDecimal.class, NUMERIC("bigDecimal")));
+		clazzFields.push(new FieldMapper("z", "getZ", Boolean.class, BOOLEAN("z")));
+		clazzFields.push(new FieldMapper("c", "getC", Character.class, CHAR("c")));
+		clazzFields.push(new FieldMapper("b", "getB", Byte.class, BIT("b")));
+		clazzFields.push(new FieldMapper("s", "getS", Short.class, SMALLINT("s")));
+		clazzFields.push(new FieldMapper("i", "getI", Integer.class, INTEGER("i")));
+		clazzFields.push(new FieldMapper("l", "getL", Long.class, BIGINT("l")));
+		clazzFields.push(new FieldMapper("f", "getF", Float.class, FLOAT("f")));
+		clazzFields.push(new FieldMapper("d", "getD", Double.class, DOUBLE("d")));
+		clazzFields.push(new FieldMapper("date", "getDate", java.sql.Date.class, DATE("date")));
+		clazzFields.push(new FieldMapper("time", "getTime", java.sql.Time.class, TIME("time")));
+		clazzFields.push(new FieldMapper("timestamp", "getTimestamp", java.sql.Timestamp.class, TIMESTAMP("timestamp")));
+		clazzDefinition = new ClazzDefinition(UserMoreComplex.class.getSimpleName(), UserMoreComplex.class.getSimpleName(), clazzFields);
 
-		String clazz = UserMoreComplexAutoIncrementJdbcRepository.class.getName();
-		String targetClazz = UserMoreComplex.class.getName();
-		String mapClazz = UserMoreComplexJdbcRowMapper.class.getName();
+		String clazzRepository = UserMoreComplexAutoIncrementJdbcRepository.class.getName();
+		String clazzTarget = UserMoreComplex.class.getName();
+		String clazzRowMapper = UserMoreComplexJdbcRowMapper.class.getName();
+		String clazzExtend = clazzTarget + "Extend";
 
-		byte[] code = jdbcRepositoryBuilder.make(clazz, targetClazz, mapClazz, "UserMoreComplex", maps);
+		byte[] codeRepository = jdbcRepositoryBuilder.make(clazzRepository, clazzTarget, clazzExtend, clazzRowMapper, clazzDefinition);
 
-		String codeActual = toString(code);
-		String codeExpected = toString(clazz);
+		String codeActual = toString(codeRepository);
+		String codeExpected = toString(clazzRepository);
 		assertEquals("Code", codeExpected, codeActual);
 	}
 
 	@Test
 	public void testUserAutoIncrementJdbcRepository() {
-		maps = new FieldList();
-		maps.push(
-				new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER).autoIncrement()));
-		maps.push(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
-		maps.push(new FieldMapper("description", "getDescription", String.class,
-				new ColumnDefinition("description", VARCHAR)));
+		FieldList clazzFields = new FieldList();
+		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER).autoIncrement()));
+		clazzFields.push(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
+		clazzFields.push(new FieldMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
+		clazzDefinition = new ClazzDefinition(User.class.getSimpleName(), User.class.getSimpleName(), clazzFields);
 
-		String clazz = UserAutoIncrementJdbcRepository.class.getName();
-		String targetClazz = User.class.getName();
-		String mapClazz = UserJdbcRowMapper.class.getName();
+		String clazzRepository = UserAutoIncrementJdbcRepository.class.getName();
+		String clazzTarget = User.class.getName();
+		String clazzRowMapper = UserJdbcRowMapper.class.getName();
+		String clazzExtend = clazzTarget + "Extend";
 
-		byte[] code = jdbcRepositoryBuilder.make(clazz, targetClazz, mapClazz, "user", maps);
+		byte[] codeRepository = jdbcRepositoryBuilder.make(clazzRepository, clazzTarget, clazzExtend, clazzRowMapper, clazzDefinition);
 
-		String codeActual = toString(code);
-		String codeExpected = toString(clazz);
+		String codeActual = toString(codeRepository);
+		String codeExpected = toString(clazzRepository);
 		assertEquals("Code", codeExpected, codeActual);
 	}
 }
