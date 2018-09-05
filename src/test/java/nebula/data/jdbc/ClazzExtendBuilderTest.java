@@ -1,25 +1,25 @@
 package nebula.data.jdbc;
 
-import static java.sql.JDBCType.BIGINT;
-import static java.sql.JDBCType.BIT;
-import static java.sql.JDBCType.BOOLEAN;
-import static java.sql.JDBCType.CHAR;
-import static java.sql.JDBCType.DOUBLE;
-import static java.sql.JDBCType.FLOAT;
-import static java.sql.JDBCType.INTEGER;
-import static java.sql.JDBCType.NUMERIC;
-import static java.sql.JDBCType.TIMESTAMP;
-import static java.sql.JDBCType.VARCHAR;
+import static nebula.jdbc.builders.schema.ColumnDefinition.BIGINT;
+import static nebula.jdbc.builders.schema.ColumnDefinition.BIT;
+import static nebula.jdbc.builders.schema.ColumnDefinition.BOOLEAN;
+import static nebula.jdbc.builders.schema.ColumnDefinition.CHAR;
+import static nebula.jdbc.builders.schema.ColumnDefinition.DATE;
+import static nebula.jdbc.builders.schema.ColumnDefinition.DOUBLE;
+import static nebula.jdbc.builders.schema.ColumnDefinition.FLOAT;
+import static nebula.jdbc.builders.schema.ColumnDefinition.INTEGER;
+import static nebula.jdbc.builders.schema.ColumnDefinition.NUMERIC;
+import static nebula.jdbc.builders.schema.ColumnDefinition.SMALLINT;
+import static nebula.jdbc.builders.schema.ColumnDefinition.TIME;
+import static nebula.jdbc.builders.schema.ColumnDefinition.TIMESTAMP;
+import static nebula.jdbc.builders.schema.ColumnDefinition.VARCHAR;
 import static org.junit.Assert.assertEquals;
-
-import java.sql.JDBCType;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import nebula.jdbc.TestBase;
-import nebula.jdbc.builders.schema.ColumnDefinition;
 
 public class ClazzExtendBuilderTest extends TestBase {
 
@@ -42,45 +42,47 @@ public class ClazzExtendBuilderTest extends TestBase {
 	@Test
 	public void testUserImpl() {
 
-		FieldList maps = new FieldList();
-		String clazzImpl = UserExtend.class.getName();
+		FieldList clazzFields = new FieldList();
 
-		maps.push(new FieldMapper("id", "getId", long.class, new ColumnDefinition("ID", INTEGER)));
-		maps.push(new FieldMapper("name", "getName", String.class, new ColumnDefinition("NAME", VARCHAR)));
-		maps.push(new FieldMapper("description", "getDescription", String.class,
-				new ColumnDefinition("description", VARCHAR)));
+		clazzFields.push(new FieldMapper("id", "getId", long.class, INTEGER("ID")));
+		clazzFields.push(new FieldMapper("name", "getName", String.class, VARCHAR("NAME")));
+		clazzFields.push(new FieldMapper("description", "getDescription", String.class, VARCHAR("description")));
+
+		ClazzDefinition clazzDefinition = new ClazzDefinition(User.class.getSimpleName(), User.class.getSimpleName(), clazzFields);
 
 		String targetClazz = User.class.getName();
-		byte[] code = builder.make(clazzImpl, targetClazz, maps);
+		String clazzExtend = targetClazz + "Extend";
+		byte[] code = builder.make(clazzExtend, targetClazz, clazzDefinition);
 
 		String codeActual = toString(code);
-		String codeExpected = toString(clazzImpl);
+		String codeExpected = toString(clazzExtend);
 		assertEquals("Code", codeExpected, codeActual);
 	}
 
 	@Test
 	public void testUserMoreComplexJdbcRowMapper() {
-		FieldList maps = new FieldList();
-		maps.push(new FieldMapper("id", "getId", Long.class,
-				new ColumnDefinition("id", BIGINT).primarykey().autoIncrement()));
-		maps.push(new FieldMapper("string", "getString", String.class, new ColumnDefinition("string", VARCHAR)));
-		maps.push(new FieldMapper("bigDecimal", "getBigDecimal", java.math.BigDecimal.class,
-				new ColumnDefinition("bigDecimal", NUMERIC)));
-		maps.push(new FieldMapper("z", "getZ", Boolean.class, new ColumnDefinition("z", BOOLEAN)));
-		maps.push(new FieldMapper("c", "getC", Character.class, new ColumnDefinition("c", CHAR)));
-		maps.push(new FieldMapper("b", "getB", Byte.class, new ColumnDefinition("b", BIT)));
-		maps.push(new FieldMapper("s", "getS", Short.class, new ColumnDefinition("s", JDBCType.SMALLINT)));
-		maps.push(new FieldMapper("i", "getI", Integer.class, new ColumnDefinition("i", INTEGER)));
-		maps.push(new FieldMapper("l", "getL", Long.class, new ColumnDefinition("l", BIGINT)));
-		maps.push(new FieldMapper("f", "getF", Float.class, new ColumnDefinition("f", FLOAT)));
-		maps.push(new FieldMapper("d", "getD", Double.class, new ColumnDefinition("d", DOUBLE)));
-		maps.push(new FieldMapper("date", "getDate", java.sql.Date.class, new ColumnDefinition("date", JDBCType.DATE)));
-		maps.push(new FieldMapper("time", "getTime", java.sql.Time.class, new ColumnDefinition("time", JDBCType.TIME)));
-		maps.push(new FieldMapper("timestamp", "getTimestamp", java.sql.Timestamp.class,
-				new ColumnDefinition("timestamp", TIMESTAMP)));
+		FieldList clazzFields = new FieldList();
+		clazzFields.push(new FieldMapper("id", "getId", Long.class, BIGINT("id").primarykey().autoIncrement()));
+		clazzFields.push(new FieldMapper("string", "getString", String.class, VARCHAR("string")));
+		clazzFields.push(new FieldMapper("bigDecimal", "getBigDecimal", java.math.BigDecimal.class, NUMERIC("bigDecimal")));
+		clazzFields.push(new FieldMapper("z", "getZ", Boolean.class, BOOLEAN("z")));
+		clazzFields.push(new FieldMapper("c", "getC", Character.class, CHAR("c")));
+		clazzFields.push(new FieldMapper("b", "getB", Byte.class, BIT("b")));
+		clazzFields.push(new FieldMapper("s", "getS", Short.class, SMALLINT("s")));
+		clazzFields.push(new FieldMapper("i", "getI", Integer.class, INTEGER("i")));
+		clazzFields.push(new FieldMapper("l", "getL", Long.class, BIGINT("l")));
+		clazzFields.push(new FieldMapper("f", "getF", Float.class, FLOAT("f")));
+		clazzFields.push(new FieldMapper("d", "getD", Double.class, DOUBLE("d")));
+		clazzFields.push(new FieldMapper("date", "getDate", java.sql.Date.class, DATE("date")));
+		clazzFields.push(new FieldMapper("time", "getTime", java.sql.Time.class, TIME("time")));
+		clazzFields.push(new FieldMapper("timestamp", "getTimestamp", java.sql.Timestamp.class, TIMESTAMP("timestamp")));
 
 		String targetClazz = UserMoreComplex.class.getName();
-		byte[] code = builder.make(UserMoreComplexExtend.class.getName(), targetClazz, maps);
+		String clazzExtend = targetClazz + "Extend";
+		ClazzDefinition clazzDefinition = new ClazzDefinition(UserMoreComplex.class.getSimpleName(), UserMoreComplex.class.getSimpleName(),
+				clazzFields);
+
+		byte[] code = builder.make(clazzExtend, targetClazz, clazzDefinition);
 
 		String codeActual = toString(code);
 		String codeExpected = toString(UserMoreComplexExtend.class);

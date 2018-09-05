@@ -3,6 +3,7 @@ package nebula.jdbc.builders.schema;
 import static java.sql.JDBCType.BIGINT;
 import static java.sql.JDBCType.BINARY;
 import static java.sql.JDBCType.BIT;
+import static java.sql.JDBCType.BOOLEAN;
 import static java.sql.JDBCType.CHAR;
 import static java.sql.JDBCType.DATE;
 import static java.sql.JDBCType.DECIMAL;
@@ -261,6 +262,10 @@ public class ColumnDefinition implements Column {
 		return new ColumnDefinition(name, BIT);
 	}
 
+	static public ColumnDefinition BOOLEAN(String name) {
+		return new ColumnDefinition(name, BOOLEAN);
+	}
+	
 	static public ColumnDefinition TINYINT(String name) {
 		return new ColumnDefinition(name, TINYINT);
 	}
