@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import nebula.data.query.Condition;
 import nebula.jdbc.builders.schema.JDBC;
 
 public interface JdbcRepository<T> extends Repository<T> {
@@ -18,6 +19,16 @@ public interface JdbcRepository<T> extends Repository<T> {
 			throw new RuntimeException(e);
 		}
 	}
+
+	@Override
+	default PageList<T> list(Condition condition, int start, int max) {
+		try {
+			return listJdbc(condition,start, max);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 
 	@Override
 	default PageList<T> list(int start, int max) {
@@ -80,6 +91,8 @@ public interface JdbcRepository<T> extends Repository<T> {
 	void initJdbc() throws SQLException;
 
 	PageList<T> listJdbc(int start, int max) throws SQLException;
+	
+	PageList<T> listJdbc(Condition condition, int start, int max) throws SQLException;
 
 	T findByIdJdbc(Object... keys) throws SQLException;
 

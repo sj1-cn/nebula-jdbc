@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nebula.data.query.Condition;
+import nebula.data.query.ConditionSQLVisitor;
 import nebula.jdbc.builders.HasSQLRepresentation;
 import nebula.jdbc.builders.schema.Column;
 import nebula.jdbc.builders.schema.ColumnList;
@@ -57,6 +59,13 @@ public class Select implements HasSQLRepresentation {
 		for (int i = 0; i < columns.length; i++) {
 			((Where) parts.get("where")).and(String.format("%s = ?", columns[i]));
 		}
+		return this;
+	}
+
+	public Select where(Condition condition) {
+		ConditionSQLVisitor conditionVisitorImpl = new ConditionSQLVisitor();
+		condition.accept(conditionVisitorImpl);
+		((Where) parts.get("where")).and(conditionVisitorImpl.toString());
 		return this;
 	}
 

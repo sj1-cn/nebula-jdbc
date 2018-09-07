@@ -12,6 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import nebula.data.query.Condition;
 import nebula.jdbc.TestBase;
 
 public class UserJdbcRepositoryTest extends TestBase {
@@ -87,6 +88,51 @@ public class UserJdbcRepositoryTest extends TestBase {
 			assertEquals(1, users.get(0).getId());
 			assertEquals(10, users.get(9).getId());
 			assertEquals(100, users.getTotalSize());
+		}
+		{
+			users = userRepository.list(10, 19);
+			assertEquals(10, users.size());
+			assertEquals(11, users.get(0).getId());
+			assertEquals(20, users.get(9).getId());
+			assertEquals(100, users.getTotalSize());
+		}
+	}
+
+	@Test
+	public void testUserWhere() throws IOException, InstantiationException, IllegalAccessException, NoSuchMethodException,
+			SecurityException, IllegalArgumentException, InvocationTargetException {
+
+		// 利用反射创建对象
+		JdbcRepository<User> userRepository = new UserJdbcRepository();
+		userRepository.setConnection(connection);
+
+		userRepository.init();
+		userRepository.init();
+
+		PageList<User> users = userRepository.list(0, 10);
+
+		for (int i = 1; i < 101; i++) {
+			User a0 = new User(i, "name_a1" + i, "description_a10");
+			userRepository.insert(a0);
+		}
+
+		{
+			users = userRepository.list(Condition.field("name").eq("name_a11"), 0, 0);
+			assertEquals(1, users.getTotalSize());
+			assertEquals(1, users.get(0).getId());
+		}
+
+		{
+			users = userRepository.list(0, 9);
+			assertEquals(10, users.size());
+			assertEquals(1, users.get(0).getId());
+			assertEquals(10, users.get(9).getId());
+			assertEquals(100, users.getTotalSize());
+		}
+		{
+			users = userRepository.list(Condition.field("name").like("name_a12%"), 0, 0);
+			assertEquals(11, users.getTotalSize());
+			assertEquals(2, users.get(0).getId());
 		}
 		{
 			users = userRepository.list(10, 19);
@@ -175,7 +221,7 @@ public class UserJdbcRepositoryTest extends TestBase {
 			assertEquals("[User [id=10, name=name_a10, description=description_a10]]", users1.toString());
 		}
 		{
-			b=userRepository.insert(b);
+			b = userRepository.insert(b);
 			users1 = userRepository.list(0, 10);
 			assertEquals(
 					"[User [id=10, name=name_a10, description=description_a10], User [id=20, name=name_b20, description=description_b20]]",

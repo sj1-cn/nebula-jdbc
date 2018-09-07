@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import nebula.data.query.Condition;
 import nebula.jdbc.builders.queries.Select;
 import nebula.jdbc.builders.schema.Column;
 import nebula.jdbc.builders.schema.ColumnDefinition;
@@ -51,6 +52,8 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 		initJdbc(clazzDefinition.tablename, clazzDefinition.fieldsAll);
 
 		listJdbc(clazzTarget, clazzExtend, clazzDefinition);
+		
+		listJdbcCondition(clazzTarget, clazzExtend, clazzDefinition);
 
 		findByIdJdbc(clazzTarget, clazzExtend, clazzDefinition);
 
@@ -159,6 +162,70 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 				//String sqlCount = Select.columns("count(1)").from("user").toSQL();
 				mv.line().clazz(Select.class).call("columns").parameter(String.class).reTurn(Select.class).invoke(Const("count(1)"))
 					.virtual("from").reTurn(Select.class).invoke(Const(clazzDefinition.tablename))
+					.virtual("toSQL").reTurn(String.class).invoke()
+					.setTo("sqlCount");
+				
+
+				// ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
+				mv.line().load("conn").inter("createStatement").reTurn(Statement.class).invoke()
+					.inter("executeQuery").reTurn(ResultSet.class).invoke("sqlCount")
+					.setTo("resultSetCount");
+				
+				// resultSetCount.next();
+				mv.line().load("resultSetCount").inter("next").reTurn(boolean.class).invoke().pop();
+
+				// int totalSize = resultSetCount.getInt(1);
+				mv.line().load("resultSetCount").inter("getInt").reTurn(int.class).invoke(Const(1)).setTo("totalSize");
+				
+				// resultSetCount.close();
+				mv.line().load("resultSetCount").inter("close").invokeVoid();
+
+				//datas.totalSize(totalSize);
+				mv.line().load("datas").inter("totalSize").invokeVoid("totalSize");
+
+				mv.line().returnVar("datas");
+
+			});
+	}
+	
+
+	private void listJdbcCondition(String clazzTarget, String clazzExtend, ClazzDefinition clazzDefinition) {
+		cw.method(ACC_PUBLIC, "listJdbc")
+			.parameter("condition", Condition.class)
+			.parameter("start", int.class)
+			.parameter("max", int.class)
+			.reTurn(PageList.class, clazzTarget)
+			.tHrow(SQLException.class)
+			.friendly(mv -> {
+				mv.define("datas", generic(PageList.class, clazzTarget));
+
+				mv.line().init(PageListImpl.class,"start", "max").setTo("datas");
+
+				String sqlColumns = String.join(",", clazzDefinition.fieldsAll.map(f -> f.column.getName()));
+				// String sql = Select.columns("id,name,description").from("user").offset(start).limit(max).toSQL();
+				mv.line().clazz(Select.class).call("columns").parameter(String.class).reTurn(Select.class).invoke(Const(sqlColumns))
+					.virtual("from").reTurn(Select.class).invoke(Const(clazzDefinition.tablename))
+					.virtual("where").reTurn(Select.class).invoke("condition")
+					.virtual("offset").reTurn(Select.class).invoke("start")
+					.virtual("max").reTurn(Select.class).invoke("max")
+					.virtual("toSQL").reTurn(String.class).invoke()
+					.setTo("sql");
+
+				mv.line().load("conn").inter("prepareStatement").reTurn(PreparedStatement.class).invoke("sql")
+					.inter("executeQuery").reTurn(ResultSet.class).invoke()
+					.setTo("resultSet");
+
+				mv.line().wHile(cause -> mv.load("resultSet").inter("next").reTurn(boolean.class).invoke(), block -> {
+					mv.line().load("datas").inter("add").parameter(Object.class).reTurn(boolean.class)
+						.invoke(p -> p.load("mapper").virtual("map").reTurn(clazzExtend).invoke("resultSet"))
+						.pop();
+				});
+				mv.line().load("resultSet").inter("close").invokeVoid();
+
+				//String sqlCount = Select.columns("count(1)").from("user").toSQL();
+				mv.line().clazz(Select.class).call("columns").parameter(String.class).reTurn(Select.class).invoke(Const("count(1)"))
+					.virtual("from").reTurn(Select.class).invoke(Const(clazzDefinition.tablename))
+					.virtual("where").reTurn(Select.class).invoke("condition")
 					.virtual("toSQL").reTurn(String.class).invoke()
 					.setTo("sqlCount");
 				

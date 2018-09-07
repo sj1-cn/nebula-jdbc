@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import nebula.data.query.Condition;
 import nebula.jdbc.builders.queries.Select;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
@@ -62,6 +63,32 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 		resultSet.close();
 
 		String sqlCount = Select.columns("count(1)").from("USERMORECOMPLEX").toSQL();
+		ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
+		resultSetCount.next();
+		int totalSize = resultSetCount.getInt(1);
+		resultSetCount.close();
+		datas.totalSize(totalSize);
+
+		return datas;
+	}
+
+	@Override
+	public PageList<UserMoreComplex> listJdbc(Condition condition, int start, int max) throws SQLException {
+
+		PageList<UserMoreComplex> datas = new PageListImpl<>(start, max);
+
+		// @formatter:off
+		String sql = Select.columns("id,string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp,createAt,updateAt").from("USERMORECOMPLEX").where(condition).offset(start).max(max).toSQL();
+		// @formatter:on
+
+		ResultSet resultSet = conn.prepareStatement(sql).executeQuery();
+
+		while (resultSet.next()) {
+			datas.add(mapper.map(resultSet));
+		}
+		resultSet.close();
+
+		String sqlCount = Select.columns("count(1)").from("USERMORECOMPLEX").where(condition).toSQL();
 		ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
 		resultSetCount.next();
 		int totalSize = resultSetCount.getInt(1);
