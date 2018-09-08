@@ -19,32 +19,32 @@ public class CommonSQLConditionVisitor implements SQLConditionVisitor {
 	}
 
 	@Override
-	public  String valueOf(String value) {
+	public String valueOf(String value) {
 		return "\'" + String.valueOf(value) + "\'";
 	}
 
 	@Override
-	public  String valueOf(int value) {
+	public String valueOf(int value) {
 		return String.valueOf(value);
 	}
 
 	@Override
-	public  String valueOf(long value) {
+	public String valueOf(long value) {
 		return String.valueOf(value);
 	}
 
 	@Override
-	public  String valueOf(Time value) {
+	public String valueOf(Time value) {
 		return String.valueOf(value);
 	}
 
 	@Override
-	public  String valueOf(Date value) {
+	public String valueOf(Date value) {
 		return String.valueOf(value);
 	}
 
 	@Override
-	public  String valueOf(Timestamp value) {
+	public String valueOf(Timestamp value) {
 		return String.valueOf(value);
 	}
 
@@ -69,6 +69,11 @@ public class CommonSQLConditionVisitor implements SQLConditionVisitor {
 	@Override
 	public void visitCondition(String name, ConditionOp op, String value) {
 		sb.append(String.format(op.format, name, valueOf(value)));
+	}
+
+	@Override
+	public void visitLikeCondition(String name, ConditionOp op, String value) {
+		sb.append(String.format(op.format, name, value));
 	}
 
 	@Override

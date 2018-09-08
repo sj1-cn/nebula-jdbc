@@ -68,7 +68,8 @@ public class Select implements HasSQLRepresentation {
 	public Select where(Condition condition) {
 		CommonSQLConditionVisitor conditionVisitorImpl = new CommonSQLConditionVisitor();
 		condition.accept(conditionVisitorImpl);
-		((Where) parts.get("where")).and(conditionVisitorImpl.toString());
+		String where = conditionVisitorImpl.toString();
+		if (where.length() > 0) ((Where) parts.get("where")).and(where);
 		return this;
 	}
 
@@ -76,6 +77,7 @@ public class Select implements HasSQLRepresentation {
 		parts.put("orderby", orderby);
 		return this;
 	}
+
 	public Select from(String table) {
 		((From) parts.get("from")).table(table);
 		return this;
@@ -202,7 +204,7 @@ public class Select implements HasSQLRepresentation {
 	public String toSQL() {
 		return String
 			.format("SELECT %s FROM %s %s %s %s %s", parts.get("columns").toSQL(), parts.get("from").toSQL(), parts.get("join").toSQL(),
-					parts.get("where").toSQL(), parts.get("orderby").toSQL(),parts.get("rows").toSQL())
+					parts.get("where").toSQL(), parts.get("orderby").toSQL(), parts.get("rows").toSQL())
 			.trim()
 			.replaceAll("( )+", " ");
 	}

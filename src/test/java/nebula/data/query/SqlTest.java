@@ -9,15 +9,19 @@ public class SqlTest {
 
 	@Test
 	public void testOrderBy() {
-		assertEquals("name ASC", OrderBy.empty().orderBy("name").toString());
-		assertEquals("name DESC", OrderBy.empty().orderBy("name").desc().toString());
-		assertEquals("name ASC, age DESC", OrderBy.empty().orderBy("name").orderBy("age").desc().toString());
+		assertEquals("ORDER BY name ASC", OrderBy.empty().orderBy("name").toString());
+		assertEquals("ORDER BY name DESC", OrderBy.empty().orderBy("name").desc().toString());
+		assertEquals("ORDER BY name ASC, age DESC", OrderBy.empty().orderBy("name").orderBy("age").desc().toString());
 	}
 
 	@Test
-	public void test() {
+	public void testCondition() {
 		assertEquals("name = \'testname\'", str(field("name").eq("testname")));
 		assertEquals("name <> \'testname\'", str(field("name").ne("testname")));
+		assertEquals("name LIKE 'testname%'", str(field("name").startWith("testname")));
+		assertEquals("name LIKE '%testname'", str(field("name").endWith("testname")));
+		assertEquals("name LIKE '%testname%'", str(field("name").contain("testname")));
+		assertEquals("name LIKE 'testname'", str(field("name").like("testname")));
 		assertEquals("age = 10", str(field("age").eq(10)));
 		assertEquals("age <> 10", str(field("age").ne(10)));
 		assertEquals("age > 10", str(field("age").gt(10)));

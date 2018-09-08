@@ -5,6 +5,8 @@ package nebula.jdbc.builders.queries;
 
 import org.junit.Test;
 
+import nebula.data.query.OrderBy;
+import nebula.data.query.OrderByOp;
 import nebula.jdbc.builders.queries.Select;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
@@ -47,6 +49,16 @@ public class SelectTest {
 		columnList.push(ColumnDefinition.valueOf("description VARCHAR(256)"));
 		select = Select.columns(columnList.all()).from("user").where(ColumnList.namesOf(columnList.primaryKeys()));
 		assertEquals("SELECT id, name, description FROM user WHERE id = ?", select.toSQL());
+	}
+
+	@Test
+	public void it_where_columns_orderby() {
+		ColumnList columnList = new ColumnList();
+		columnList.push(ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY"));
+		columnList.push(ColumnDefinition.valueOf("name VARCHAR(256)"));
+		columnList.push(ColumnDefinition.valueOf("description VARCHAR(256)"));
+		select = Select.columns(columnList.all()).from("user").where(ColumnList.namesOf(columnList.primaryKeys())).orderby(OrderBy.empty().andOrderBy("name",OrderByOp.ASC));
+		assertEquals("SELECT id, name, description FROM user WHERE id = ? ORDER BY name ASC", select.toSQL());
 	}
 
 	@Test

@@ -56,6 +56,9 @@ public interface ConditionBuilder<T> {
 	default T isNull() {return condition(ISNULL);}		
 	default T isNotNull() {return condition(ISNOTNULL);}	
 
+	default T startWith(String value) {return condition(STARTWITH, value);}
+	default T endWith(String value) {return condition(ENDWITH, value);}
+	default T contain(String value) {return condition(CONTAIN, value);}
 	default T like(String value) {return condition(LIKE, value);}	
 	default T notLike(String value) {return condition(NOTLIKE, value);}	
 	
@@ -81,7 +84,7 @@ public interface ConditionBuilder<T> {
 	default T notIn(Timestamp... values) {return conditionComplex(NotIn, values);}
 
 	T condition(ConditionOp type);
-
+	
 	T condition(ConditionOp type,String value);
 	T condition(ConditionOp type,int value);
 	T condition(ConditionOp type,long value);

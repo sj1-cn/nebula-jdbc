@@ -12,23 +12,33 @@ public abstract class Condition implements AcceptConditionVisitor {
 		return simple;
 	}
 
+	static public Condition empty() {
+		return new EmptyConditionExpression();
+	}
+
 	static public ConditionBuilder<Condition> field(String name) {
 		return new ConditionBuilderImpl(name);
 	}
 
-	ConditionBuilder<Condition> and(String name) {
-		return new ConditionBuilderWithLeft(this, ConditionOp.AND, name);
+	public ConditionBuilder<Condition> and(String name) {
+		if (this instanceof EmptyConditionExpression) return new ConditionBuilderImpl(name);
+		else
+			return new ConditionBuilderWithLeft(this, ConditionOp.AND, name);
 	}
 
-	ConditionBuilder<Condition> or(String name) {
-		return new ConditionBuilderWithLeft(this, ConditionOp.OR, name);
+	public ConditionBuilder<Condition> or(String name) {
+		if (this instanceof EmptyConditionExpression) return new ConditionBuilderImpl(name);
+		else
+			return new ConditionBuilderWithLeft(this, ConditionOp.OR, name);
 	}
 
-	Condition and(Condition right) {
+	public Condition and(Condition right) {
+		if (this instanceof EmptyConditionExpression) return right;
 		return new LogicalConditionExpression(this, ConditionOp.AND, right);
 	}
 
-	Condition or(Condition right) {
+	public Condition or(Condition right) {
+		if (this instanceof EmptyConditionExpression) return right;
 		return new LogicalConditionExpression(this, ConditionOp.OR, right);
 	}
 
@@ -49,6 +59,17 @@ abstract class ConditionCompare extends Condition {
 		super();
 		this.name = name;
 		this.condition = condition;
+	}
+}
+
+class EmptyConditionExpression extends Condition {
+
+	public EmptyConditionExpression() {
+		super.simple = false;
+	}
+
+	@Override
+	public void accept(SQLConditionVisitor visitor) {
 	}
 
 }
@@ -93,7 +114,11 @@ class StringConditionExpression extends ConditionCompare {
 
 	@Override
 	public void accept(SQLConditionVisitor visitor) {
-		visitor.visitCondition(name, condition, value);
+		if (condition == ConditionOp.LIKE || condition == ConditionOp.STARTWITH || condition == ConditionOp.ENDWITH
+				|| condition == ConditionOp.CONTAIN)
+			visitor.visitLikeCondition(name, condition, value);
+		else
+			visitor.visitCondition(name, condition, value);
 	}
 }
 

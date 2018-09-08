@@ -41,11 +41,15 @@ public class OrderBy implements HasSQLRepresentation {
 
 	@Override
 	public String toSQL() {
-		List<String> str = new ArrayList<>();
-		for (OrderByItem o : orderbys) {
-			str.add(String.format(o.op.format, o.field));
+		if (orderbys.size() > 0) {
+			List<String> str = new ArrayList<>();
+			for (OrderByItem o : orderbys) {
+				str.add(String.format(o.op.format, o.field));
+			}
+			return "ORDER BY " + String.join(", ", str);
+		} else {
+			return "";
 		}
-		return String.join(", ", str);
 	}
 
 	@Override

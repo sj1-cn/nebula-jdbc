@@ -9,6 +9,8 @@ interface SQLConditionVisitor {
 
 	void visitCondition(String name, ConditionOp op);
 
+	void visitLikeCondition(String name, ConditionOp op, String value);
+	
 	void visitCondition(String name, ConditionOp op, String value);
 
 	void visitCondition(String name, ConditionOp op, int value);
