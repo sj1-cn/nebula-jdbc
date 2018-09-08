@@ -54,7 +54,9 @@ public class CommonSQLConditionVisitor implements SQLConditionVisitor {
 		left.accept(this);
 		if (!left.isSimple()) sb.append(")");
 
-		sb.append(" AND ");
+		sb.append(" ");
+		sb.append(op);
+		sb.append(" ");
 
 		if (!right.isSimple()) sb.append("(");
 		right.accept(this);

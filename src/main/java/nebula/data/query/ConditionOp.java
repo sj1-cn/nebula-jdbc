@@ -1,8 +1,8 @@
 package nebula.data.query;
 
 public enum ConditionOp {
-	AND("%s AND %s"),
-	OR("%s OR %s"),
+	AND("AND"),
+	OR("OR"),
 	EQ("%s = %s"),
 	STARTWITH("%s LIKE \'%s%%\'"),
 	ENDWITH("%s LIKE \'%%%s\'"),
