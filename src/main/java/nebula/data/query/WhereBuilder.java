@@ -12,7 +12,7 @@ class WhereBuilder implements ConditionBuilder<WhereBuilder> {
 
 	@Override
 	public String toString() {
-		ConditionSQLVisitor conditionVisitorImpl = new ConditionSQLVisitor();
+		CommonSQLConditionVisitor conditionVisitorImpl = new CommonSQLConditionVisitor();
 		lastCondition.accept(conditionVisitorImpl);
 		return conditionVisitorImpl.toString();
 	}

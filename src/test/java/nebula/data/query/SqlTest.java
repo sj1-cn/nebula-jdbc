@@ -6,6 +6,14 @@ import org.junit.Test;
 import static nebula.data.query.Condition.*;
 
 public class SqlTest {
+
+	@Test
+	public void testOrderBy() {
+		assertEquals("name ASC", OrderBy.empty().orderBy("name").toString());
+		assertEquals("name DESC", OrderBy.empty().orderBy("name").desc().toString());
+		assertEquals("name ASC, age DESC", OrderBy.empty().orderBy("name").orderBy("age").desc().toString());
+	}
+
 	@Test
 	public void test() {
 		assertEquals("name = \'testname\'", str(field("name").eq("testname")));
@@ -20,13 +28,15 @@ public class SqlTest {
 		assertEquals("age IN (10, 20, 30, 40)", str(field("age").in(10, 20, 30, 40)));
 		assertEquals("age BETWEEN 10 AND 20", str(field("age").between(10, 20)));
 		assertEquals("name = \'testname\' AND id = 10", str(field("name").eq("testname").and("id").eq(10)));
-		assertEquals("(name = \'testname\' AND id = 10) AND age > 50", str(field("name").eq("testname").and("id").eq(10).and("age").gt(50)));
-		assertEquals("name = \'testname\' AND (id = 10 AND age > 50)", str(field("name").eq("testname").and(field("id").eq(10).and("age").gt(50))));
+		assertEquals("(name = \'testname\' AND id = 10) AND age > 50",
+				str(field("name").eq("testname").and("id").eq(10).and("age").gt(50)));
+		assertEquals("name = \'testname\' AND (id = 10 AND age > 50)",
+				str(field("name").eq("testname").and(field("id").eq(10).and("age").gt(50))));
 		assertEquals("name = \'testname\' AND id >= 10", str(and(field("name").eq("testname"), field("id").ge(10))));
 	}
 
 	private String str(Condition c) {
-		ConditionSQLVisitor conditionVisitorImpl = new ConditionSQLVisitor();
+		CommonSQLConditionVisitor conditionVisitorImpl = new CommonSQLConditionVisitor();
 		c.accept(conditionVisitorImpl);
 		return conditionVisitorImpl.toString();
 	}

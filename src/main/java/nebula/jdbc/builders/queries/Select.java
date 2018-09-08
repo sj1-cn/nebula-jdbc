@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import nebula.data.query.Condition;
-import nebula.data.query.ConditionSQLVisitor;
+import nebula.data.query.OrderBy;
+import nebula.data.query.CommonSQLConditionVisitor;
 import nebula.jdbc.builders.HasSQLRepresentation;
 import nebula.jdbc.builders.schema.Column;
 import nebula.jdbc.builders.schema.ColumnList;
@@ -21,6 +22,7 @@ public class Select implements HasSQLRepresentation {
 		parts.put("from", From.empty());
 		parts.put("columns", columns);
 		parts.put("where", Where.empty());
+		parts.put("orderby", OrderBy.empty());
 		parts.put("join", Join.empty());
 		parts.put("rows", Rows.all());
 	}
@@ -35,6 +37,7 @@ public class Select implements HasSQLRepresentation {
 		parts.put("from", new From(((From) select.parts.get("from"))));
 		parts.put("columns", new Columns(((Columns) select.parts.get("columns"))));
 		parts.put("where", select.parts.get("where"));
+		parts.put("orderby", OrderBy.empty());
 		parts.put("join", select.parts.get("join"));
 		parts.put("rows", select.parts.get("rows"));
 	}
@@ -63,12 +66,16 @@ public class Select implements HasSQLRepresentation {
 	}
 
 	public Select where(Condition condition) {
-		ConditionSQLVisitor conditionVisitorImpl = new ConditionSQLVisitor();
+		CommonSQLConditionVisitor conditionVisitorImpl = new CommonSQLConditionVisitor();
 		condition.accept(conditionVisitorImpl);
 		((Where) parts.get("where")).and(conditionVisitorImpl.toString());
 		return this;
 	}
 
+	public Select orderby(OrderBy orderby) {
+		parts.put("orderby", orderby);
+		return this;
+	}
 	public Select from(String table) {
 		((From) parts.get("from")).table(table);
 		return this;
@@ -194,8 +201,8 @@ public class Select implements HasSQLRepresentation {
 	@Override
 	public String toSQL() {
 		return String
-			.format("SELECT %s FROM %s %s %s %s", parts.get("columns").toSQL(), parts.get("from").toSQL(), parts.get("join").toSQL(),
-					parts.get("where").toSQL(), parts.get("rows").toSQL())
+			.format("SELECT %s FROM %s %s %s %s %s", parts.get("columns").toSQL(), parts.get("from").toSQL(), parts.get("join").toSQL(),
+					parts.get("where").toSQL(), parts.get("orderby").toSQL(),parts.get("rows").toSQL())
 			.trim()
 			.replaceAll("( )+", " ");
 	}

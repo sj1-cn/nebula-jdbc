@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nebula.data.query.Condition;
+import nebula.data.query.OrderBy;
 import nebula.jdbc.builders.queries.Select;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
@@ -63,12 +64,12 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 	}
 
 	@Override
-	public PageList<User> listJdbc(Condition condition, int start, int max) throws SQLException {
+	public PageList<User> listJdbc(Condition condition,OrderBy orderBy, int start, int max) throws SQLException {
 
 		PageList<User> datas = new PageListImpl<>(start, max);
 
 		// @formatter:off
-		String sql = Select.columns("id,name,description,createAt,updateAt").from("USER").where(condition).offset(start).max(max).toSQL();
+		String sql = Select.columns("id,name,description,createAt,updateAt").from("USER").where(condition).orderby(orderBy).offset(start).max(max).toSQL();
 		// @formatter:on
 
 		ResultSet resultSet = conn.prepareStatement(sql).executeQuery();

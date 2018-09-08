@@ -66,8 +66,8 @@ class LogicalConditionExpression extends Condition {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visit(left, op, right);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitCondition(left, op, right);
 	}
 
 }
@@ -78,8 +78,8 @@ class SingleConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visit(name, condition);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitCondition(name, condition);
 	}
 }
 
@@ -92,8 +92,8 @@ class StringConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visit(name, condition, value);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitCondition(name, condition, value);
 	}
 }
 
@@ -106,8 +106,8 @@ class IntConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visit(name, condition, value);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitCondition(name, condition, value);
 	}
 }
 
@@ -120,8 +120,8 @@ class LongConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visit(name, condition, value);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitCondition(name, condition, value);
 	}
 }
 
@@ -134,8 +134,8 @@ class DateConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visit(name, condition, value);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitCondition(name, condition, value);
 	}
 }
 
@@ -148,8 +148,8 @@ class TimeConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visit(name, condition, value);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitCondition(name, condition, value);
 	}
 }
 
@@ -162,8 +162,8 @@ class TimestampConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visit(name, condition, value);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitCondition(name, condition, value);
 	}
 }
 
@@ -178,8 +178,8 @@ class StringBinaryConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visit(name, condition, first, second);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitCondition(name, condition, first, second);
 	}
 }
 
@@ -194,8 +194,8 @@ class IntBinaryConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visit(name, condition, first, second);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitCondition(name, condition, first, second);
 	}
 }
 
@@ -210,8 +210,8 @@ class LongBinaryConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visit(name, condition, first, second);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitCondition(name, condition, first, second);
 	}
 }
 
@@ -226,8 +226,8 @@ class TimeBinaryConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visit(name, condition, first, second);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitCondition(name, condition, first, second);
 	}
 }
 
@@ -242,8 +242,8 @@ class DateBinaryConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visit(name, condition, first, second);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitCondition(name, condition, first, second);
 	}
 }
 
@@ -258,8 +258,8 @@ class TimestampBinaryConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visit(name, condition, first, second);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitCondition(name, condition, first, second);
 	}
 }
 
@@ -272,8 +272,8 @@ class StringComplexConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visitComplex(name, condition, value);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitComplexCondition(name, condition, value);
 	}
 }
 
@@ -286,8 +286,8 @@ class IntComplexConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visitComplex(name, condition, value);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitComplexCondition(name, condition, value);
 	}
 }
 
@@ -300,8 +300,8 @@ class LongComplexConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visitComplex(name, condition, value);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitComplexCondition(name, condition, value);
 	}
 }
 
@@ -314,8 +314,8 @@ class DateComplexConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visitComplex(name, condition, value);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitComplexCondition(name, condition, value);
 	}
 }
 
@@ -328,8 +328,8 @@ class TimeComplexConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visitComplex(name, condition, value);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitComplexCondition(name, condition, value);
 	}
 }
 
@@ -342,7 +342,7 @@ class TimestampComplexConditionExpression extends ConditionCompare {
 	}
 
 	@Override
-	public void accept(ConditionVisitor visitor) {
-		visitor.visitComplex(name, condition, value);
+	public void accept(SQLConditionVisitor visitor) {
+		visitor.visitComplexCondition(name, condition, value);
 	}
 }

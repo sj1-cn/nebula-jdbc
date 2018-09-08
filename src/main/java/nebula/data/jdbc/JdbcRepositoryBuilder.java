@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nebula.data.query.Condition;
+import nebula.data.query.OrderBy;
 import nebula.jdbc.builders.queries.Select;
 import nebula.jdbc.builders.schema.Column;
 import nebula.jdbc.builders.schema.ColumnDefinition;
@@ -192,6 +193,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 	private void listJdbcCondition(String clazzTarget, String clazzExtend, ClazzDefinition clazzDefinition) {
 		cw.method(ACC_PUBLIC, "listJdbc")
 			.parameter("condition", Condition.class)
+			.parameter("orderBy", OrderBy.class)
 			.parameter("start", int.class)
 			.parameter("max", int.class)
 			.reTurn(PageList.class, clazzTarget)
@@ -206,6 +208,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 				mv.line().clazz(Select.class).call("columns").parameter(String.class).reTurn(Select.class).invoke(Const(sqlColumns))
 					.virtual("from").reTurn(Select.class).invoke(Const(clazzDefinition.tablename))
 					.virtual("where").reTurn(Select.class).invoke("condition")
+					.virtual("orderby").reTurn(Select.class).invoke("orderBy")
 					.virtual("offset").reTurn(Select.class).invoke("start")
 					.virtual("max").reTurn(Select.class).invoke("max")
 					.virtual("toSQL").reTurn(String.class).invoke()
