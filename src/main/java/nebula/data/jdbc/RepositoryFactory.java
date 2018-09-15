@@ -70,7 +70,7 @@ public class RepositoryFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Class<T> getClazzExtend(ClazzDefinition clazzDefinition) {
+	public <T> Class<T> actualClazz(ClazzDefinition clazzDefinition) {
 		if (clazzExtends.containsKey(clazzDefinition.clazz)) return (Class<T>) clazzExtends.get(clazzDefinition.clazz);
 		Class<T> clazzClazzExtend = makeClazzExtend(clazzDefinition);
 		return clazzClazzExtend;
@@ -113,7 +113,7 @@ public class RepositoryFactory {
 	private <T> Repository<T> makeJdbcRepository(ClazzDefinition clazzDefinition) {
 		String clazzRepositoryName = clazzDefinition.clazz + "Repository";
 		String clazzTargetName = clazzDefinition.clazz;
-		String clazzExtendName = getClazzExtend(clazzDefinition).getName();
+		String clazzExtendName = actualClazz(clazzDefinition).getName();
 		String clazzRowMapperName = makeJdbcRowMapper(clazzDefinition).getName();
 
 		byte[] codeRepository = repositoryBuilder.make(clazzRepositoryName, clazzTargetName, clazzExtendName, clazzRowMapperName,
