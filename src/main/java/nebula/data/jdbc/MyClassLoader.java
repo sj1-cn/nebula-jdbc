@@ -12,6 +12,13 @@ class MyClassLoader extends ClassLoader {
 
 	public Class<?> defineClassByName(String name, byte[] b, int off, int len) {
 
+		saveClassDefine(name, b);
+
+		Class<?> clazz = super.defineClass(name, b, 0, b.length);
+		return clazz;
+	}
+
+	private void saveClassDefine(String name, byte[] b) {
 		File root = new File("target/generated-sources");
 		if (!root.exists()) root.mkdirs();
 
@@ -29,9 +36,6 @@ class MyClassLoader extends ClassLoader {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-
-		Class<?> clazz = super.defineClass(name, b, 0, b.length);
-		return clazz;
 	}
 
 	private void makesureFolderExists(File file) {
