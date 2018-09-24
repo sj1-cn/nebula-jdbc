@@ -1,6 +1,6 @@
 package nebula.jdbc.meta;
 
-import nebula.tinyasm.data.ListMap;
+import nebula.commons.list.ListMap;
 
 public class JdbcDatabaseInfo {
 	String databaseProductName;

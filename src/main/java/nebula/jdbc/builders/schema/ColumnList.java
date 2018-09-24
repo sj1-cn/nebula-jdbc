@@ -3,9 +3,9 @@ package nebula.jdbc.builders.schema;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import nebula.tinyasm.data.ArrayListMap;
+import nebula.commons.list.StringListMap;
 
-public class ColumnList extends ArrayListMap<ColumnDefinition> {
+public class ColumnList extends StringListMap<ColumnDefinition> {
 	public ColumnList() {
 		super(c -> c.columnName);
 	}

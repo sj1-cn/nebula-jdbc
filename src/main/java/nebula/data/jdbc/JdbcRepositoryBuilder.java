@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import nebula.commons.list.ListMap;
 import nebula.data.query.Condition;
 import nebula.data.query.OrderBy;
 import nebula.jdbc.builders.queries.Select;
@@ -26,7 +27,6 @@ import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.data.ClassBody;
 import nebula.tinyasm.data.Instance;
-import nebula.tinyasm.data.ListMap;
 import nebula.tinyasm.data.MethodCodeFriendly;
 
 public class JdbcRepositoryBuilder extends RepositoryBuilder {
