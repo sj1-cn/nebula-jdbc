@@ -25,6 +25,7 @@ import nebula.jdbc.builders.schema.ColumnList;
 import nebula.jdbc.builders.schema.JDBC;
 import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
 import nebula.tinyasm.ClassBuilder;
+import nebula.tinyasm.data.BoxUnbox;
 import nebula.tinyasm.data.ClassBody;
 import nebula.tinyasm.data.Instance;
 import nebula.tinyasm.data.MethodCodeFriendly;
@@ -285,8 +286,8 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 						mv.line().load("keys").loadElement(j++).setTo("key");
 						mv.line().load("preparedStatement").inter(jdbc.setName).invokeVoid(Const(i++),p->{
-
-							mv.load("key").checkcastAndUnbox(fieldMapper.clazz);							
+							mv.load("key");
+							BoxUnbox.unboxToWhenNeed(fieldMapper.clazz).accept(p);							
 							arguments.toJdbcClazz(fieldMapper.clazz, jdbc.jdbcClazz).accept(mv);
 						});
 					}
@@ -520,7 +521,8 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 						mv.line().load("keys").loadElement(j++).setTo("key");
 						mv.line().load("preparedStatement").inter(jdbc.setName).invokeVoid(Const(i++),p->{
-							mv.load("key").checkcastAndUnbox(fieldMapper.clazz);							
+							mv.load("key");
+							BoxUnbox.unboxToWhenNeed(fieldMapper.clazz).accept(p);									
 							arguments.toJdbcClazz(fieldMapper.clazz, jdbc.jdbcClazz).accept(mv);
 						});
 					}
