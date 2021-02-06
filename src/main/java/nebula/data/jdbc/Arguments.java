@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import nebula.tinyasm.data.MethodCode;
-import nebula.tinyasm.data.MethodCodeFriendly;
+import nebula.tinyasm.MethodCode;
+import nebula.tinyasm.MethodCodeFriendly;
 
 //Primitives: boolean, byte, short, int, long, char, float, and double
 //

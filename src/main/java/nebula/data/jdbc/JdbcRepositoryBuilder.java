@@ -1,8 +1,8 @@
 package nebula.data.jdbc;
 
-import static nebula.tinyasm.data.CodeHelper.Const;
-import static nebula.tinyasm.data.CodeHelper.Var;
-import static nebula.tinyasm.data.GenericClazz.generic;
+import static nebula.tinyasm.CodeHelper.Const;
+import static nebula.tinyasm.CodeHelper.Var;
+import static nebula.tinyasm.GenericClazz.generic;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
@@ -24,11 +24,11 @@ import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
 import nebula.jdbc.builders.schema.JDBC;
 import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
+import nebula.tinyasm.BoxUnbox;
+import nebula.tinyasm.ClassBody;
 import nebula.tinyasm.ClassBuilder;
-import nebula.tinyasm.data.BoxUnbox;
-import nebula.tinyasm.data.ClassBody;
-import nebula.tinyasm.data.Instance;
-import nebula.tinyasm.data.MethodCodeFriendly;
+import nebula.tinyasm.Instance;
+import nebula.tinyasm.MethodCodeFriendly;
 
 public class JdbcRepositoryBuilder extends RepositoryBuilder {
 

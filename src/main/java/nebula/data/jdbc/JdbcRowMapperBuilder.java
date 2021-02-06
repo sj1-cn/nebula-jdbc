@@ -9,9 +9,9 @@ import java.sql.SQLException;
 
 import nebula.jdbc.builders.schema.JDBC;
 import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
+import nebula.tinyasm.ClassBody;
 import nebula.tinyasm.ClassBuilder;
-import nebula.tinyasm.data.ClassBody;
-import nebula.tinyasm.data.MethodCode;
+import nebula.tinyasm.MethodCode;
 
 public class JdbcRowMapperBuilder {
 	Arguments arguments;

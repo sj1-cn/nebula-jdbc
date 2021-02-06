@@ -1,13 +1,13 @@
 package nebula.data.jdbc;
 
+import static nebula.tinyasm.GenericClazz.*;
 import static nebula.tinyasm.util.TypeUtils.typeOf;
 
 import org.objectweb.asm.Type;
 
+import nebula.tinyasm.ClassBody;
 import nebula.tinyasm.ClassBuilder;
-import nebula.tinyasm.data.ClassBody;
-import nebula.tinyasm.data.Field;
-import static nebula.tinyasm.data.GenericClazz.*;
+import nebula.tinyasm.Field;
 
 public class ClazzExtendBuilder {
 	
