@@ -1,6 +1,6 @@
 package nebula.data.jdbc;
 
-import static nebula.tinyasm.GenericClazz.*;
+import static nebula.tinyasm.util.GenericClazz.*;
 import static nebula.tinyasm.util.TypeUtils.typeOf;
 
 import org.objectweb.asm.Type;
@@ -8,6 +8,7 @@ import org.objectweb.asm.Type;
 import nebula.tinyasm.ClassBody;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.Field;
+import nebula.tinyasm.util.TypeUtils;
 
 public class ClazzExtendBuilder {
 	
@@ -18,7 +19,7 @@ public class ClazzExtendBuilder {
 		cw.field("createAt", java.sql.Timestamp.class);
 		cw.field("updateAt", java.sql.Timestamp.class);
 
-		cw.publicMethod("<init>").parameter(clazz.fieldsAll.map(f -> new Field(f.fieldName, generic(f.clazz)))).code(mv -> {
+		cw.publicMethod("<init>").parameter(clazz.fieldsAll.map(f -> new Field(f.fieldName, TypeUtils.generic(f.clazz)))).code(mv -> {
 			mv.line();
 			mv.LOAD(0);
 			for (FieldMapper fieldMapper : clazz.fields) {

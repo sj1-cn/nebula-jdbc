@@ -1,8 +1,7 @@
 package nebula.data.jdbc;
 
 import static nebula.tinyasm.CodeHelper.Const;
-import static nebula.tinyasm.CodeHelper.Var;
-import static nebula.tinyasm.GenericClazz.generic;
+import static nebula.tinyasm.CodeHelper.Var; 
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
@@ -29,6 +28,7 @@ import nebula.tinyasm.ClassBody;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.Instance;
 import nebula.tinyasm.MethodCodeFriendly;
+import nebula.tinyasm.util.TypeUtils;
 
 public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
@@ -137,7 +137,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.reTurn(PageList.class, clazzTarget)
 			.tHrow(SQLException.class)
 			.friendly(mv -> {
-				mv.define("datas", generic(PageList.class, clazzTarget));
+				mv.define("datas", TypeUtils.generic(PageList.class, clazzTarget));
 
 				mv.line().init(PageListImpl.class,"start", "max").setTo("datas");
 
@@ -200,7 +200,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.reTurn(PageList.class, clazzTarget)
 			.tHrow(SQLException.class)
 			.friendly(mv -> {
-				mv.define("datas", generic(PageList.class, clazzTarget));
+				mv.define("datas", TypeUtils.generic(PageList.class, clazzTarget));
 
 				mv.line().init(PageListImpl.class,"start", "max").setTo("datas");
 
@@ -260,13 +260,13 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 		cw.method("findByIdJdbc")
 			.ACC_PUBLIC()
 			.ACC_VARARGS()
-			.parameter("keys", generic(Object.class, true))
+			.parameter("keys", TypeUtils.generic(Object.class, true))
 			.reTurn(clazzTarget)
 			.tHrow(SQLException.class)
 			.friendly(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
 				mv.define("resultSet", ResultSet.class);
-				mv.define("datas", generic(List.class, clazzTarget));
+				mv.define("datas", TypeUtils.generic(List.class, clazzTarget));
 
 				mv.line().setNew("datas", ArrayList.class);
 
@@ -495,7 +495,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 	private void deleteJdbc(ClazzDefinition clazzDefinition) {
 		cw.method(ACC_PUBLIC, "deleteJdbc").ACC_PUBLIC().ACC_VARARGS()
-			.parameter("keys", generic(Object.class, true))
+			.parameter("keys", TypeUtils.generic(Object.class, true))
 			.reTurn(int.class)
 			.tHrow(SQLException.class)
 			.friendly(mv -> {
@@ -556,7 +556,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 	private void findByIdJdbcBridge(String clazzTarget) {
 		cw.method("findByIdJdbc").bridge()
-			.parameter("keys", generic(Object.class, true))
+			.parameter("keys", TypeUtils.generic(Object.class, true))
 			.reTurn(Object.class)
 			.tHrow(SQLException.class)
 			.friendly(mv -> {
