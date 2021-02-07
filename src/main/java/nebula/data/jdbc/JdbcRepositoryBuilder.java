@@ -28,7 +28,7 @@ import nebula.tinyasm.ClassBody;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.Instance;
 import nebula.tinyasm.MethodCodeFriendly;
-import nebula.tinyasm.util.TypeUtils;
+import nebula.tinyasm.TypeUtils;
 
 public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
@@ -260,7 +260,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 		cw.method("findByIdJdbc")
 			.ACC_PUBLIC()
 			.ACC_VARARGS()
-			.parameter("keys", TypeUtils.generic(Object.class, true))
+			.parameter("keys", Object.class, true)
 			.reTurn(clazzTarget)
 			.tHrow(SQLException.class)
 			.friendly(mv -> {
@@ -495,7 +495,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 	private void deleteJdbc(ClazzDefinition clazzDefinition) {
 		cw.method(ACC_PUBLIC, "deleteJdbc").ACC_PUBLIC().ACC_VARARGS()
-			.parameter("keys", TypeUtils.generic(Object.class, true))
+			.parameter("keys", Object.class, true)
 			.reTurn(int.class)
 			.tHrow(SQLException.class)
 			.friendly(mv -> {
@@ -556,7 +556,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 	private void findByIdJdbcBridge(String clazzTarget) {
 		cw.method("findByIdJdbc").bridge()
-			.parameter("keys", TypeUtils.generic(Object.class, true))
+			.parameter("keys", Object.class, true)
 			.reTurn(Object.class)
 			.tHrow(SQLException.class)
 			.friendly(mv -> {

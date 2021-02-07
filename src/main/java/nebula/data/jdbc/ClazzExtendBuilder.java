@@ -1,14 +1,8 @@
 package nebula.data.jdbc;
 
-import static nebula.tinyasm.util.GenericClazz.*;
-import static nebula.tinyasm.util.TypeUtils.typeOf;
-
-import org.objectweb.asm.Type;
-
 import nebula.tinyasm.ClassBody;
 import nebula.tinyasm.ClassBuilder;
 import nebula.tinyasm.Field;
-import nebula.tinyasm.util.TypeUtils;
 
 public class ClazzExtendBuilder {
 	
@@ -19,13 +13,17 @@ public class ClazzExtendBuilder {
 		cw.field("createAt", java.sql.Timestamp.class);
 		cw.field("updateAt", java.sql.Timestamp.class);
 
-		cw.publicMethod("<init>").parameter(clazz.fieldsAll.map(f -> new Field(f.fieldName, TypeUtils.generic(f.clazz)))).code(mv -> {
+		cw.publicMethod("<init>").parameter(clazz.fieldsAll.map(f -> new Field(f.fieldName, f.clazz))).code(mv -> {
 			mv.line();
 			mv.LOAD(0);
 			for (FieldMapper fieldMapper : clazz.fields) {
 				mv.load(fieldMapper.fieldName);
 			}
-			mv.INVOKESPECIAL(typeOf(targetClazz), Type.VOID_TYPE, "<init>", clazz.fields.map(f -> typeOf(f.clazz)).toArray(new Type[0]));
+			Class<?>[] clazzes = new Class<?>[clazz.fields.size()];
+			for (int i = 0; i < clazz.fields.size(); i++) {
+				clazzes[i] = clazz.fields.get(i).clazz;
+			}
+			mv.SPECIAL(targetClazz, "<init>").parameter(clazzes).INVOKE();
 			mv.line().putThisFieldWithVar("createAt", "createAt");
 			mv.line().putThisFieldWithVar("updateAt", "updateAt");
 			mv.line().returnVoid();
