@@ -1,8 +1,7 @@
 package nebula.data.jdbc;
 
 import static nebula.tinyasm.CodeHelper.Const;
-import static nebula.tinyasm.CodeHelper.Var; 
-import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
+import static nebula.tinyasm.CodeHelper.Var;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
 import java.sql.Connection;
@@ -26,9 +25,9 @@ import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
 import nebula.tinyasm.BoxUnbox;
 import nebula.tinyasm.ClassBody;
 import nebula.tinyasm.ClassBuilder;
+import nebula.tinyasm.Clazz;
 import nebula.tinyasm.Instance;
 import nebula.tinyasm.MethodCodeFriendly;
-import nebula.tinyasm.TypeUtils;
 
 public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
@@ -38,14 +37,13 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 	ClassBody cw;
 
-	public byte[] make(String clazzRepository, String clazzTarget, String clazzExtend, String clazzRowMapper,
-			ClazzDefinition clazzDefinition) {
+	public byte[] make(String clazzRepository, String clazzTarget, String clazzExtend, String clazzRowMapper, ClazzDefinition clazzDefinition) {
 
 		cw = ClassBuilder.make(clazzRepository).implement(JdbcRepository.class, clazzTarget).body();
 
-		cw.field(ACC_PRIVATE, "conn", Connection.class);
+		cw.field("conn", Connection.class);
 
-		cw.field(ACC_PRIVATE, "mapper", clazzRowMapper);
+		cw.field("mapper", clazzRowMapper);
 
 		constructor(clazzRowMapper);
 
@@ -54,7 +52,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 		initJdbc(clazzDefinition.tablename, clazzDefinition.fieldsAll);
 
 		listJdbc(clazzTarget, clazzExtend, clazzDefinition);
-		
+
 		listJdbcCondition(clazzTarget, clazzExtend, clazzDefinition);
 
 		findByIdJdbc(clazzTarget, clazzExtend, clazzDefinition);
@@ -75,7 +73,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 	// @formatter:off
 	private void constructor(String clazzRowMapper) {
-		cw.method(ACC_PUBLIC, "<init>").code(mv -> {
+		cw.method(ACC_PUBLIC, "<init>").friendly(mv -> {
 			mv.line().initThis();
 			mv.line().initTo(clazzRowMapper, "mapper");
 			mv.returnVoid();
@@ -83,9 +81,11 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 	}
 
 	private void setConnection() {
-		cw.method(ACC_PUBLIC, "setConnection").parameter("conn", Connection.class).friendly(mv -> {
-			mv.line().putThisFieldWithVar("conn", "conn");
-			mv.line().returnVoid();
+		cw.method(ACC_PUBLIC, "setConnection").parameter("conn", Connection.class).code(mv -> {
+			mv.LINE();
+			mv.LOAD("conn");
+			mv.PUTFIELD_OF_THIS("conn");
+			mv.LINE();mv.RETURN();
 		});
 	}
 
@@ -137,7 +137,8 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.reTurn(PageList.class, clazzTarget)
 			.tHrow(SQLException.class)
 			.friendly(mv -> {
-				mv.define("datas", TypeUtils.generic(PageList.class, clazzTarget));
+				String[] genericParameterClazz = { clazzTarget };
+				mv.define("datas", Clazz.of(PageList.class.getName(), genericParameterClazz));
 
 				mv.line().init(PageListImpl.class,"start", "max").setTo("datas");
 
@@ -200,7 +201,8 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.reTurn(PageList.class, clazzTarget)
 			.tHrow(SQLException.class)
 			.friendly(mv -> {
-				mv.define("datas", TypeUtils.generic(PageList.class, clazzTarget));
+				String[] genericParameterClazz = { clazzTarget };
+				mv.define("datas", Clazz.of(PageList.class.getName(), genericParameterClazz));
 
 				mv.line().init(PageListImpl.class,"start", "max").setTo("datas");
 
@@ -266,7 +268,8 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 			.friendly(mv -> {
 				mv.define("preparedStatement", PreparedStatement.class);
 				mv.define("resultSet", ResultSet.class);
-				mv.define("datas", TypeUtils.generic(List.class, clazzTarget));
+				String[] genericParameterClazz = { clazzTarget };
+				mv.define("datas", Clazz.of(List.class.getName(), genericParameterClazz));
 
 				mv.line().setNew("datas", ArrayList.class);
 

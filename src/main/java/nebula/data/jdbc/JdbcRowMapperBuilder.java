@@ -27,7 +27,7 @@ public class JdbcRowMapperBuilder {
 		cw.constructerEmpty();
 		{
 			cw.method("map").parameter("rs", ResultSet.class).reTurn(clazzExtend).tHrow(SQLException.class).code(mv -> {
-				mv.line();
+				mv.LINE();
 				mv.NEW(clazzExtend);
 				mv.DUP();
 				Class<?>[] clazzes = new Class<?>[maps.size()];
@@ -44,7 +44,7 @@ public class JdbcRowMapperBuilder {
 					map(mv, name, getname, pojoClazz, jdbcClazz);
 				}
 				mv.SPECIAL(clazzExtend, "<init>").parameter(clazzes).INVOKE();
-				mv.line();
+				mv.LINE();
 				mv.RETURNTop();
 			});
 		}
@@ -54,7 +54,7 @@ public class JdbcRowMapperBuilder {
 				.reTurn(Object.class)
 				.tHrow(SQLException.class)
 				.code(mv -> {
-					mv.line();
+					mv.LINE();
 					mv.LOAD(0);
 					mv.LOAD(1);
 					mv.VIRTUAL(clazzRowMapper, "map").parameter(ResultSet.class).reTurn(clazzExtend).INVOKE();
@@ -69,7 +69,7 @@ public class JdbcRowMapperBuilder {
 		{
 			mv.LOAD("rs");
 			mv.LOADConst(name);
-			mv.line();
+			mv.LINE();
 			mv.INTERFACE(ResultSet.class, jdbcFuncName).parameter(String.class).reTurn(jdbcClazz).INVOKE();
 
 			arguments.fromJdbcClazz(pojoClazz, jdbcClazz).accept(mv);

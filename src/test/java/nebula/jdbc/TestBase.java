@@ -1,7 +1,6 @@
 package nebula.jdbc;
 
-import static nebula.tinyasm.util.RefineCode.excludeLineNumber;
-import static nebula.tinyasm.util.RefineCode.skipToString;
+import static nebula.jdbc.RefineCode.*;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
