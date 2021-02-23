@@ -3,13 +3,13 @@
  */
 package nebula.jdbc.statements;
 
-import com.dbal.jdbc.QueryParameters;
-
-import nebula.jdbc.builders.queries.Update;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import com.dbal.jdbc.QueryParameters;
+
+import nebula.jdbc.builders.queries.Update;
 
 public class UpdateStatement extends SQLStatement {
     private final Update update;

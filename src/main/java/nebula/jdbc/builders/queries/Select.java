@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nebula.data.query.CommonSQLConditionVisitor;
 import nebula.data.query.Condition;
 import nebula.data.query.OrderBy;
-import nebula.data.query.CommonSQLConditionVisitor;
 import nebula.jdbc.builders.HasSQLRepresentation;
 import nebula.jdbc.builders.schema.Column;
 import nebula.jdbc.builders.schema.ColumnList;

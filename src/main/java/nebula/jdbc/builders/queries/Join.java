@@ -3,11 +3,11 @@
  */
 package nebula.jdbc.builders.queries;
 
-import nebula.jdbc.builders.HasSQLRepresentation;
-import nebula.jdbc.builders.queries.JoinExpression.Type;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import nebula.jdbc.builders.HasSQLRepresentation;
+import nebula.jdbc.builders.queries.JoinExpression.Type;
 
 class Join implements HasSQLRepresentation {
     private List<JoinExpression> joins;

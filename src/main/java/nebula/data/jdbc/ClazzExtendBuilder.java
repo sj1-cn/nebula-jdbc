@@ -1,8 +1,8 @@
 package nebula.data.jdbc;
 
-import nebula.tinyasm.ClassBody;
-import nebula.tinyasm.ClassBuilder;
-import nebula.tinyasm.Field;
+import cc1sj.tinyasm.ClassBody;
+import cc1sj.tinyasm.ClassBuilder;
+import cc1sj.tinyasm.Field;
 
 public class ClazzExtendBuilder {
 	

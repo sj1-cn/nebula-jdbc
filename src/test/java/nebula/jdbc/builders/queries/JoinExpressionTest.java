@@ -3,12 +3,11 @@
  */
 package nebula.jdbc.builders.queries;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
-import nebula.jdbc.builders.queries.JoinExpression;
-
-import static nebula.jdbc.builders.queries.JoinExpression.*;
-import static org.junit.Assert.assertEquals;
+import nebula.jdbc.builders.queries.JoinExpression.Type;
 
 public class JoinExpressionTest {
     @Test

@@ -3,11 +3,11 @@
  */
 package nebula.jdbc.builders.queries;
 
-import nebula.jdbc.builders.HasSQLRepresentation;
-import nebula.jdbc.builders.queries.WhereExpression.Operator;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import nebula.jdbc.builders.HasSQLRepresentation;
+import nebula.jdbc.builders.queries.WhereExpression.Operator;
 
 class Where implements HasSQLRepresentation {
 	private final List<WhereExpression> expressions;

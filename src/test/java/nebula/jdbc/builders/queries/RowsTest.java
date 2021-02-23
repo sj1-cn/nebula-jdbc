@@ -3,12 +3,10 @@
  */
 package nebula.jdbc.builders.queries;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import nebula.jdbc.builders.queries.Rows;
-
-import static org.junit.Assert.assertEquals;
 
 public class RowsTest {
     private Rows rows;

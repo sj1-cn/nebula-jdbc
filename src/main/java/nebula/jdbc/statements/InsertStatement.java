@@ -3,12 +3,16 @@
  */
 package nebula.jdbc.statements;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import com.dbal.jdbc.QueryParameters;
 import com.dbal.jdbc.RowMapper;
 
 import nebula.jdbc.builders.queries.Insert;
-
-import java.sql.*;
 
 public class InsertStatement<T> extends SQLStatement {
     private Insert insert;

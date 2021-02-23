@@ -1,6 +1,6 @@
 package nebula.data.jdbc;
 
-import static nebula.jdbc.builders.schema.ColumnDefinition.*;
+import static nebula.jdbc.builders.schema.ColumnDefinition.TIMESTAMP;
 
 public class ClazzDefinition {
 	final String name;

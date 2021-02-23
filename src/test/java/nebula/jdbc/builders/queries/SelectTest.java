@@ -3,15 +3,14 @@
  */
 package nebula.jdbc.builders.queries;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import nebula.data.query.OrderBy;
 import nebula.data.query.OrderByOp;
-import nebula.jdbc.builders.queries.Select;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
-
-import static org.junit.Assert.assertEquals;
 
 public class SelectTest {
 	@Test

@@ -1,7 +1,10 @@
 package nebula.jdbc.builders.schema;
 
-import static org.junit.Assert.*;
-import static nebula.jdbc.builders.schema.ColumnDefinition.*;
+import static nebula.jdbc.builders.schema.ColumnDefinition.BIT;
+import static nebula.jdbc.builders.schema.ColumnDefinition.DECIMAL;
+import static nebula.jdbc.builders.schema.ColumnDefinition.IDENTITY;
+import static nebula.jdbc.builders.schema.ColumnDefinition.VARCHAR;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 

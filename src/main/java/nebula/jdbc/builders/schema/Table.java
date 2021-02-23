@@ -3,7 +3,8 @@
  */
 package nebula.jdbc.builders.schema;
 
-import static nebula.jdbc.builders.schema.ColumnDefinition.*;
+import static nebula.jdbc.builders.schema.ColumnDefinition.INTEGER;
+import static nebula.jdbc.builders.schema.ColumnDefinition.VARCHAR;
 
 import java.util.ArrayList;
 import java.util.List;

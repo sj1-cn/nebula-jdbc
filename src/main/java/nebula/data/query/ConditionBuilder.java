@@ -1,9 +1,24 @@
 package nebula.data.query;
 
+import static nebula.data.query.ConditionOp.CONTAIN;
+import static nebula.data.query.ConditionOp.ENDWITH;
+import static nebula.data.query.ConditionOp.EQ;
+import static nebula.data.query.ConditionOp.GE;
+import static nebula.data.query.ConditionOp.GT;
+import static nebula.data.query.ConditionOp.IN;
+import static nebula.data.query.ConditionOp.ISNOTNULL;
+import static nebula.data.query.ConditionOp.ISNULL;
+import static nebula.data.query.ConditionOp.LE;
+import static nebula.data.query.ConditionOp.LIKE;
+import static nebula.data.query.ConditionOp.LT;
+import static nebula.data.query.ConditionOp.NE;
+import static nebula.data.query.ConditionOp.NOTLIKE;
+import static nebula.data.query.ConditionOp.NotIn;
+import static nebula.data.query.ConditionOp.STARTWITH;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-import static nebula.data.query.ConditionOp.*;
 
 public interface ConditionBuilder<T> {
 	// @formatter:off

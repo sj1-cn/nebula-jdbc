@@ -3,11 +3,9 @@
  */
 package nebula.jdbc.builders.queries;
 
-import org.junit.Test;
-
-import nebula.jdbc.builders.queries.Join;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 public class JoinTest {
     private Join join = Join.empty();

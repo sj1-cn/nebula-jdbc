@@ -3,13 +3,13 @@
  */
 package nebula.jdbc.statements;
 
-import com.dbal.jdbc.RowMapper;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.dbal.jdbc.RowMapper;
 
 public class Hydrator<T> {
     private List<List<Object>> rows;

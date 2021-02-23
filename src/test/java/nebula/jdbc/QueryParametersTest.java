@@ -3,16 +3,19 @@
  */
 package nebula.jdbc;
 
-import org.junit.Test;
-
-import com.dbal.jdbc.QueryParameters;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.*;
+import org.junit.Test;
+
+import com.dbal.jdbc.QueryParameters;
 
 public class QueryParametersTest {
     @Test

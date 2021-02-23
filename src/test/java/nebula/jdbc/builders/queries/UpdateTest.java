@@ -3,13 +3,12 @@
  */
 package nebula.jdbc.builders.queries;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
-import nebula.jdbc.builders.queries.Update;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
-
-import static org.junit.Assert.assertEquals;
 
 public class UpdateTest {
 	private Update update = Update.table("users");

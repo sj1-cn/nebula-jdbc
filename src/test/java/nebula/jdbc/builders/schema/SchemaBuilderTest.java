@@ -3,16 +3,15 @@
  */
 package nebula.jdbc.builders.schema;
 
-import org.junit.Test;
-
-import nebula.jdbc.builders.schema.SchemaBuilder;
-import nebula.jdbc.builders.schema.Table;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import static org.mockito.Mockito.*;
+import org.junit.Test;
 
 public class SchemaBuilderTest {
 

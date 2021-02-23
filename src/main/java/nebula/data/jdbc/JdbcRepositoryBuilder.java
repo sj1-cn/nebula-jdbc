@@ -1,7 +1,7 @@
 package nebula.data.jdbc;
 
-import static nebula.tinyasm.CodeHelper.Const;
-import static nebula.tinyasm.CodeHelper.Var;
+import static cc1sj.tinyasm.CodeHelper.Const;
+import static cc1sj.tinyasm.CodeHelper.Var;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
 import java.sql.Connection;
@@ -13,6 +13,12 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import cc1sj.tinyasm.BoxUnbox;
+import cc1sj.tinyasm.ClassBody;
+import cc1sj.tinyasm.ClassBuilder;
+import cc1sj.tinyasm.Clazz;
+import cc1sj.tinyasm.Instance;
+import cc1sj.tinyasm.MethodCodeFriendly;
 import nebula.commons.list.ListMap;
 import nebula.data.query.Condition;
 import nebula.data.query.OrderBy;
@@ -22,12 +28,7 @@ import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
 import nebula.jdbc.builders.schema.JDBC;
 import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
-import nebula.tinyasm.BoxUnbox;
-import nebula.tinyasm.ClassBody;
-import nebula.tinyasm.ClassBuilder;
-import nebula.tinyasm.Clazz;
-import nebula.tinyasm.Instance;
-import nebula.tinyasm.MethodCodeFriendly;
+
 
 public class JdbcRepositoryBuilder extends RepositoryBuilder {
 

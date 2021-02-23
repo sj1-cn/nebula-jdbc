@@ -3,12 +3,15 @@
  */
 package com.dbal.jdbc;
 
-import nebula.jdbc.builders.HasSQLRepresentation;
-import nebula.jdbc.statements.*;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import nebula.jdbc.builders.HasSQLRepresentation;
+import nebula.jdbc.statements.InsertStatement;
+import nebula.jdbc.statements.SQLError;
+import nebula.jdbc.statements.SelectStatement;
+import nebula.jdbc.statements.UpdateStatement;
 
 abstract public class Table<T> {
     private final Connection connection;

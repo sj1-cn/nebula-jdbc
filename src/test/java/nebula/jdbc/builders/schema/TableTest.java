@@ -3,13 +3,10 @@
  */
 package nebula.jdbc.builders.schema;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import nebula.jdbc.builders.schema.Column;
-import nebula.jdbc.builders.schema.Table;
-
-import static org.junit.Assert.assertEquals;
 
 public class TableTest {
     private Table table;

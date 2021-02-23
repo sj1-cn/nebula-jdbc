@@ -1,9 +1,10 @@
 package nebula.data.query;
 
+import static nebula.data.query.Condition.and;
+import static nebula.data.query.Condition.field;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import static nebula.data.query.Condition.*;
 
 public class SqlTest {
 

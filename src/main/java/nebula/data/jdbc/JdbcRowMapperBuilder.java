@@ -7,11 +7,11 @@ import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import cc1sj.tinyasm.ClassBuilder;
+import cc1sj.tinyasm.MethodCode;
 import nebula.jdbc.builders.schema.JDBC;
 import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
-import nebula.tinyasm.ClassBody;
-import nebula.tinyasm.ClassBuilder;
-import nebula.tinyasm.MethodCode;
+import cc1sj.tinyasm.ClassBody;
 
 public class JdbcRowMapperBuilder {
 	Arguments arguments;

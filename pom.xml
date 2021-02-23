@@ -91,9 +91,20 @@
 			<version>${nebula.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.github.ByronWang</groupId>
+			<groupId>com.github.1sj-cc</groupId>
 			<artifactId>tinyasm-adv</artifactId>
 			<version>${tinyasm.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.1sj-cc</groupId>
+			<artifactId>tinyasm-core</artifactId>
+			<version>${tinyasm.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.1sj-cc</groupId>
+			<artifactId>tinyasm-tool</artifactId>
+			<version>${tinyasm.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>nebula</groupId>

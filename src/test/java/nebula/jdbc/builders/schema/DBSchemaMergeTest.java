@@ -1,12 +1,17 @@
 package nebula.jdbc.builders.schema;
 
+import static nebula.jdbc.builders.schema.ColumnDefinition.BIGINT;
+import static nebula.jdbc.builders.schema.ColumnDefinition.CHAR;
 import static nebula.jdbc.builders.schema.ColumnDefinition.DECIMAL;
-import static nebula.jdbc.builders.schema.ColumnDefinition.*;
+import static nebula.jdbc.builders.schema.ColumnDefinition.IDENTITY;
+import static nebula.jdbc.builders.schema.ColumnDefinition.VARCHAR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.sql.Connection;
 import java.sql.JDBCType;
@@ -24,8 +29,6 @@ import org.junit.rules.TestName;
 import nebula.data.jdbc.Command;
 import nebula.jdbc.TestBase;
 import nebula.jdbc.meta.JdbcDababaseMetadata;
-
-import static org.mockito.Mockito.*;
 
 public class DBSchemaMergeTest extends TestBase {
 	@Rule

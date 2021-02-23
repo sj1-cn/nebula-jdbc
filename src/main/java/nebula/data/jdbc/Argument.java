@@ -1,6 +1,6 @@
 package nebula.data.jdbc;
 
-import nebula.tinyasm.MethodCode;
+import cc1sj.tinyasm.MethodCode;
 
 public interface Argument {
 	void apply(MethodCode mv);

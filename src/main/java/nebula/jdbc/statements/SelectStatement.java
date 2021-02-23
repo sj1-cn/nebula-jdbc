@@ -3,15 +3,15 @@
  */
 package nebula.jdbc.statements;
 
-import com.dbal.jdbc.QueryParameters;
-import com.dbal.jdbc.RowMapper;
-
-import nebula.jdbc.builders.queries.Select;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import com.dbal.jdbc.QueryParameters;
+import com.dbal.jdbc.RowMapper;
+
+import nebula.jdbc.builders.queries.Select;
 
 public class SelectStatement<T> extends SQLStatement {
     private final Select select;
