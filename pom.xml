@@ -16,6 +16,7 @@
 		<nebula.version>0.1.1-SNAPSHOT</nebula.version>
 		<tinyasm.version>0.2.0</tinyasm.version>
 		<slf4j.version>1.7.25</slf4j.version>
+		<log4j.version>2.14.0</log4j.version>
 		<mockito.version>1.10.19</mockito.version>
 		<asm.version>6.2</asm.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,8 +36,14 @@
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
+			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
 			<scope>test</scope>
 		</dependency>
 		
@@ -90,7 +97,7 @@
 			<artifactId>nebula-commons</artifactId>
 			<version>${nebula.version}</version>
 		</dependency>
-		<dependency>
+ 		<dependency>
 			<groupId>com.github.1sj-cc</groupId>
 			<artifactId>tinyasm-adv</artifactId>
 			<version>${tinyasm.version}</version>
