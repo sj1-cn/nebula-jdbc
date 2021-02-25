@@ -220,6 +220,9 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmWithProxyBuilder {
 			MethodCode code = classBody.method(Clazz.of(nebula.data.jdbc.PageList.class, Clazz.of(nebula.data.jdbc.User.class)), "listJdbc")
 					.tHrow(SQLException.class).parameter("start", int.class).parameter("max", int.class).begin();
 
+			int start = param("start", int.class);
+			int max = param("max",int.class);
+			
 			code.LINE(43);
 			code.NEW(PageListImpl.class);
 			code.DUP();
