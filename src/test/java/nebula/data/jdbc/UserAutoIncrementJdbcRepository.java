@@ -26,11 +26,27 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 	@Override
 	public void initJdbc() throws SQLException {
 		ColumnList columnList = new ColumnList();
-		columnList.push(ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY AUTO_INCREMENT"));
-		columnList.push(ColumnDefinition.valueOf("name VARCHAR(256)"));
-		columnList.push(ColumnDefinition.valueOf("description VARCHAR(256)"));
-		columnList.push(ColumnDefinition.valueOf("createAt TIMESTAMP"));
-		columnList.push(ColumnDefinition.valueOf("updateAt TIMESTAMP"));
+		{
+			ColumnDefinition cd = ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY AUTO_INCREMENT");
+			columnList.push(cd);
+		}
+		{
+			ColumnDefinition cd = ColumnDefinition.valueOf("name VARCHAR(256)");
+			columnList.push(cd);
+		}
+		{
+			ColumnDefinition cd = ColumnDefinition.valueOf("description VARCHAR(256)");
+			columnList.push(cd);
+		}
+		{
+			ColumnDefinition cd = ColumnDefinition.valueOf("createAt TIMESTAMP");
+			columnList.push(cd);
+		}
+		{
+			ColumnDefinition cd = ColumnDefinition.valueOf("updateAt TIMESTAMP");
+			columnList.push(cd);
+		}
+
 		if (!JDBC.mergeIfExists(conn, "USER", columnList)) {
 			// @formatter:off
 			conn.prepareStatement("CREATE TABLE USER(id INTEGER(10) PRIMARY KEY AUTO_INCREMENT,name VARCHAR(256),description VARCHAR(256),createAt TIMESTAMP,updateAt TIMESTAMP)").execute();
@@ -100,7 +116,7 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		// @formatter:on
 
 		Object key = keys[0];
-		preparedStatement.setLong(1, ((Long)key).longValue());
+		preparedStatement.setLong(1, ((Long) key).longValue());
 
 		resultSet = preparedStatement.executeQuery();
 
@@ -127,8 +143,8 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		if (preparedStatement.executeUpdate() > 0) {
 			rs = preparedStatement.getGeneratedKeys();
 			rs.next();
-			
-			return findByIdJdbc( rs.getLong(1));
+
+			return findByIdJdbc(rs.getLong(1));
 		} else {
 			return null;
 		}
@@ -163,7 +179,7 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		// @formatter:on
 
 		Object key = keys[0];
-		preparedStatement.setLong(1, ((Long)key).longValue());
+		preparedStatement.setLong(1, ((Long) key).longValue());
 
 		return preparedStatement.executeUpdate();
 	}

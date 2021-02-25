@@ -35,11 +35,12 @@ public class UserJdbcRepositoryTinyAsmDump {
 
 public static byte[] dump () throws Exception {
 
-ClassBody classWriter = ClassBuilder.make("nebula.data.jdbc.UserJdbcRepository", Clazz.of(java.lang.Object.class),Clazz.of(nebula.data.jdbc.JdbcRepository.class,Clazz.of(nebula.data.jdbc.User.class))).access(ACC_PUBLIC | ACC_SUPER).body();
+ClassBody classBody = ClassBuilder.make("nebula.data.jdbc.UserJdbcRepository", Clazz.of(java.lang.Object.class),Clazz.of(nebula.data.jdbc.JdbcRepository.class,Clazz.of(nebula.data.jdbc.User.class))).access(ACC_PUBLIC | ACC_SUPER).body();
 
-classWriter.field("conn", Clazz.of(Connection.class));
-classWriter.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
-classWriter.method("<init>").code(code -> {
+classBody.field("conn", Clazz.of(Connection.class));
+classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
+{
+	MethodCode code = classBody.method("<init>").begin();
 
 	code.LINE(17);
 	code.LOAD("this");
@@ -51,10 +52,15 @@ classWriter.method("<init>").code(code -> {
 	code.DUP();
 	code.SPECIAL(UserExtendJdbcRowMapper.class, "<init>").INVOKE();
 	code.PUTFIELD("mapper", UserExtendJdbcRowMapper.class);
+
+	code.LINE(17);
 	code.RETURN();
-});
-classWriter.method("setConnection")
-	.parameter("conn",Connection.class).code(code -> {
+	code.END();
+}
+
+{
+	MethodCode code = classBody.method("setConnection")
+	.parameter("conn",Connection.class).begin();
 
 	code.LINE(23);
 	code.LOAD("this");
@@ -63,9 +69,12 @@ classWriter.method("setConnection")
 
 	code.LINE(24);
 	code.RETURN();
-});
-classWriter.method("initJdbc")
-	.tHrow(SQLException.class ).code(code -> {
+	code.END();
+}
+
+{
+	MethodCode code = classBody.method("initJdbc")
+	.tHrow(SQLException.class ).begin();
 
 	code.LINE(28);
 	code.NEW(ColumnList.class);
@@ -146,11 +155,14 @@ classWriter.method("initJdbc")
 
 	code.LINE(39);
 	code.RETURN();
-});
-classWriter.method(Clazz.of(nebula.data.jdbc.PageList.class,Clazz.of(nebula.data.jdbc.User.class)), "listJdbc")
+	code.END();
+}
+
+{
+	MethodCode code = classBody.method(Clazz.of(nebula.data.jdbc.PageList.class,Clazz.of(nebula.data.jdbc.User.class)), "listJdbc")
 	.tHrow(SQLException.class )
 	.parameter("start",int.class)
-	.parameter("max",int.class).code(code -> {
+	.parameter("max",int.class).begin();
 
 	code.LINE(43);
 	code.NEW(PageListImpl.class);
@@ -193,16 +205,13 @@ classWriter.method(Clazz.of(nebula.data.jdbc.PageList.class,Clazz.of(nebula.data
 	code.INTERFACE(PreparedStatement.class, "executeQuery")
 		.reTurn(ResultSet.class).INVOKE();
 	code.STORE("resultSet",ResultSet.class);
-	Label label6OfGOTO = new Label();
-
-	code.visitLabel(label6OfGOTO);
 
 	code.LINE(51);
-	code.LOAD("resultSet");
-	code.INTERFACE(ResultSet.class, "next")
-		.reTurn(boolean.class).INVOKE();
-	Label label4OfIFEQ = new Label();
-	code.IFEQ(label4OfIFEQ);
+	Label label4OfGOTO = new Label();
+	code.GOTO(label4OfGOTO);
+	Label label6OfIFNE = new Label();
+
+	code.visitLabel(label6OfIFNE);
 
 	code.LINE(52);
 	code.LOAD("datas");
@@ -216,9 +225,14 @@ classWriter.method(Clazz.of(nebula.data.jdbc.PageList.class,Clazz.of(nebula.data
 		.reTurn(boolean.class)
 		.parameter(Object.class).INVOKE();
 	code.POP();
-	code.GOTO(label6OfGOTO);
 
-	code.visitLabel(label4OfIFEQ);
+	code.visitLabel(label4OfGOTO);
+
+	code.LINE(51);
+	code.LOAD("resultSet");
+	code.INTERFACE(ResultSet.class, "next")
+		.reTurn(boolean.class).INVOKE();
+	code.IFNE(label6OfIFNE);
 
 	code.LINE(54);
 	code.LOAD("resultSet");
@@ -275,13 +289,16 @@ classWriter.method(Clazz.of(nebula.data.jdbc.PageList.class,Clazz.of(nebula.data
 	code.LINE(63);
 	code.LOAD("datas");
 	code.RETURNTop();
-});
-classWriter.method(Clazz.of(nebula.data.jdbc.PageList.class,Clazz.of(nebula.data.jdbc.User.class)), "listJdbc")
+	code.END();
+}
+
+{
+	MethodCode code = classBody.method(Clazz.of(nebula.data.jdbc.PageList.class,Clazz.of(nebula.data.jdbc.User.class)), "listJdbc")
 	.tHrow(SQLException.class )
 	.parameter("condition",Clazz.of(nebula.data.query.Condition.class))
 	.parameter("orderBy",Clazz.of(nebula.data.query.OrderBy.class))
 	.parameter("start",int.class)
-	.parameter("max",int.class).code(code -> {
+	.parameter("max",int.class).begin();
 
 	code.LINE(69);
 	code.NEW(PageListImpl.class);
@@ -332,16 +349,13 @@ classWriter.method(Clazz.of(nebula.data.jdbc.PageList.class,Clazz.of(nebula.data
 	code.INTERFACE(PreparedStatement.class, "executeQuery")
 		.reTurn(ResultSet.class).INVOKE();
 	code.STORE("resultSet",ResultSet.class);
-	Label label6OfGOTO = new Label();
-
-	code.visitLabel(label6OfGOTO);
 
 	code.LINE(77);
-	code.LOAD("resultSet");
-	code.INTERFACE(ResultSet.class, "next")
-		.reTurn(boolean.class).INVOKE();
-	Label label4OfIFEQ = new Label();
-	code.IFEQ(label4OfIFEQ);
+	Label label4OfGOTO = new Label();
+	code.GOTO(label4OfGOTO);
+	Label label6OfIFNE = new Label();
+
+	code.visitLabel(label6OfIFNE);
 
 	code.LINE(78);
 	code.LOAD("datas");
@@ -355,9 +369,14 @@ classWriter.method(Clazz.of(nebula.data.jdbc.PageList.class,Clazz.of(nebula.data
 		.reTurn(boolean.class)
 		.parameter(Object.class).INVOKE();
 	code.POP();
-	code.GOTO(label6OfGOTO);
 
-	code.visitLabel(label4OfIFEQ);
+	code.visitLabel(label4OfGOTO);
+
+	code.LINE(77);
+	code.LOAD("resultSet");
+	code.INTERFACE(ResultSet.class, "next")
+		.reTurn(boolean.class).INVOKE();
+	code.IFNE(label6OfIFNE);
 
 	code.LINE(80);
 	code.LOAD("resultSet");
@@ -418,10 +437,13 @@ classWriter.method(Clazz.of(nebula.data.jdbc.PageList.class,Clazz.of(nebula.data
 	code.LINE(89);
 	code.LOAD("datas");
 	code.RETURNTop();
-});
-classWriter.method(ACC_PUBLIC | ACC_VARARGS, User.class, "findByIdJdbc")
+	code.END();
+}
+
+{
+	MethodCode code = classBody.method(ACC_PUBLIC | ACC_VARARGS, User.class, "findByIdJdbc")
 	.tHrow(SQLException.class )
-	.parameter("keys",Object[].class).code(code -> {
+	.parameter("keys",Object[].class).begin();
 	code.define("preparedStatement",PreparedStatement.class);
 	code.define("resultSet",ResultSet.class);
 	code.define("datas",Clazz.of(java.util.List.class,Clazz.of(nebula.data.jdbc.User.class)));
@@ -464,16 +486,13 @@ classWriter.method(ACC_PUBLIC | ACC_VARARGS, User.class, "findByIdJdbc")
 	code.INTERFACE(PreparedStatement.class, "executeQuery")
 		.reTurn(ResultSet.class).INVOKE();
 	code.STORE("resultSet",ResultSet.class);
-	Label label8OfGOTO = new Label();
-
-	code.visitLabel(label8OfGOTO);
 
 	code.LINE(107);
-	code.LOAD("resultSet");
-	code.INTERFACE(ResultSet.class, "next")
-		.reTurn(boolean.class).INVOKE();
-	Label label6OfIFEQ = new Label();
-	code.IFEQ(label6OfIFEQ);
+	Label label6OfGOTO = new Label();
+	code.GOTO(label6OfGOTO);
+	Label label8OfIFNE = new Label();
+
+	code.visitLabel(label8OfIFNE);
 
 	code.LINE(108);
 	code.LOAD("datas");
@@ -487,9 +506,14 @@ classWriter.method(ACC_PUBLIC | ACC_VARARGS, User.class, "findByIdJdbc")
 		.reTurn(boolean.class)
 		.parameter(Object.class).INVOKE();
 	code.POP();
-	code.GOTO(label8OfGOTO);
 
-	code.visitLabel(label6OfIFEQ);
+	code.visitLabel(label6OfGOTO);
+
+	code.LINE(107);
+	code.LOAD("resultSet");
+	code.INTERFACE(ResultSet.class, "next")
+		.reTurn(boolean.class).INVOKE();
+	code.IFNE(label8OfIFNE);
 
 	code.LINE(110);
 	code.LOAD("datas");
@@ -499,10 +523,13 @@ classWriter.method(ACC_PUBLIC | ACC_VARARGS, User.class, "findByIdJdbc")
 		.parameter(int.class).INVOKE();
 	code.CHECKCAST(User.class);
 	code.RETURNTop();
-});
-classWriter.method(User.class, "insertJdbc")
+	code.END();
+}
+
+{
+	MethodCode code = classBody.method(User.class, "insertJdbc")
 	.tHrow(SQLException.class )
-	.parameter("data",User.class).code(code -> {
+	.parameter("data",User.class).begin();
 
 	code.LINE(116);
 	code.LOAD("this");
@@ -583,10 +610,13 @@ classWriter.method(User.class, "insertJdbc")
 	code.LINE(128);
 	code.LOADConstNULL();
 	code.RETURNTop();
-});
-classWriter.method(User.class, "updateJdbc")
+	code.END();
+}
+
+{
+	MethodCode code = classBody.method(User.class, "updateJdbc")
 	.tHrow(SQLException.class )
-	.parameter("data",User.class).code(code -> {
+	.parameter("data",User.class).begin();
 
 	code.LINE(133);
 	code.LOAD("this");
@@ -703,10 +733,13 @@ classWriter.method(User.class, "updateJdbc")
 	code.LINE(150);
 	code.LOADConstNULL();
 	code.RETURNTop();
-});
-classWriter.method(ACC_PUBLIC | ACC_VARARGS, int.class, "deleteJdbc")
+	code.END();
+}
+
+{
+	MethodCode code = classBody.method(ACC_PUBLIC | ACC_VARARGS, int.class, "deleteJdbc")
 	.tHrow(SQLException.class )
-	.parameter("keys",Object[].class).code(code -> {
+	.parameter("keys",Object[].class).begin();
 
 	code.LINE(156);
 	code.LOAD("this");
@@ -739,12 +772,30 @@ classWriter.method(ACC_PUBLIC | ACC_VARARGS, int.class, "deleteJdbc")
 	code.INTERFACE(PreparedStatement.class, "executeUpdate")
 		.reTurn(int.class).INVOKE();
 	code.RETURNTop();
-});
-classWriter.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, Object.class, "updateJdbc")
-	.tHrow(SQLException.class )
-	.parameter("var1",Object.class).code(code -> {
+	code.END();
+}
 
-	code.LINE(17);
+{
+	MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_VARARGS | ACC_SYNTHETIC, Object.class, "findByIdJdbc")
+	.tHrow(SQLException.class )
+	.parameter("var1",Object[].class).begin();
+
+	code.LINE(1);
+	code.LOAD("this");
+	code.LOAD("var1");
+	code.VIRTUAL("findByIdJdbc")
+		.reTurn(User.class)
+		.parameter(Object[].class).INVOKE();
+	code.RETURNTop();
+	code.END();
+}
+
+{
+	MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, Object.class, "updateJdbc")
+	.tHrow(SQLException.class )
+	.parameter("var1",Object.class).begin();
+
+	code.LINE(1);
 	code.LOAD("this");
 	code.LOAD("var1");
 	code.CHECKCAST(User.class);
@@ -752,12 +803,15 @@ classWriter.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, Object.class, "updat
 		.reTurn(User.class)
 		.parameter(User.class).INVOKE();
 	code.RETURNTop();
-});
-classWriter.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, Object.class, "insertJdbc")
-	.tHrow(SQLException.class )
-	.parameter("var1",Object.class).code(code -> {
+	code.END();
+}
 
-	code.LINE(17);
+{
+	MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, Object.class, "insertJdbc")
+	.tHrow(SQLException.class )
+	.parameter("var1",Object.class).begin();
+
+	code.LINE(1);
 	code.LOAD("this");
 	code.LOAD("var1");
 	code.CHECKCAST(User.class);
@@ -765,19 +819,9 @@ classWriter.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, Object.class, "inser
 		.reTurn(User.class)
 		.parameter(User.class).INVOKE();
 	code.RETURNTop();
-});
-classWriter.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, Object.class, "findByIdJdbc")
-	.tHrow(SQLException.class )
-	.parameter("var1",Object[].class).code(code -> {
+	code.END();
+}
 
-	code.LINE(17);
-	code.LOAD("this");
-	code.LOAD("var1");
-	code.VIRTUAL("findByIdJdbc")
-		.reTurn(User.class)
-		.parameter(Object[].class).INVOKE();
-	code.RETURNTop();
-});
-return classWriter.end().toByteArray();
+return classBody.end().toByteArray();
 }
 }

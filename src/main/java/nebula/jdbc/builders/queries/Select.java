@@ -17,7 +17,7 @@ import nebula.jdbc.builders.schema.ColumnList;
 public class Select implements HasSQLRepresentation {
 	private Map<String, HasSQLRepresentation> parts;
 
-	private Select(Columns columns) {
+	public Select(Columns columns) {
 		parts = new HashMap<>();
 		parts.put("from", From.empty());
 		parts.put("columns", columns);
