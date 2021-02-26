@@ -95,60 +95,29 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump2 extends UserAutoIncreme
 	protected void _setConnection(ClassBody classBody) {
 		MethodCode code = classBody.method("setConnection").parameter("conn", Connection.class).begin();
 
-		Connection conn = param("conn", Connection.class);
-		setField("conn", conn);
-//
-//		code.LINE(22);
-//		code.LOAD("this");
-//		code.LOAD("conn");
-//		code.PUTFIELD("conn", Connection.class);
+		setField("conn", param("conn", Connection.class));
 
 		code.LINE(23);
 		code.RETURN();
 
 		code.END();
 	}
-//
-//	protected void _initJdbc(ClassBody classBody) {
-//		MethodCode code = classBody.method("initJdbc")
-//			.tHrow(SQLException.class ).begin();
-//
-//		code.LINE(27);
-//		code.NEW(ColumnList.class);
-//		code.DUP();
-//		code.SPECIAL(ColumnList.class, "<init>").INVOKE();
-//		code.STORE("columnList",ColumnList.class);
-//
-//		code.LINE(28);
-//		code.LOAD("columnList");
-//		code.LOADConst("id INTEGER(10) PRIMARY KEY AUTO_INCREMENT");
-//		code.VIRTUAL(ColumnList.class, "addColumn")
-//			.parameter(String.class).INVOKE();
-//
-//		code.LINE(29);
-//		code.LOAD("columnList");
-//		code.LOADConst("name VARCHAR(256)");
-//		code.VIRTUAL(ColumnList.class, "addColumn")
-//			.parameter(String.class).INVOKE();
-//
-//		code.LINE(30);
-//		code.LOAD("columnList");
-//		code.LOADConst("description VARCHAR(256)");
-//		code.VIRTUAL(ColumnList.class, "addColumn")
-//			.parameter(String.class).INVOKE();
-//
-//		code.LINE(31);
-//		code.LOAD("columnList");
-//		code.LOADConst("createAt TIMESTAMP");
-//		code.VIRTUAL(ColumnList.class, "addColumn")
-//			.parameter(String.class).INVOKE();
-//
-//		code.LINE(32);
-//		code.LOAD("columnList");
-//		code.LOADConst("updateAt TIMESTAMP");
-//		code.VIRTUAL(ColumnList.class, "addColumn")
-//			.parameter(String.class).INVOKE();
-//
+
+	protected void _initJdbc(ClassBody classBody) {
+		MethodCode code = classBody.method("initJdbc").tHrow(SQLException.class).begin();
+
+		ColumnList columnList = ctor(ColumnList.class);
+		columnList.addColumn("id INTEGER(10) PRIMARY KEY AUTO_INCREMENT");
+		columnList.addColumn("name VARCHAR(256)");
+		columnList.addColumn("description VARCHAR(256)");
+		columnList.addColumn("createAt TIMESTAMP");
+		columnList.addColumn("updateAt TIMESTAMP");
+//		if (checkIsExist(conn, "USER", columnList)) {
+//			// @formatter:off
+//			conn.prepareStatement("CREATE TABLE USER(id INTEGER(10) PRIMARY KEY AUTO_INCREMENT,name VARCHAR(256),description VARCHAR(256),createAt TIMESTAMP,updateAt TIMESTAMP)").execute();
+//			// @formatter:on
+//		}
+
 //		code.LINE(33);
 //		code.LOAD("this");
 //		code.LOAD("this");
@@ -178,16 +147,42 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump2 extends UserAutoIncreme
 //
 //		code.LINE(38);
 //		code.RETURN();
+
+		code.END();
+	}
+
+	protected void _listJdbc(ClassBody classBody) {
+		try {
+			MethodCode code = classBody.method(Clazz.of(PageList.class,Clazz.of(User.class)), "listJdbc")
+				.tHrow(SQLException.class )
+				.parameter("start",int.class)
+				.parameter("max",int.class).begin();
+			
+			int start = param("start", int.class);
+			int max  = param("max", int.class);
+			
+			PageList<User> datas = (PageList<User>)ctor( PageListImpl.class,start, max);
+
+			
+			// @formatter:off
+			String sql = getField("sqlHelper", SqlHelper.class).select("id,name,description,createAt,updateAt").from("USER").offset(start).max(max).toSQL();
+			// @formatter:on
 //
-//		code.END();
-//	}
+			ResultSet resultSet =getField("conn",Connection.class).prepareStatement(sql).executeQuery();
 //
-//	protected void _listJdbc(ClassBody classBody) {
-//		MethodCode code = classBody.method(Clazz.of(PageList.class,Clazz.of(User.class)), "listJdbc")
-//			.tHrow(SQLException.class )
-//			.parameter("start",int.class)
-//			.parameter("max",int.class).begin();
-//
+//		while (resultSet.next()) {
+//			datas.add(mapper.map(resultSet));
+//		}
+		resultSet.close();
+
+		String sqlCount = getField("sqlHelper", SqlHelper.class).select("count(1)").from("USER").toSQL();
+		ResultSet resultSetCount = getField("conn",Connection.class).createStatement().executeQuery(sqlCount);
+		resultSetCount.next();
+		int totalSize = resultSetCount.getInt(1);
+		resultSetCount.close();
+		datas.totalSize(totalSize);
+		
+			
 //		code.LINE(42);
 //		code.NEW(PageListImpl.class);
 //		code.DUP();
@@ -315,9 +310,13 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump2 extends UserAutoIncreme
 //		code.LINE(62);
 //		code.LOAD("datas");
 //		code.RETURNTop();
-//
-//		code.END();
-//	}
+
+			code.END();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 //
 //	protected void _listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int(ClassBody classBody) {
 //		MethodCode code = classBody.method(Clazz.of(PageList.class,Clazz.of(User.class)), "listJdbc")

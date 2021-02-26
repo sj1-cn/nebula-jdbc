@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import cc1sj.tinyasm.util.TinyAsmTestUtils;
 
-public class JdbcRepositoryBuilderTinyASMifierTest  {
+public class JdbcRepositoryBuilderTinyASMifierTest {
 
 	@Test
 	public void test_UserKeysJdbcRepository() throws Exception {
@@ -15,7 +15,7 @@ public class JdbcRepositoryBuilderTinyASMifierTest  {
 		String codeExpected = TinyAsmTestUtils.toString(expectedClazz);
 
 		try {
-			String codeActual = TinyAsmTestUtils.toString(dumpTinyAsm(expectedClazz));
+			String codeActual = TinyAsmTestUtils.toString(expectedClazz.getName(), dumpTinyAsm(expectedClazz));
 
 			assertEquals("Code", codeExpected, codeActual);
 		} finally {
@@ -25,14 +25,14 @@ public class JdbcRepositoryBuilderTinyASMifierTest  {
 		}
 
 	}
-	
+
 	@Test
 	public void test_UserJdbcRepository() throws Exception {
 		Class<?> expectedClazz = UserJdbcRepository.class;
 		String codeExpected = TinyAsmTestUtils.toString(expectedClazz);
 
 		try {
-			String codeActual = TinyAsmTestUtils.toString(dumpTinyAsm(expectedClazz));
+			String codeActual = TinyAsmTestUtils.toString(expectedClazz.getName(), dumpTinyAsm(expectedClazz));
 
 			assertEquals("Code", codeExpected, codeActual);
 		} finally {
@@ -42,13 +42,14 @@ public class JdbcRepositoryBuilderTinyASMifierTest  {
 		}
 
 	}
+
 	@Test
 	public void test_UserAutoIncrementJdbcRepository() throws Exception {
 		Class<?> expectedClazz = UserAutoIncrementJdbcRepository.class;
 		String codeExpected = TinyAsmTestUtils.toString(expectedClazz);
 
 		try {
-			String codeActual = TinyAsmTestUtils.toString(dumpTinyAsm(expectedClazz));
+			String codeActual = TinyAsmTestUtils.toString(expectedClazz.getName(), dumpTinyAsm(expectedClazz));
 
 			assertEquals("Code", codeExpected, codeActual);
 		} finally {
@@ -58,7 +59,7 @@ public class JdbcRepositoryBuilderTinyASMifierTest  {
 		}
 
 	}
-	
+
 //	@Test
 //	public void test_UserAutoIncrementJdbcRepositoryWithProxy() throws Exception {
 //		Class<?> expectedClazz = UserAutoIncrementJdbcRepository.class;
@@ -75,15 +76,14 @@ public class JdbcRepositoryBuilderTinyASMifierTest  {
 //		}
 //
 //	}
-	
-	
+
 	@Test
 	public void test_UserMoreComplexAutoIncrementJdbcRepository() throws Exception {
 		Class<?> expectedClazz = UserMoreComplexAutoIncrementJdbcRepository.class;
 		String codeExpected = TinyAsmTestUtils.toString(expectedClazz);
 
 		try {
-			String codeActual = TinyAsmTestUtils.toString(dumpTinyAsm(expectedClazz));
+			String codeActual = TinyAsmTestUtils.toString(expectedClazz.getName(), dumpTinyAsm(expectedClazz));
 
 			assertEquals("Code", codeExpected, codeActual);
 		} finally {
@@ -93,13 +93,14 @@ public class JdbcRepositoryBuilderTinyASMifierTest  {
 		}
 
 	}
-	
-	
+
 	@Test
 	public void test_UserAutoIncrementJdbcRepositoryTinyAsmDump2() throws Exception {
 //		Class<?> expectedClazz = UserAutoIncrementJdbcRepositoryTinyAsmDump2.class;
-		String codeExpected = TinyAsmTestUtils.toString(UserAutoIncrementJdbcRepositoryTinyAsmDump.dump());
-		String codeActual = TinyAsmTestUtils.toString(UserAutoIncrementJdbcRepositoryTinyAsmDump2.dump());
+		String codeExpected = TinyAsmTestUtils.toString(UserAutoIncrementJdbcRepository.class.getName(),
+				UserAutoIncrementJdbcRepositoryTinyAsmDump.dump());
+		String codeActual = TinyAsmTestUtils.toString(UserAutoIncrementJdbcRepository.class.getName(),
+				UserAutoIncrementJdbcRepositoryTinyAsmDump2.dump());
 
 		assertEquals("Code", codeExpected, codeActual);
 //
