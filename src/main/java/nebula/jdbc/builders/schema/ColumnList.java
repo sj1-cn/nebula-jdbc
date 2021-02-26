@@ -9,6 +9,10 @@ public class ColumnList extends StringListMap<ColumnDefinition> {
 	public ColumnList() {
 		super(c -> c.columnName);
 	}
+	
+	public void addColumn(String strColumnDefinition) {
+		this.push(ColumnDefinition.valueOf(strColumnDefinition));
+	}
 
 	public ColumnList copy() {
 		ColumnList newobject = new ColumnList();

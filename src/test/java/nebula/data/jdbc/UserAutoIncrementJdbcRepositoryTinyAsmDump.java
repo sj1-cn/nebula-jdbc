@@ -7,10 +7,9 @@ import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
 import cc1sj.tinyasm.Annotation;
 import cc1sj.tinyasm.Clazz;
-import nebula.jdbc.builders.schema.JDBC;
-import nebula.jdbc.builders.schema.ColumnDefinition;
 import java.sql.Connection;
 import nebula.data.query.OrderBy;
+import nebula.data.jdbc.JdbcRepositoryBase;
 import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import nebula.jdbc.builders.queries.Select;
@@ -26,121 +25,116 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.lang.Object;
 import nebula.data.query.Condition;
+import nebula.data.jdbc.SqlHelper;
 import nebula.jdbc.builders.schema.ColumnList;
 import java.lang.String;
 import nebula.data.jdbc.PageListImpl;
 import nebula.data.jdbc.PageList;
 @SuppressWarnings("unused")
-public class UserAutoIncrementJdbcRepositoryTinyAsmBuilder {
+public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 
 public static byte[] dump () throws Exception {
 
-ClassBody classBody = ClassBuilder.make("nebula.data.jdbc.UserAutoIncrementJdbcRepository", Clazz.of(java.lang.Object.class),Clazz.of(nebula.data.jdbc.JdbcRepository.class,Clazz.of(nebula.data.jdbc.User.class))).access(ACC_PUBLIC | ACC_SUPER).body();
+ClassBody classBody = ClassBuilder.make("nebula.data.jdbc.UserAutoIncrementJdbcRepository", Clazz.of(nebula.data.jdbc.JdbcRepositoryBase.class),Clazz.of(nebula.data.jdbc.JdbcRepository.class,Clazz.of(nebula.data.jdbc.User.class))).access(ACC_PUBLIC | ACC_SUPER).body();
 
-classBody.field("conn", Clazz.of(Connection.class));
+classBody.field(0, "conn", Clazz.of(Connection.class));
 classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
-{
+classBody.field(0, "sqlHelper", Clazz.of(SqlHelper.class));
+protected static void _init_(ClassBody classBody) {
 	MethodCode code = classBody.method("<init>").begin();
 
-	code.LINE(17);
+	code.LINE(15);
 	code.LOAD("this");
-	code.SPECIAL(Object.class, "<init>").INVOKE();
+	code.SPECIAL(JdbcRepositoryBase.class, "<init>").INVOKE();
 
-	code.LINE(19);
+	code.LINE(17);
 	code.LOAD("this");
 	code.NEW(UserExtendJdbcRowMapper.class);
 	code.DUP();
 	code.SPECIAL(UserExtendJdbcRowMapper.class, "<init>").INVOKE();
 	code.PUTFIELD("mapper", UserExtendJdbcRowMapper.class);
 
-	code.LINE(17);
+	code.LINE(18);
+	code.LOAD("this");
+	code.NEW(SqlHelper.class);
+	code.DUP();
+	code.SPECIAL(SqlHelper.class, "<init>").INVOKE();
+	code.PUTFIELD("sqlHelper", SqlHelper.class);
+
+	code.LINE(15);
 	code.RETURN();
 	code.END();
 }
 
-{
+protected static void setConnection(ClassBody classBody) {
 	MethodCode code = classBody.method("setConnection")
 	.parameter("conn",Connection.class).begin();
 
-	code.LINE(23);
+	code.LINE(22);
 	code.LOAD("this");
 	code.LOAD("conn");
 	code.PUTFIELD("conn", Connection.class);
 
-	code.LINE(24);
+	code.LINE(23);
 	code.RETURN();
 	code.END();
 }
 
-{
+protected static void initJdbc(ClassBody classBody) {
 	MethodCode code = classBody.method("initJdbc")
 	.tHrow(SQLException.class ).begin();
 
-	code.LINE(28);
+	code.LINE(27);
 	code.NEW(ColumnList.class);
 	code.DUP();
 	code.SPECIAL(ColumnList.class, "<init>").INVOKE();
 	code.STORE("columnList",ColumnList.class);
 
-	code.LINE(29);
+	code.LINE(28);
 	code.LOAD("columnList");
 	code.LOADConst("id INTEGER(10) PRIMARY KEY AUTO_INCREMENT");
-	code.STATIC(ColumnDefinition.class, "valueOf")
-		.reTurn(ColumnDefinition.class)
+	code.VIRTUAL(ColumnList.class, "addColumn")
 		.parameter(String.class).INVOKE();
-	code.VIRTUAL(ColumnList.class, "push")
-		.parameter(Object.class).INVOKE();
+
+	code.LINE(29);
+	code.LOAD("columnList");
+	code.LOADConst("name VARCHAR(256)");
+	code.VIRTUAL(ColumnList.class, "addColumn")
+		.parameter(String.class).INVOKE();
 
 	code.LINE(30);
 	code.LOAD("columnList");
-	code.LOADConst("name VARCHAR(256)");
-	code.STATIC(ColumnDefinition.class, "valueOf")
-		.reTurn(ColumnDefinition.class)
+	code.LOADConst("description VARCHAR(256)");
+	code.VIRTUAL(ColumnList.class, "addColumn")
 		.parameter(String.class).INVOKE();
-	code.VIRTUAL(ColumnList.class, "push")
-		.parameter(Object.class).INVOKE();
 
 	code.LINE(31);
 	code.LOAD("columnList");
-	code.LOADConst("description VARCHAR(256)");
-	code.STATIC(ColumnDefinition.class, "valueOf")
-		.reTurn(ColumnDefinition.class)
+	code.LOADConst("createAt TIMESTAMP");
+	code.VIRTUAL(ColumnList.class, "addColumn")
 		.parameter(String.class).INVOKE();
-	code.VIRTUAL(ColumnList.class, "push")
-		.parameter(Object.class).INVOKE();
 
 	code.LINE(32);
 	code.LOAD("columnList");
-	code.LOADConst("createAt TIMESTAMP");
-	code.STATIC(ColumnDefinition.class, "valueOf")
-		.reTurn(ColumnDefinition.class)
+	code.LOADConst("updateAt TIMESTAMP");
+	code.VIRTUAL(ColumnList.class, "addColumn")
 		.parameter(String.class).INVOKE();
-	code.VIRTUAL(ColumnList.class, "push")
-		.parameter(Object.class).INVOKE();
 
 	code.LINE(33);
-	code.LOAD("columnList");
-	code.LOADConst("updateAt TIMESTAMP");
-	code.STATIC(ColumnDefinition.class, "valueOf")
-		.reTurn(ColumnDefinition.class)
-		.parameter(String.class).INVOKE();
-	code.VIRTUAL(ColumnList.class, "push")
-		.parameter(Object.class).INVOKE();
-
-	code.LINE(34);
+	code.LOAD("this");
 	code.LOAD("this");
 	code.GETFIELD("conn", Connection.class);
 	code.LOADConst("USER");
 	code.LOAD("columnList");
-	code.STATIC(JDBC.class, "mergeIfExists")
+	code.VIRTUAL("checkIsExist")
 		.reTurn(boolean.class)
 		.parameter(Connection.class)
 		.parameter(String.class)
 		.parameter(ColumnList.class).INVOKE();
-	Label label7OfIFNE = new Label();
-	code.IFNE(label7OfIFNE);
+	Label label7OfIFEQ = new Label();
+	code.IFEQ(label7OfIFEQ);
 
-	code.LINE(36);
+	code.LINE(35);
 	code.LOAD("this");
 	code.GETFIELD("conn", Connection.class);
 	code.LOADConst("CREATE TABLE USER(id INTEGER(10) PRIMARY KEY AUTO_INCREMENT,name VARCHAR(256),description VARCHAR(256),createAt TIMESTAMP,updateAt TIMESTAMP)");
@@ -151,20 +145,20 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.reTurn(boolean.class).INVOKE();
 	code.POP();
 
-	code.visitLabel(label7OfIFNE);
+	code.visitLabel(label7OfIFEQ);
 
-	code.LINE(39);
+	code.LINE(38);
 	code.RETURN();
 	code.END();
 }
 
-{
+protected static void listJdbc(ClassBody classBody) {
 	MethodCode code = classBody.method(Clazz.of(nebula.data.jdbc.PageList.class,Clazz.of(nebula.data.jdbc.User.class)), "listJdbc")
 	.tHrow(SQLException.class )
 	.parameter("start",int.class)
 	.parameter("max",int.class).begin();
 
-	code.LINE(43);
+	code.LINE(42);
 	code.NEW(PageListImpl.class);
 	code.DUP();
 	code.LOAD("start");
@@ -174,9 +168,11 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(int.class).INVOKE();
 	code.STORE("datas",Clazz.of(nebula.data.jdbc.PageList.class,Clazz.of(nebula.data.jdbc.User.class)));
 
-	code.LINE(46);
+	code.LINE(45);
+	code.LOAD("this");
+	code.GETFIELD("sqlHelper", SqlHelper.class);
 	code.LOADConst("id,name,description,createAt,updateAt");
-	code.STATIC(Select.class, "columns")
+	code.VIRTUAL(SqlHelper.class, "select")
 		.reTurn(Select.class)
 		.parameter(String.class).INVOKE();
 	code.LOADConst("USER");
@@ -195,7 +191,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.reTurn(String.class).INVOKE();
 	code.STORE("sql",String.class);
 
-	code.LINE(49);
+	code.LINE(48);
 	code.LOAD("this");
 	code.GETFIELD("conn", Connection.class);
 	code.LOAD("sql");
@@ -206,14 +202,14 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.reTurn(ResultSet.class).INVOKE();
 	code.STORE("resultSet",ResultSet.class);
 
-	code.LINE(51);
+	code.LINE(50);
 	Label label4OfGOTO = new Label();
 	code.GOTO(label4OfGOTO);
 	Label label6OfIFNE = new Label();
 
 	code.visitLabel(label6OfIFNE);
 
-	code.LINE(52);
+	code.LINE(51);
 	code.LOAD("datas");
 	code.LOAD("this");
 	code.GETFIELD("mapper", UserExtendJdbcRowMapper.class);
@@ -228,17 +224,17 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 
 	code.visitLabel(label4OfGOTO);
 
-	code.LINE(51);
+	code.LINE(50);
 	code.LOAD("resultSet");
 	code.INTERFACE(ResultSet.class, "next")
 		.reTurn(boolean.class).INVOKE();
 	code.IFNE(label6OfIFNE);
 
-	code.LINE(54);
+	code.LINE(53);
 	code.LOAD("resultSet");
 	code.INTERFACE(ResultSet.class, "close").INVOKE();
 
-	code.LINE(56);
+	code.LINE(55);
 	code.LOADConst("count(1)");
 	code.STATIC(Select.class, "columns")
 		.reTurn(Select.class)
@@ -251,7 +247,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.reTurn(String.class).INVOKE();
 	code.STORE("sqlCount",String.class);
 
-	code.LINE(57);
+	code.LINE(56);
 	code.LOAD("this");
 	code.GETFIELD("conn", Connection.class);
 	code.INTERFACE(Connection.class, "createStatement")
@@ -262,13 +258,13 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(String.class).INVOKE();
 	code.STORE("resultSetCount",ResultSet.class);
 
-	code.LINE(58);
+	code.LINE(57);
 	code.LOAD("resultSetCount");
 	code.INTERFACE(ResultSet.class, "next")
 		.reTurn(boolean.class).INVOKE();
 	code.POP();
 
-	code.LINE(59);
+	code.LINE(58);
 	code.LOAD("resultSetCount");
 	code.LOADConst(1);
 	code.INTERFACE(ResultSet.class, "getInt")
@@ -276,23 +272,23 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(int.class).INVOKE();
 	code.STORE("totalSize",int.class);
 
-	code.LINE(60);
+	code.LINE(59);
 	code.LOAD("resultSetCount");
 	code.INTERFACE(ResultSet.class, "close").INVOKE();
 
-	code.LINE(61);
+	code.LINE(60);
 	code.LOAD("datas");
 	code.LOAD("totalSize");
 	code.INTERFACE(PageList.class, "totalSize")
 		.parameter(int.class).INVOKE();
 
-	code.LINE(63);
+	code.LINE(62);
 	code.LOAD("datas");
 	code.RETURNTop();
 	code.END();
 }
 
-{
+protected static void listJdbc____(ClassBody classBody) {
 	MethodCode code = classBody.method(Clazz.of(nebula.data.jdbc.PageList.class,Clazz.of(nebula.data.jdbc.User.class)), "listJdbc")
 	.tHrow(SQLException.class )
 	.parameter("condition",Clazz.of(nebula.data.query.Condition.class))
@@ -300,7 +296,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 	.parameter("start",int.class)
 	.parameter("max",int.class).begin();
 
-	code.LINE(69);
+	code.LINE(68);
 	code.NEW(PageListImpl.class);
 	code.DUP();
 	code.LOAD("start");
@@ -310,9 +306,11 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(int.class).INVOKE();
 	code.STORE("datas",Clazz.of(nebula.data.jdbc.PageList.class,Clazz.of(nebula.data.jdbc.User.class)));
 
-	code.LINE(72);
+	code.LINE(71);
+	code.LOAD("this");
+	code.GETFIELD("sqlHelper", SqlHelper.class);
 	code.LOADConst("id,name,description,createAt,updateAt");
-	code.STATIC(Select.class, "columns")
+	code.VIRTUAL(SqlHelper.class, "select")
 		.reTurn(Select.class)
 		.parameter(String.class).INVOKE();
 	code.LOADConst("USER");
@@ -339,7 +337,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.reTurn(String.class).INVOKE();
 	code.STORE("sql",String.class);
 
-	code.LINE(75);
+	code.LINE(74);
 	code.LOAD("this");
 	code.GETFIELD("conn", Connection.class);
 	code.LOAD("sql");
@@ -350,14 +348,14 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.reTurn(ResultSet.class).INVOKE();
 	code.STORE("resultSet",ResultSet.class);
 
-	code.LINE(77);
+	code.LINE(76);
 	Label label4OfGOTO = new Label();
 	code.GOTO(label4OfGOTO);
 	Label label6OfIFNE = new Label();
 
 	code.visitLabel(label6OfIFNE);
 
-	code.LINE(78);
+	code.LINE(77);
 	code.LOAD("datas");
 	code.LOAD("this");
 	code.GETFIELD("mapper", UserExtendJdbcRowMapper.class);
@@ -372,19 +370,21 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 
 	code.visitLabel(label4OfGOTO);
 
-	code.LINE(77);
+	code.LINE(76);
 	code.LOAD("resultSet");
 	code.INTERFACE(ResultSet.class, "next")
 		.reTurn(boolean.class).INVOKE();
 	code.IFNE(label6OfIFNE);
 
-	code.LINE(80);
+	code.LINE(79);
 	code.LOAD("resultSet");
 	code.INTERFACE(ResultSet.class, "close").INVOKE();
 
-	code.LINE(82);
+	code.LINE(81);
+	code.LOAD("this");
+	code.GETFIELD("sqlHelper", SqlHelper.class);
 	code.LOADConst("count(1)");
-	code.STATIC(Select.class, "columns")
+	code.VIRTUAL(SqlHelper.class, "select")
 		.reTurn(Select.class)
 		.parameter(String.class).INVOKE();
 	code.LOADConst("USER");
@@ -399,7 +399,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.reTurn(String.class).INVOKE();
 	code.STORE("sqlCount",String.class);
 
-	code.LINE(83);
+	code.LINE(82);
 	code.LOAD("this");
 	code.GETFIELD("conn", Connection.class);
 	code.INTERFACE(Connection.class, "createStatement")
@@ -410,13 +410,13 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(String.class).INVOKE();
 	code.STORE("resultSetCount",ResultSet.class);
 
-	code.LINE(84);
+	code.LINE(83);
 	code.LOAD("resultSetCount");
 	code.INTERFACE(ResultSet.class, "next")
 		.reTurn(boolean.class).INVOKE();
 	code.POP();
 
-	code.LINE(85);
+	code.LINE(84);
 	code.LOAD("resultSetCount");
 	code.LOADConst(1);
 	code.INTERFACE(ResultSet.class, "getInt")
@@ -424,23 +424,23 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(int.class).INVOKE();
 	code.STORE("totalSize",int.class);
 
-	code.LINE(86);
+	code.LINE(85);
 	code.LOAD("resultSetCount");
 	code.INTERFACE(ResultSet.class, "close").INVOKE();
 
-	code.LINE(87);
+	code.LINE(86);
 	code.LOAD("datas");
 	code.LOAD("totalSize");
 	code.INTERFACE(PageList.class, "totalSize")
 		.parameter(int.class).INVOKE();
 
-	code.LINE(89);
+	code.LINE(88);
 	code.LOAD("datas");
 	code.RETURNTop();
 	code.END();
 }
 
-{
+protected static void findByIdJdbc(ClassBody classBody) {
 	MethodCode code = classBody.method(ACC_PUBLIC | ACC_VARARGS, User.class, "findByIdJdbc")
 	.tHrow(SQLException.class )
 	.parameter("keys",Object[].class).begin();
@@ -449,13 +449,13 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 	code.define("datas",Clazz.of(java.util.List.class,Clazz.of(nebula.data.jdbc.User.class)));
 	code.define("key",Object.class);
 
-	code.LINE(96);
+	code.LINE(95);
 	code.NEW(ArrayList.class);
 	code.DUP();
 	code.SPECIAL(ArrayList.class, "<init>").INVOKE();
 	code.STORE("datas",Clazz.of(java.util.List.class,Clazz.of(nebula.data.jdbc.User.class)));
 
-	code.LINE(99);
+	code.LINE(98);
 	code.LOAD("this");
 	code.GETFIELD("conn", Connection.class);
 	code.LOADConst("SELECT id, name, description, createAt, updateAt FROM USER WHERE id = ?");
@@ -464,13 +464,13 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(String.class).INVOKE();
 	code.STORE("preparedStatement",PreparedStatement.class);
 
-	code.LINE(102);
+	code.LINE(101);
 	code.LOAD("keys");
 	code.LOADConst(0);
 	code.ARRAYLOAD();
 	code.STORE("key",Object.class);
 
-	code.LINE(103);
+	code.LINE(102);
 	code.LOAD("preparedStatement");
 	code.LOADConst(1);
 	code.LOAD("key");
@@ -481,20 +481,20 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(int.class)
 		.parameter(long.class).INVOKE();
 
-	code.LINE(105);
+	code.LINE(104);
 	code.LOAD("preparedStatement");
 	code.INTERFACE(PreparedStatement.class, "executeQuery")
 		.reTurn(ResultSet.class).INVOKE();
 	code.STORE("resultSet",ResultSet.class);
 
-	code.LINE(107);
+	code.LINE(106);
 	Label label6OfGOTO = new Label();
 	code.GOTO(label6OfGOTO);
 	Label label8OfIFNE = new Label();
 
 	code.visitLabel(label8OfIFNE);
 
-	code.LINE(108);
+	code.LINE(107);
 	code.LOAD("datas");
 	code.LOAD("this");
 	code.GETFIELD("mapper", UserExtendJdbcRowMapper.class);
@@ -509,13 +509,13 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 
 	code.visitLabel(label6OfGOTO);
 
-	code.LINE(107);
+	code.LINE(106);
 	code.LOAD("resultSet");
 	code.INTERFACE(ResultSet.class, "next")
 		.reTurn(boolean.class).INVOKE();
 	code.IFNE(label8OfIFNE);
 
-	code.LINE(110);
+	code.LINE(109);
 	code.LOAD("datas");
 	code.LOADConst(0);
 	code.INTERFACE(List.class, "get")
@@ -526,20 +526,20 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 	code.END();
 }
 
-{
+protected static void insertJdbc(ClassBody classBody) {
 	MethodCode code = classBody.method(User.class, "insertJdbc")
 	.tHrow(SQLException.class )
 	.parameter("data",User.class).begin();
 
-	code.LINE(115);
+	code.LINE(114);
 	code.LOADConstNULL();
 	code.STORE("preparedStatement",PreparedStatement.class);
 
-	code.LINE(116);
+	code.LINE(115);
 	code.LOADConstNULL();
 	code.STORE("rs",ResultSet.class);
 
-	code.LINE(119);
+	code.LINE(118);
 	code.LOAD("this");
 	code.GETFIELD("conn", Connection.class);
 	code.LOADConst("INSERT INTO USER(name,description,createAt,updateAt) VALUES(?,?,?,?)");
@@ -550,7 +550,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(int.class).INVOKE();
 	code.STORE("preparedStatement");
 
-	code.LINE(122);
+	code.LINE(121);
 	code.LOAD("preparedStatement");
 	code.LOADConst(1);
 	code.LOAD("data");
@@ -560,7 +560,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(int.class)
 		.parameter(String.class).INVOKE();
 
-	code.LINE(123);
+	code.LINE(122);
 	code.LOAD("preparedStatement");
 	code.LOADConst(2);
 	code.LOAD("data");
@@ -570,7 +570,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(int.class)
 		.parameter(String.class).INVOKE();
 
-	code.LINE(125);
+	code.LINE(124);
 	code.LOAD("this");
 	code.LOAD("preparedStatement");
 	code.LOADConst(3);
@@ -580,26 +580,26 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(int.class).INVOKE();
 	code.POP();
 
-	code.LINE(127);
+	code.LINE(126);
 	code.LOAD("preparedStatement");
 	code.INTERFACE(PreparedStatement.class, "executeUpdate")
 		.reTurn(int.class).INVOKE();
 	Label label7OfIFLE = new Label();
 	code.IFLE(label7OfIFLE);
 
-	code.LINE(128);
+	code.LINE(127);
 	code.LOAD("preparedStatement");
 	code.INTERFACE(PreparedStatement.class, "getGeneratedKeys")
 		.reTurn(ResultSet.class).INVOKE();
 	code.STORE("rs");
 
-	code.LINE(129);
+	code.LINE(128);
 	code.LOAD("rs");
 	code.INTERFACE(ResultSet.class, "next")
 		.reTurn(boolean.class).INVOKE();
 	code.POP();
 
-	code.LINE(131);
+	code.LINE(130);
 	code.LOAD("this");
 	code.LOADConst(1);
 	code.NEWARRAY(Object.class);
@@ -621,18 +621,18 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 
 	code.visitLabel(label7OfIFLE);
 
-	code.LINE(133);
+	code.LINE(132);
 	code.LOADConstNULL();
 	code.RETURNTop();
 	code.END();
 }
 
-{
+protected static void updateJdbc(ClassBody classBody) {
 	MethodCode code = classBody.method(User.class, "updateJdbc")
 	.tHrow(SQLException.class )
 	.parameter("data",User.class).begin();
 
-	code.LINE(139);
+	code.LINE(138);
 	code.LOAD("this");
 	code.LOADConst(1);
 	code.NEWARRAY(Object.class);
@@ -651,7 +651,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 	code.CHECKCAST(ClassExtend.class);
 	code.STORE("extend",ClassExtend.class);
 
-	code.LINE(140);
+	code.LINE(139);
 	code.LOAD("extend");
 	code.INTERFACE(ClassExtend.class, "getUpdateAt")
 		.reTurn(Timestamp.class).INVOKE();
@@ -662,13 +662,13 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 	Label label2OfIF_ACMPNE = new Label();
 	code.IF_ACMPNE(label2OfIF_ACMPNE);
 
-	code.LINE(141);
+	code.LINE(140);
 	code.LOADConstNULL();
 	code.RETURNTop();
 
 	code.visitLabel(label2OfIF_ACMPNE);
 
-	code.LINE(145);
+	code.LINE(144);
 	code.LOAD("this");
 	code.GETFIELD("conn", Connection.class);
 	code.LOADConst("UPDATE USER SET name=?,description=?,updateAt=? WHERE id=?");
@@ -677,7 +677,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(String.class).INVOKE();
 	code.STORE("preparedStatement",PreparedStatement.class);
 
-	code.LINE(148);
+	code.LINE(147);
 	code.LOAD("preparedStatement");
 	code.LOADConst(1);
 	code.LOAD("data");
@@ -687,7 +687,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(int.class)
 		.parameter(String.class).INVOKE();
 
-	code.LINE(149);
+	code.LINE(148);
 	code.LOAD("preparedStatement");
 	code.LOADConst(2);
 	code.LOAD("data");
@@ -697,7 +697,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(int.class)
 		.parameter(String.class).INVOKE();
 
-	code.LINE(150);
+	code.LINE(149);
 	code.LOAD("this");
 	code.LOAD("preparedStatement");
 	code.LOADConst(3);
@@ -707,7 +707,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(int.class).INVOKE();
 	code.POP();
 
-	code.LINE(151);
+	code.LINE(150);
 	code.LOAD("preparedStatement");
 	code.LOADConst(4);
 	code.LOAD("data");
@@ -717,14 +717,14 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(int.class)
 		.parameter(long.class).INVOKE();
 
-	code.LINE(153);
+	code.LINE(152);
 	code.LOAD("preparedStatement");
 	code.INTERFACE(PreparedStatement.class, "executeUpdate")
 		.reTurn(int.class).INVOKE();
 	Label label9OfIFLE = new Label();
 	code.IFLE(label9OfIFLE);
 
-	code.LINE(154);
+	code.LINE(153);
 	code.LOAD("this");
 	code.LOADConst(1);
 	code.NEWARRAY(Object.class);
@@ -744,18 +744,18 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 
 	code.visitLabel(label9OfIFLE);
 
-	code.LINE(156);
+	code.LINE(155);
 	code.LOADConstNULL();
 	code.RETURNTop();
 	code.END();
 }
 
-{
+protected static void deleteJdbc(ClassBody classBody) {
 	MethodCode code = classBody.method(ACC_PUBLIC | ACC_VARARGS, int.class, "deleteJdbc")
 	.tHrow(SQLException.class )
 	.parameter("keys",Object[].class).begin();
 
-	code.LINE(162);
+	code.LINE(161);
 	code.LOAD("this");
 	code.GETFIELD("conn", Connection.class);
 	code.LOADConst("DELETE USER WHERE id=?");
@@ -764,13 +764,13 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(String.class).INVOKE();
 	code.STORE("preparedStatement",PreparedStatement.class);
 
-	code.LINE(165);
+	code.LINE(164);
 	code.LOAD("keys");
 	code.LOADConst(0);
 	code.ARRAYLOAD();
 	code.STORE("key",Object.class);
 
-	code.LINE(166);
+	code.LINE(165);
 	code.LOAD("preparedStatement");
 	code.LOADConst(1);
 	code.LOAD("key");
@@ -781,7 +781,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		.parameter(int.class)
 		.parameter(long.class).INVOKE();
 
-	code.LINE(168);
+	code.LINE(167);
 	code.LOAD("preparedStatement");
 	code.INTERFACE(PreparedStatement.class, "executeUpdate")
 		.reTurn(int.class).INVOKE();
@@ -789,7 +789,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 	code.END();
 }
 
-{
+protected static void findByIdJdbc_(ClassBody classBody) {
 	MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_VARARGS | ACC_SYNTHETIC, Object.class, "findByIdJdbc")
 	.tHrow(SQLException.class )
 	.parameter("var1",Object[].class).begin();
@@ -804,7 +804,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 	code.END();
 }
 
-{
+protected static void updateJdbc_(ClassBody classBody) {
 	MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, Object.class, "updateJdbc")
 	.tHrow(SQLException.class )
 	.parameter("var1",Object.class).begin();
@@ -820,7 +820,7 @@ classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 	code.END();
 }
 
-{
+protected static void insertJdbc_(ClassBody classBody) {
 	MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, Object.class, "insertJdbc")
 	.tHrow(SQLException.class )
 	.parameter("var1",Object.class).begin();

@@ -10,13 +10,12 @@ import java.util.List;
 import nebula.data.query.Condition;
 import nebula.data.query.OrderBy;
 import nebula.jdbc.builders.queries.Select;
-import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
-import nebula.jdbc.builders.schema.JDBC;
 
-public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
-	private Connection conn;
+public class UserAutoIncrementJdbcRepository extends JdbcRepositoryBase implements JdbcRepository<User> {
+	Connection conn;
 	private UserExtendJdbcRowMapper mapper = new UserExtendJdbcRowMapper();
+	SqlHelper sqlHelper = new SqlHelper();
 
 	@Override
 	public void setConnection(Connection conn) {
@@ -26,28 +25,12 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 	@Override
 	public void initJdbc() throws SQLException {
 		ColumnList columnList = new ColumnList();
-		{
-			ColumnDefinition cd = ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY AUTO_INCREMENT");
-			columnList.push(cd);
-		}
-		{
-			ColumnDefinition cd = ColumnDefinition.valueOf("name VARCHAR(256)");
-			columnList.push(cd);
-		}
-		{
-			ColumnDefinition cd = ColumnDefinition.valueOf("description VARCHAR(256)");
-			columnList.push(cd);
-		}
-		{
-			ColumnDefinition cd = ColumnDefinition.valueOf("createAt TIMESTAMP");
-			columnList.push(cd);
-		}
-		{
-			ColumnDefinition cd = ColumnDefinition.valueOf("updateAt TIMESTAMP");
-			columnList.push(cd);
-		}
-
-		if (!JDBC.mergeIfExists(conn, "USER", columnList)) {
+		columnList.addColumn("id INTEGER(10) PRIMARY KEY AUTO_INCREMENT");
+		columnList.addColumn("name VARCHAR(256)");
+		columnList.addColumn("description VARCHAR(256)");
+		columnList.addColumn("createAt TIMESTAMP");
+		columnList.addColumn("updateAt TIMESTAMP");
+		if (checkIsExist(conn, "USER", columnList)) {
 			// @formatter:off
 			conn.prepareStatement("CREATE TABLE USER(id INTEGER(10) PRIMARY KEY AUTO_INCREMENT,name VARCHAR(256),description VARCHAR(256),createAt TIMESTAMP,updateAt TIMESTAMP)").execute();
 			// @formatter:on
@@ -59,7 +42,7 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		PageList<User> datas = new PageListImpl<>(start, max);
 
 		// @formatter:off
-		String sql = Select.columns("id,name,description,createAt,updateAt").from("USER").offset(start).max(max).toSQL();
+		String sql = sqlHelper.select("id,name,description,createAt,updateAt").from("USER").offset(start).max(max).toSQL();
 		// @formatter:on
 
 		ResultSet resultSet = conn.prepareStatement(sql).executeQuery();
@@ -85,7 +68,7 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		PageList<User> datas = new PageListImpl<>(start, max);
 
 		// @formatter:off
-		String sql = Select.columns("id,name,description,createAt,updateAt").from("USER").where(condition).orderby(orderBy).offset(start).max(max).toSQL();
+		String sql = sqlHelper.select("id,name,description,createAt,updateAt").from("USER").where(condition).orderby(orderBy).offset(start).max(max).toSQL();
 		// @formatter:on
 
 		ResultSet resultSet = conn.prepareStatement(sql).executeQuery();
@@ -95,7 +78,7 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		}
 		resultSet.close();
 
-		String sqlCount = Select.columns("count(1)").from("USER").where(condition).toSQL();
+		String sqlCount = sqlHelper.select("count(1)").from("USER").where(condition).toSQL();
 		ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
 		resultSetCount.next();
 		int totalSize = resultSetCount.getInt(1);
@@ -179,7 +162,7 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		// @formatter:on
 
 		Object key = keys[0];
-		preparedStatement.setLong(1, ((Long) key).longValue());
+		preparedStatement.setLong(1, ((Long) key));
 
 		return preparedStatement.executeUpdate();
 	}
