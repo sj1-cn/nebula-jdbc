@@ -116,7 +116,7 @@ public class RepositoryFactory {
 		String clazzExtendName = actualClazz(clazzDefinition).getName();
 		String clazzRowMapperName = makeJdbcRowMapper(clazzDefinition).getName();
 
-		byte[] codeRepository = repositoryBuilder.make(clazzRepositoryName, clazzTargetName, clazzExtendName, clazzRowMapperName,
+		byte[] codeRepository = repositoryBuilder.dump(clazzRepositoryName, clazzTargetName, clazzExtendName, clazzRowMapperName,
 				clazzDefinition);
 
 		try {

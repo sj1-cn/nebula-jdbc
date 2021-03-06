@@ -1,5 +1,6 @@
 package nebula.data.jdbc;
 
+import static cc1sj.tinyasm.util.TinyAsmTestUtils.dumpTinyAsm;
 import static nebula.jdbc.builders.schema.ColumnDefinition.BIGINT;
 import static nebula.jdbc.builders.schema.ColumnDefinition.BIT;
 import static nebula.jdbc.builders.schema.ColumnDefinition.BOOLEAN;
@@ -19,6 +20,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import cc1sj.tinyasm.util.TinyAsmTestUtils;
 import nebula.jdbc.TestBase;
 
 public class ClazzExtendBuilderTest extends TestBase {
@@ -54,8 +56,8 @@ public class ClazzExtendBuilderTest extends TestBase {
 		String clazzExtend = targetClazz + "Extend";
 		byte[] code = builder.make(clazzExtend, targetClazz, clazzDefinition);
 
-		String codeActual = toString(code);
-		String codeExpected = toString(clazzExtend);
+		String codeActual = toString(targetClazz, code);
+		String codeExpected = TinyAsmTestUtils.toString(clazzExtend);
 		assertEquals("Code", codeExpected, codeActual);
 	}
 
@@ -84,8 +86,8 @@ public class ClazzExtendBuilderTest extends TestBase {
 
 		byte[] code = builder.make(clazzExtend, targetClazz, clazzDefinition);
 
-		String codeActual = toString(code);
-		String codeExpected = toString(UserMoreComplexExtend.class);
+		String codeActual = toString(targetClazz, code);
+		String codeExpected = TinyAsmTestUtils.toString(UserMoreComplexExtend.class.getName(), dumpTinyAsm(UserMoreComplexExtend.class));
 		assertEquals("Code", codeExpected, codeActual);
 	}
 }
