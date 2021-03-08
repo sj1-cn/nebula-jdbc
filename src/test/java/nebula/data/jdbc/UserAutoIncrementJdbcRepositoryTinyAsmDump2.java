@@ -1,11 +1,13 @@
 package nebula.data.jdbc;
 
 import org.objectweb.asm.Label;
-import static cc1sj.tinyasm.TinyAsmBuilder.*;
+
 import cc1sj.tinyasm.ClassBody;
 import cc1sj.tinyasm.ClassBuilder;
 import cc1sj.tinyasm.MethodCode;
 import org.objectweb.asm.Type;
+
+import static cc1sj.tinyasm.Adv.*;
 import static org.objectweb.asm.Opcodes.*;
 import cc1sj.tinyasm.Annotation;
 import cc1sj.tinyasm.Clazz;
@@ -92,231 +94,101 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump2 extends UserAutoIncreme
 //		code.END();
 //	}
 //
-	protected void _setConnection(ClassBody classBody) {
-		MethodCode code = classBody.method("setConnection").parameter("conn", Connection.class).begin();
+//	protected void _setConnection(ClassBody classBody) {
+//		MethodCode code = classBody.method("setConnection").parameter("conn", Connection.class).begin();
+//
+//		setField("conn", param("conn", Connection.class));
+//
+//		code.END();
+//	}
 
-		setField("conn", param("conn", Connection.class));
+//	protected void _initJdbc(ClassBody classBody) {
+//		MethodCode code = classBody.method("initJdbc").tHrow(SQLException.class).begin();
+//
+//		ColumnList columnList = ctor(ColumnList.class);
+//		columnList.addColumn("id INTEGER(10) PRIMARY KEY AUTO_INCREMENT");
+//		columnList.addColumn("name VARCHAR(256)");
+//		columnList.addColumn("description VARCHAR(256)");
+//		columnList.addColumn("createAt TIMESTAMP");
+//		columnList.addColumn("updateAt TIMESTAMP");
+////		if (checkIsExist(conn, "USER", columnList)) {
+////			// @formatter:off
+////			conn.prepareStatement("CREATE TABLE USER(id INTEGER(10) PRIMARY KEY AUTO_INCREMENT,name VARCHAR(256),description VARCHAR(256),createAt TIMESTAMP,updateAt TIMESTAMP)").execute();
+////			// @formatter:on
+////		}
+//
+////		code.LINE(33);
+////		code.LOAD("this");
+////		code.LOAD("this");
+////		code.GETFIELD("conn", Connection.class);
+////		code.LOADConst("USER");
+////		code.LOAD("columnList");
+////		code.VIRTUAL("checkIsExist")
+////			.reTurn(boolean.class)
+////			.parameter(Connection.class)
+////			.parameter(String.class)
+////			.parameter(ColumnList.class).INVOKE();
+////		Label label7OfIFEQ = new Label();
+////		code.IFEQ(label7OfIFEQ);
+////
+////		code.LINE(35);
+////		code.LOAD("this");
+////		code.GETFIELD("conn", Connection.class);
+////		code.LOADConst("CREATE TABLE USER(id INTEGER(10) PRIMARY KEY AUTO_INCREMENT,name VARCHAR(256),description VARCHAR(256),createAt TIMESTAMP,updateAt TIMESTAMP)");
+////		code.INTERFACE(Connection.class, "prepareStatement")
+////			.reTurn(PreparedStatement.class)
+////			.parameter(String.class).INVOKE();
+////		code.INTERFACE(PreparedStatement.class, "execute")
+////			.reTurn(boolean.class).INVOKE();
+////		code.POP();
+////
+////		code.visitLabel(label7OfIFEQ);
+////
+////		code.LINE(38);
+////		code.RETURN();
+//
+//		code.END();
+//	}
 
-		code.LINE(23);
-		code.RETURN();
-
-		code.END();
-	}
-
-	protected void _initJdbc(ClassBody classBody) {
-		MethodCode code = classBody.method("initJdbc").tHrow(SQLException.class).begin();
-
-		ColumnList columnList = ctor(ColumnList.class);
-		columnList.addColumn("id INTEGER(10) PRIMARY KEY AUTO_INCREMENT");
-		columnList.addColumn("name VARCHAR(256)");
-		columnList.addColumn("description VARCHAR(256)");
-		columnList.addColumn("createAt TIMESTAMP");
-		columnList.addColumn("updateAt TIMESTAMP");
-//		if (checkIsExist(conn, "USER", columnList)) {
+//	protected void _listJdbc(ClassBody classBody) {
+//		try {
+//			MethodCode code = classBody.method(Clazz.of(PageList.class, Clazz.of(User.class)), "listJdbc").tHrow(SQLException.class)
+//					.parameter("start", int.class).parameter("max", int.class).begin();
+//
+//			int start = param("start", int.class);
+//			int max = param("max", int.class);
+//
+//			PageList<User> datas = (PageList<User>) ctor(PageListImpl.class, start, max);
+//
 //			// @formatter:off
-//			conn.prepareStatement("CREATE TABLE USER(id INTEGER(10) PRIMARY KEY AUTO_INCREMENT,name VARCHAR(256),description VARCHAR(256),createAt TIMESTAMP,updateAt TIMESTAMP)").execute();
+//			String sql = getField("sqlHelper", SqlHelper.class).select("id,name,description,createAt,updateAt").from("USER").offset(start).max(max).toSQL();
 //			// @formatter:on
+////
+//			ResultSet resultSet = getField("conn", Connection.class).prepareStatement(sql).executeQuery();
+////			
+//			whileEval(cmpTrue(c -> resultSet.next()), c -> {
+//				datas.add(getField("mapper", UserExtendJdbcRowMapper.class).map(resultSet));
+//			});
+////		while (resultSet.next()) {
+////			datas.add(mapper.map(resultSet));
+////		}
+//			resultSet.close();
+//
+//			String sqlCount = getField("sqlHelper", SqlHelper.class).select("count(1)").from("USER").toSQL();
+//			ResultSet resultSetCount = getField("conn", Connection.class).createStatement().executeQuery(sqlCount);
+//			resultSetCount.next();
+//			int totalSize = resultSetCount.getInt(1);
+//			resultSetCount.close();
+//			datas.totalSize(totalSize);
+//
+//			ret(datas);
+//
+//			code.END();
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
 //		}
-
-//		code.LINE(33);
-//		code.LOAD("this");
-//		code.LOAD("this");
-//		code.GETFIELD("conn", Connection.class);
-//		code.LOADConst("USER");
-//		code.LOAD("columnList");
-//		code.VIRTUAL("checkIsExist")
-//			.reTurn(boolean.class)
-//			.parameter(Connection.class)
-//			.parameter(String.class)
-//			.parameter(ColumnList.class).INVOKE();
-//		Label label7OfIFEQ = new Label();
-//		code.IFEQ(label7OfIFEQ);
-//
-//		code.LINE(35);
-//		code.LOAD("this");
-//		code.GETFIELD("conn", Connection.class);
-//		code.LOADConst("CREATE TABLE USER(id INTEGER(10) PRIMARY KEY AUTO_INCREMENT,name VARCHAR(256),description VARCHAR(256),createAt TIMESTAMP,updateAt TIMESTAMP)");
-//		code.INTERFACE(Connection.class, "prepareStatement")
-//			.reTurn(PreparedStatement.class)
-//			.parameter(String.class).INVOKE();
-//		code.INTERFACE(PreparedStatement.class, "execute")
-//			.reTurn(boolean.class).INVOKE();
-//		code.POP();
-//
-//		code.visitLabel(label7OfIFEQ);
-//
-//		code.LINE(38);
-//		code.RETURN();
-
-		code.END();
-	}
-
-	protected void _listJdbc(ClassBody classBody) {
-		try {
-			MethodCode code = classBody.method(Clazz.of(PageList.class,Clazz.of(User.class)), "listJdbc")
-				.tHrow(SQLException.class )
-				.parameter("start",int.class)
-				.parameter("max",int.class).begin();
-			
-			int start = param("start", int.class);
-			int max  = param("max", int.class);
-			
-			PageList<User> datas = (PageList<User>)ctor( PageListImpl.class,start, max);
-
-			
-			// @formatter:off
-			String sql = getField("sqlHelper", SqlHelper.class).select("id,name,description,createAt,updateAt").from("USER").offset(start).max(max).toSQL();
-			// @formatter:on
-//
-			ResultSet resultSet =getField("conn",Connection.class).prepareStatement(sql).executeQuery();
-//
-//		while (resultSet.next()) {
-//			datas.add(mapper.map(resultSet));
-//		}
-		resultSet.close();
-
-		String sqlCount = getField("sqlHelper", SqlHelper.class).select("count(1)").from("USER").toSQL();
-		ResultSet resultSetCount = getField("conn",Connection.class).createStatement().executeQuery(sqlCount);
-		resultSetCount.next();
-		int totalSize = resultSetCount.getInt(1);
-		resultSetCount.close();
-		datas.totalSize(totalSize);
-		
-			
-//		code.LINE(42);
-//		code.NEW(PageListImpl.class);
-//		code.DUP();
-//		code.LOAD("start");
-//		code.LOAD("max");
-//		code.SPECIAL(PageListImpl.class, "<init>")
-//			.parameter(int.class)
-//			.parameter(int.class).INVOKE();
-//		code.STORE("datas",Clazz.of(PageList.class,Clazz.of(User.class)));
-//
-//		code.LINE(45);
-//		code.LOAD("this");
-//		code.GETFIELD("sqlHelper", SqlHelper.class);
-//		code.LOADConst("id,name,description,createAt,updateAt");
-//		code.VIRTUAL(SqlHelper.class, "select")
-//			.reTurn(Select.class)
-//			.parameter(String.class).INVOKE();
-//		code.LOADConst("USER");
-//		code.VIRTUAL(Select.class, "from")
-//			.reTurn(Select.class)
-//			.parameter(String.class).INVOKE();
-//		code.LOAD("start");
-//		code.VIRTUAL(Select.class, "offset")
-//			.reTurn(Select.class)
-//			.parameter(int.class).INVOKE();
-//		code.LOAD("max");
-//		code.VIRTUAL(Select.class, "max")
-//			.reTurn(Select.class)
-//			.parameter(int.class).INVOKE();
-//		code.VIRTUAL(Select.class, "toSQL")
-//			.reTurn(String.class).INVOKE();
-//		code.STORE("sql",String.class);
-//
-//		code.LINE(48);
-//		code.LOAD("this");
-//		code.GETFIELD("conn", Connection.class);
-//		code.LOAD("sql");
-//		code.INTERFACE(Connection.class, "prepareStatement")
-//			.reTurn(PreparedStatement.class)
-//			.parameter(String.class).INVOKE();
-//		code.INTERFACE(PreparedStatement.class, "executeQuery")
-//			.reTurn(ResultSet.class).INVOKE();
-//		code.STORE("resultSet",ResultSet.class);
-//
-//		code.LINE(50);
-//		Label label4OfGOTO = new Label();
-//		code.GOTO(label4OfGOTO);
-//		Label label6OfIFNE = new Label();
-//
-//		code.visitLabel(label6OfIFNE);
-//
-//		code.LINE(51);
-//		code.LOAD("datas");
-//		code.LOAD("this");
-//		code.GETFIELD("mapper", UserExtendJdbcRowMapper.class);
-//		code.LOAD("resultSet");
-//		code.VIRTUAL(UserExtendJdbcRowMapper.class, "map")
-//			.reTurn(UserExtend.class)
-//			.parameter(ResultSet.class).INVOKE();
-//		code.INTERFACE(PageList.class, "add")
-//			.reTurn(boolean.class)
-//			.parameter(Object.class).INVOKE();
-//		code.POP();
-//
-//		code.visitLabel(label4OfGOTO);
-//
-//		code.LINE(50);
-//		code.LOAD("resultSet");
-//		code.INTERFACE(ResultSet.class, "next")
-//			.reTurn(boolean.class).INVOKE();
-//		code.IFNE(label6OfIFNE);
-//
-//		code.LINE(53);
-//		code.LOAD("resultSet");
-//		code.INTERFACE(ResultSet.class, "close").INVOKE();
-//
-//		code.LINE(55);
-//		code.LOADConst("count(1)");
-//		code.STATIC(Select.class, "columns")
-//			.reTurn(Select.class)
-//			.parameter(String.class).INVOKE();
-//		code.LOADConst("USER");
-//		code.VIRTUAL(Select.class, "from")
-//			.reTurn(Select.class)
-//			.parameter(String.class).INVOKE();
-//		code.VIRTUAL(Select.class, "toSQL")
-//			.reTurn(String.class).INVOKE();
-//		code.STORE("sqlCount",String.class);
-//
-//		code.LINE(56);
-//		code.LOAD("this");
-//		code.GETFIELD("conn", Connection.class);
-//		code.INTERFACE(Connection.class, "createStatement")
-//			.reTurn(Statement.class).INVOKE();
-//		code.LOAD("sqlCount");
-//		code.INTERFACE(Statement.class, "executeQuery")
-//			.reTurn(ResultSet.class)
-//			.parameter(String.class).INVOKE();
-//		code.STORE("resultSetCount",ResultSet.class);
-//
-//		code.LINE(57);
-//		code.LOAD("resultSetCount");
-//		code.INTERFACE(ResultSet.class, "next")
-//			.reTurn(boolean.class).INVOKE();
-//		code.POP();
-//
-//		code.LINE(58);
-//		code.LOAD("resultSetCount");
-//		code.LOADConst(1);
-//		code.INTERFACE(ResultSet.class, "getInt")
-//			.reTurn(int.class)
-//			.parameter(int.class).INVOKE();
-//		code.STORE("totalSize",int.class);
-//
-//		code.LINE(59);
-//		code.LOAD("resultSetCount");
-//		code.INTERFACE(ResultSet.class, "close").INVOKE();
-//
-//		code.LINE(60);
-//		code.LOAD("datas");
-//		code.LOAD("totalSize");
-//		code.INTERFACE(PageList.class, "totalSize")
-//			.parameter(int.class).INVOKE();
-//
-//		code.LINE(62);
-//		code.LOAD("datas");
-//		code.RETURNTop();
-
-			code.END();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	}
 //
 //	protected void _listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int(ClassBody classBody) {
 //		MethodCode code = classBody.method(Clazz.of(PageList.class,Clazz.of(User.class)), "listJdbc")

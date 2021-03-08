@@ -78,12 +78,12 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTest extends TestBase {
 					users1.toString());
 		}
 		{
-			userRepository.delete(a.getId());
+			userRepository.deleteById(a.getId());
 			users1 = userRepository.list(0, 10);
 			assertEquals("[User [id=2, name=name_b20_new, description=description_b20_new]]", users1.toString());
 		}
 		{
-			userRepository.delete(b.getId());
+			userRepository.deleteById(b.getId());
 			users1 = userRepository.list(0, 10);
 			assertEquals("[]", users1.toString());
 		}

@@ -100,15 +100,14 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 	}
 
 	@Override
-	public UserMoreComplex findByIdJdbc(Object... keys) throws SQLException {
+	public UserMoreComplex findByIdJdbc(long key) throws SQLException {
 		PreparedStatement preparedStatement;
 		ResultSet resultSet;
 		List<UserMoreComplex> datas = new ArrayList<>();
 
 		preparedStatement = conn.prepareStatement("SELECT id, string, bigDecimal, z, c, b, s, i, l, f, d, date, time, timestamp, createAt, updateAt FROM USERMORECOMPLEX WHERE id = ?");
 
-		Object key = keys[0];
-		preparedStatement.setLong(1, ((Long)key).longValue());
+		preparedStatement.setLong(1, key);
 
 		resultSet = preparedStatement.executeQuery();
 
@@ -184,12 +183,11 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 	}
 
 	@Override
-	public int deleteJdbc(Object... keys) throws SQLException {
+	public int deleteByIdJdbc(long key) throws SQLException {
 		// @formatter:off
 		PreparedStatement preparedStatement = conn.prepareStatement("DELETE USERMORECOMPLEX WHERE id=?");
 		// @formatter:on
 
-		Object key = keys[0];
 		preparedStatement.setLong(1, ((Long)key).longValue());
 
 		return preparedStatement.executeUpdate();

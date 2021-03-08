@@ -9,13 +9,18 @@ import java.util.List;
 
 import nebula.data.query.Condition;
 import nebula.data.query.OrderBy;
-import nebula.jdbc.builders.queries.Select;
 import nebula.jdbc.builders.schema.ColumnList;
+import nebula.jdbc.builders.schema.JDBC;
 
-public class UserAutoIncrementJdbcRepository extends JdbcRepositoryBase implements JdbcRepository<User> {
-	Connection conn;
-	private UserExtendJdbcRowMapper mapper = new UserExtendJdbcRowMapper();
-	SqlHelper sqlHelper = new SqlHelper();
+public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
+	private Connection conn;
+	private UserExtendJdbcRowMapper mapper;
+	private SqlHelper sqlHelper;
+
+	public UserAutoIncrementJdbcRepository() {
+		mapper = new UserExtendJdbcRowMapper();
+		sqlHelper = new SqlHelper();
+	}
 
 	@Override
 	public void setConnection(Connection conn) {
@@ -30,7 +35,7 @@ public class UserAutoIncrementJdbcRepository extends JdbcRepositoryBase implemen
 		columnList.addColumn("description VARCHAR(256)");
 		columnList.addColumn("createAt TIMESTAMP");
 		columnList.addColumn("updateAt TIMESTAMP");
-		if (checkIsExist(conn, "USER", columnList)) {
+		if (!JDBC.mergeIfExists(conn, "USER", columnList)) {
 			// @formatter:off
 			conn.prepareStatement("CREATE TABLE USER(id INTEGER(10) PRIMARY KEY AUTO_INCREMENT,name VARCHAR(256),description VARCHAR(256),createAt TIMESTAMP,updateAt TIMESTAMP)").execute();
 			// @formatter:on
@@ -39,7 +44,7 @@ public class UserAutoIncrementJdbcRepository extends JdbcRepositoryBase implemen
 
 	@Override
 	public PageList<User> listJdbc(int start, int max) throws SQLException {
-		PageList<User> datas = new PageListImpl<>(start, max);
+		PageListImpl<User> datas = new PageListImpl<>(start, max);
 
 		// @formatter:off
 		String sql = sqlHelper.select("id,name,description,createAt,updateAt").from("USER").offset(start).max(max).toSQL();
@@ -52,9 +57,9 @@ public class UserAutoIncrementJdbcRepository extends JdbcRepositoryBase implemen
 		}
 		resultSet.close();
 
-		String sqlCount = Select.columns("count(1)").from("USER").toSQL();
+		String sqlCount = sqlHelper.select("count(1)").from("USER").toSQL();
 		ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
-		resultSetCount.next();
+		boolean result = resultSetCount.next();
 		int totalSize = resultSetCount.getInt(1);
 		resultSetCount.close();
 		datas.totalSize(totalSize);
@@ -89,7 +94,7 @@ public class UserAutoIncrementJdbcRepository extends JdbcRepositoryBase implemen
 	}
 
 	@Override
-	public User findByIdJdbc(Object... keys) throws SQLException {
+	public User findByIdJdbc(long id) throws SQLException {
 		PreparedStatement preparedStatement;
 		ResultSet resultSet;
 		List<User> datas = new ArrayList<>();
@@ -98,8 +103,8 @@ public class UserAutoIncrementJdbcRepository extends JdbcRepositoryBase implemen
 		preparedStatement = conn.prepareStatement("SELECT id, name, description, createAt, updateAt FROM USER WHERE id = ?");
 		// @formatter:on
 
-		Object key = keys[0];
-		preparedStatement.setLong(1, ((Long) key).longValue());
+//		Object key = keys[0];
+		preparedStatement.setLong(1, id);
 
 		resultSet = preparedStatement.executeQuery();
 
@@ -156,13 +161,13 @@ public class UserAutoIncrementJdbcRepository extends JdbcRepositoryBase implemen
 	}
 
 	@Override
-	public int deleteJdbc(Object... keys) throws SQLException {
+	public int deleteByIdJdbc(long id) throws SQLException {
 		// @formatter:off
 		PreparedStatement preparedStatement = conn.prepareStatement("DELETE USER WHERE id=?");
 		// @formatter:on
 
-		Object key = keys[0];
-		preparedStatement.setLong(1, ((Long) key));
+//		Object key = keys[0];
+		preparedStatement.setLong(1, id);
 
 		return preparedStatement.executeUpdate();
 	}

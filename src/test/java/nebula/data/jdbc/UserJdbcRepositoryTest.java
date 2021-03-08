@@ -188,13 +188,13 @@ public class UserJdbcRepositoryTest extends TestBase {
 					users.toString());
 		}
 		{
-			userRepository.delete(a.getId());
+			userRepository.deleteById(a.getId());
 			users = userRepository.list(0, 10);
 			assertEquals(1, users.getTotalSize());
 			assertEquals("[User [id=20, name=name_b20_new, description=description_b20_new]]", users.toString());
 		}
 		{
-			userRepository.delete(b.getId());
+			userRepository.deleteById(b.getId());
 			users = userRepository.list(0, 10);
 			assertEquals(0, users.getTotalSize());
 			assertEquals("[]", users.toString());
@@ -236,12 +236,12 @@ public class UserJdbcRepositoryTest extends TestBase {
 					users1.toString());
 		}
 		{
-			userRepository.delete(a.getId());
+			userRepository.deleteById(a.getId());
 			users1 = userRepository.list(0, 10);
 			assertEquals("[User [id=20, name=name_b20_new, description=description_b20_new]]", users1.toString());
 		}
 		{
-			userRepository.delete(b.getId());
+			userRepository.deleteById(b.getId());
 			users1 = userRepository.list(0, 10);
 			assertEquals("[]", users1.toString());
 		}

@@ -24,6 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import cc1sj.tinyasm.util.TinyAsmTestUtils;
 import nebula.jdbc.TestBase;
 
 public class JdbcRowMapperBuilderTest extends TestBase {
@@ -71,8 +72,8 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 		String clazzRowMapper = UserExtendJdbcRowMapper.class.getName();
 		byte[] code = builder.make(clazzRowMapper, clazzExtend, clazzDefinition.fieldsAll);
 
-		String codeActual = toString(code);
-		String codeExpected = toString(clazzRowMapper);
+		String codeActual = toString(targetClazz, code);
+		String codeExpected = TinyAsmTestUtils.toString(clazzRowMapper);
 		assertEquals("Code", codeExpected, codeActual);
 
 		Class<JdbcRowMapper<?>> rowMapper = (Class<JdbcRowMapper<?>>) classLoader.defineClassByName(clazzRowMapper, code);
@@ -101,8 +102,8 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 		String clazzRowMapper = UserExtendJdbcRowMapper.class.getName();
 		byte[] code = builder.make(clazzRowMapper, clazzExtend, clazzDefinition.fieldsAll);
 
-		String codeActual = toString(code);
-		String codeExpected = toString(clazzRowMapper);
+		String codeActual = toString(targetClazz, code);
+		String codeExpected = TinyAsmTestUtils.toString(clazzRowMapper);
 		assertEquals("Code", codeExpected, codeActual);
 	}
 
@@ -134,8 +135,8 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 		String clazzRowMapper = UserMoreComplexExtendJdbcRowMapper.class.getName();
 		byte[] code = builder.make(clazzRowMapper, clazzExtend, clazzDefinition.fieldsAll);
 
-		String codeActual = toString(code);
-		String codeExpected = toString(clazzRowMapper);
+		String codeActual = toString(targetClazz, code);
+		String codeExpected = TinyAsmTestUtils.toString(clazzRowMapper);
 		assertEquals("Code", codeExpected, codeActual);
 	}
 }

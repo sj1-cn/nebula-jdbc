@@ -90,7 +90,7 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 	}
 
 	@Override
-	public User findByIdJdbc(Object... keys) throws SQLException {
+	public User findByIdJdbc(long id) throws SQLException {
 		PreparedStatement preparedStatement;
 		ResultSet resultSet;
 		List<User> datas = new ArrayList<>();
@@ -99,8 +99,7 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 		preparedStatement = conn.prepareStatement("SELECT id, name, description, createAt, updateAt FROM USER WHERE id = ?");
 		// @formatter:on
 
-		Object key = keys[0];
-		preparedStatement.setLong(1, ((Long) key).longValue());
+		preparedStatement.setLong(1, id);
 
 		resultSet = preparedStatement.executeQuery();
 
@@ -151,13 +150,12 @@ public class UserJdbcRepository implements JdbcRepository<User> {
 	}
 
 	@Override
-	public int deleteJdbc(Object... keys) throws SQLException {
+	public int deleteByIdJdbc(long id) throws SQLException {
 		// @formatter:off
 		PreparedStatement preparedStatement = conn.prepareStatement("DELETE USER WHERE id=?");
 		// @formatter:on
 
-		Object key = keys[0];
-		preparedStatement.setLong(1, ((Long) key).longValue());
+		preparedStatement.setLong(1, id);
 
 		return preparedStatement.executeUpdate();
 	}

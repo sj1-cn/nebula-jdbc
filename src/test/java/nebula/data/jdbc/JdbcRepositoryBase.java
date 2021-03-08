@@ -11,8 +11,4 @@ public class JdbcRepositoryBase {
 		super();
 	}
 
-	protected boolean checkIsExist(Connection conn, String tableName, ColumnList columnList) {
-		return !JDBC.mergeIfExists(conn, tableName, columnList);
-	}
-
 }

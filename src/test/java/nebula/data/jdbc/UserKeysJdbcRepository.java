@@ -90,7 +90,7 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 	}
 
 	@Override
-	public User findByIdJdbc(Object... keys) throws SQLException {
+	public User findByIdJdbc(long id) throws SQLException {
 		PreparedStatement preparedStatement;
 		ResultSet resultSet;
 		List<User> datas = new ArrayList<>();
@@ -99,10 +99,11 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 		preparedStatement = conn.prepareStatement("SELECT id, name, description, createAt, updateAt FROM USER WHERE id = ? AND name = ?");
 		// @formatter:on
 
-		Object key = keys[0];
-		preparedStatement.setLong(1, ((Long)key).longValue());
-		key = keys[1];
-		preparedStatement.setString(2, (String) key);
+//		Object key = keys[0];
+		preparedStatement.setLong(1, id);
+		//TODO
+//		key = keys[1];
+//		preparedStatement.setString(2, (String) key);
 
 		resultSet = preparedStatement.executeQuery();
 
@@ -114,53 +115,53 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 
 	@Override
 	public User insertJdbc(User data) throws SQLException {
-		// @formatter:off
-		PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO USER(id,name,description,createAt,updateAt) VALUES(?,?,?,?,?)");
-		// @formatter:on
-
-		preparedStatement.setLong(1, data.getId());
-		preparedStatement.setString(2, data.getName());
-		preparedStatement.setString(3, data.getDescription());
-
-		bindInsertExtend(preparedStatement, 4);
-
-		if (preparedStatement.executeUpdate() > 0) {
-			return this.findByIdJdbc(data.getId(),data.getName());
-		}
+//		// @formatter:off
+//		PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO USER(id,name,description,createAt,updateAt) VALUES(?,?,?,?,?)");
+//		// @formatter:on
+//
+//		preparedStatement.setLong(1, data.getId());
+//		preparedStatement.setString(2, data.getName());
+//		preparedStatement.setString(3, data.getDescription());
+//
+//		bindInsertExtend(preparedStatement, 4);
+//
+//		if (preparedStatement.executeUpdate() > 0) {
+//			return this.findByIdJdbc(data.getId(),data.getName());
+//		}
 		return null;
 	}
 
 	@Override
 	public User updateJdbc(User data) throws SQLException {
-		ClassExtend extend = (ClassExtend) findByIdJdbc(data.getId(),data.getName());
-		if (extend.getUpdateAt() == ((ClassExtend) data).getUpdateAt()) {
-			return null;
-		}
-
-		// @formatter:off
-		PreparedStatement preparedStatement = conn.prepareStatement("UPDATE USER SET description=?,updateAt=? WHERE id=? AND name=?");
-		// @formatter:on
-		preparedStatement.setString(1, data.getDescription());
-		bindUpdateExtend(preparedStatement, 2);
-		preparedStatement.setLong(3, data.getId());
-		preparedStatement.setString(4, data.getName());
-
-		if (preparedStatement.executeUpdate() > 0) {
-			return findByIdJdbc(data.getId(),data.getName());
-		}
+//		ClassExtend extend = (ClassExtend) findByIdJdbc(data.getId(),data.getName());
+//		if (extend.getUpdateAt() == ((ClassExtend) data).getUpdateAt()) {
+//			return null;
+//		}
+//
+//		// @formatter:off
+//		PreparedStatement preparedStatement = conn.prepareStatement("UPDATE USER SET description=?,updateAt=? WHERE id=? AND name=?");
+//		// @formatter:on
+//		preparedStatement.setString(1, data.getDescription());
+//		bindUpdateExtend(preparedStatement, 2);
+//		preparedStatement.setLong(3, data.getId());
+//		preparedStatement.setString(4, data.getName());
+//
+//		if (preparedStatement.executeUpdate() > 0) {
+//			return findByIdJdbc(data.getId(),data.getName());
+//		}
 		return null;
 	}
 
 	@Override
-	public int deleteJdbc(Object... keys) throws SQLException {
+	public int deleteByIdJdbc(long id) throws SQLException {
 		// @formatter:off
 		PreparedStatement preparedStatement = conn.prepareStatement("DELETE USER WHERE id=? AND name=?");
 		// @formatter:on
 
-		Object key = keys[0];
-		preparedStatement.setLong(1, ((Long)key).longValue());
-		key = keys[1];
-		preparedStatement.setString(2, (String) key);
+//		Object key = keys[0];
+		preparedStatement.setLong(1, id);
+//		key = keys[1];
+//		preparedStatement.setString(2, (String) key);
 
 		return preparedStatement.executeUpdate();
 	}

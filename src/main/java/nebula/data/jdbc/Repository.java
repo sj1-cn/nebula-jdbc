@@ -13,14 +13,18 @@ public interface Repository<T> {
 	PageList<T> list(int start, int max);
 
 	PageList<T> list(Condition condition, int start, int max);
-	
+
 	PageList<T> list(Condition condition, OrderBy orderby, int start, int max);
 
-	T findById(Object... keys);
+	T findById(long id);
+
+//	T findByName(String id);
 
 	T insert(T pet);
 
 	T update(T pet);
 
-	int delete(Object... keys);
+	int deleteById(long key);
+
+//	int deleteByName(String name);
 }
