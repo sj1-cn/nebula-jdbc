@@ -3,15 +3,14 @@ package nebula.data.jdbc;
 import static cc1sj.tinyasm.Adv.__;
 import static cc1sj.tinyasm.Adv._b;
 import static cc1sj.tinyasm.Adv._if;
-import static cc1sj.tinyasm.Adv.*;
 import static cc1sj.tinyasm.Adv._return;
 import static cc1sj.tinyasm.Adv._while;
-import static cc1sj.tinyasm.Adv.dumpClass;
 import static cc1sj.tinyasm.Adv.isGreaterThan;
 import static cc1sj.tinyasm.Adv.isTrue;
 import static cc1sj.tinyasm.Adv.new_;
+import static cc1sj.tinyasm.Adv.null_;
+import static cc1sj.tinyasm.Adv.params;
 import static cc1sj.tinyasm.Adv.private_;
-import static cc1sj.tinyasm.Adv.public_class_;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cc1sj.tinyasm.AdvClassBuilder;
+import cc1sj.tinyasm.AdvMagic;
 import cc1sj.tinyasm.boolean_;
 import nebula.data.query.Condition;
 import nebula.data.query.OrderBy;
@@ -44,6 +44,9 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 
 			__(mapper, new_(UserExtendJdbcRowMapper.class));
 			__(sqlHelper, new_(SqlHelper.class));
+
+			code.LINE();
+			code.RETURN();
 		});
 	}
 
@@ -97,7 +100,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 	@Override
 	public PageList<User> listJdbc(Condition condition, OrderBy orderBy, int start, int max) throws SQLException {
 
-		final PageList<User> datas = __("datas", new_(PageListImpl.class, PageList.class, User.class, params(start, max)));
+		final PageList<User> datas = __(PageList.class, User.class, "datas", new_(PageListImpl.class, User.class, params(start, max)));
 //
 //		// @formatter:off
 		final String sql =__("sql", sqlHelper.select("id,name,description,createAt,updateAt").from("USER").where(condition).orderby(orderBy).offset(start).max(max).toSQL());
@@ -165,6 +168,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 		return null;
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public User updateJdbc(User data) throws SQLException {
 		ClassExtend extend = __(ClassExtend.class, "extend", findByIdJdbc(data.getId()));
@@ -200,7 +204,11 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 	}
 
 	public static byte[] dump() {
-		return dumpClass(public_class_("nebula.data.jdbc.UserAutoIncrementJdbcRepository").implements_(JdbcRepository.class, User.class)
-				.enterClassBody(), UserAutoIncrementJdbcRepositoryMagicBuilder.class);
+		UserAutoIncrementJdbcRepositoryMagicBuilder magicBuilderProxy = AdvMagic.build("nebula.data.jdbc.UserAutoIncrementJdbcRepository",
+				UserAutoIncrementJdbcRepositoryMagicBuilder.class);
+
+//		magicBuilderProxy.dumpInit("sayNothing");
+
+		return AdvMagic.dump(magicBuilderProxy);
 	}
 }
