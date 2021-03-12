@@ -166,4 +166,10 @@ public class UserKeysJdbcRepository implements JdbcRepository<User> {
 		return preparedStatement.executeUpdate();
 	}
 
+	@Override
+	public boolean mergeIfExists(Connection conn, String tableName, ColumnList columnsExpected) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

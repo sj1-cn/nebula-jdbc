@@ -32,11 +32,11 @@ public class UserMoreComplexExtendTinyAsmDump {
 	}
 
 	public byte[] dump(String className) throws Exception {
-		ClassBody classBody = ClassBuilder.make(className, UserMoreComplex.class, ClassExtend.class)
+		ClassBody classBody = ClassBuilder.class_(className, UserMoreComplex.class, ClassExtend.class)
 			.access(ACC_PUBLIC | ACC_SUPER).body();
 
-		classBody.field("createAt", Clazz.of(Timestamp.class));
-		classBody.field("updateAt", Clazz.of(Timestamp.class));
+		classBody.private_().field("createAt", Clazz.of(Timestamp.class));
+		classBody.private_().field("updateAt", Clazz.of(Timestamp.class));
 		__init_(classBody);
 		_getCreateAt(classBody);
 		_getUpdateAt(classBody);
@@ -45,7 +45,7 @@ public class UserMoreComplexExtendTinyAsmDump {
 	}
 
 	protected void __init_(ClassBody classBody) {
-		MethodCode code = classBody.publicMethod("<init>")
+		MethodCode code = classBody.public_().method("<init>")
 			.parameter("id",Long.class)
 			.parameter("string",String.class)
 			.parameter("bigDecimal",BigDecimal.class)
@@ -112,7 +112,8 @@ public class UserMoreComplexExtendTinyAsmDump {
 	}
 
 	protected void _getCreateAt(ClassBody classBody) {
-		MethodCode code = classBody.publicMethod(Timestamp.class, "getCreateAt").begin();
+		MethodCode code = classBody.public_().method("getCreateAt")
+			.return_(Timestamp.class ).begin();
 
 		code.LINE();
 		code.LOAD("this");
@@ -123,7 +124,8 @@ public class UserMoreComplexExtendTinyAsmDump {
 	}
 
 	protected void _getUpdateAt(ClassBody classBody) {
-		MethodCode code = classBody.publicMethod(Timestamp.class, "getUpdateAt").begin();
+		MethodCode code = classBody.public_().method("getUpdateAt")
+			.return_(Timestamp.class ).begin();
 
 		code.LINE();
 		code.LOAD("this");

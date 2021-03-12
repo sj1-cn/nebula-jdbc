@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 
 import nebula.data.query.Condition;
 import nebula.data.query.OrderBy;
+import nebula.jdbc.builders.schema.ColumnList;
 import nebula.jdbc.builders.schema.JDBC;
 
 public interface JdbcRepository<T> extends Repository<T> {
@@ -119,6 +120,10 @@ public interface JdbcRepository<T> extends Repository<T> {
 	T updateJdbc(T pet) throws SQLException;
 
 	int deleteByIdJdbc(long id) throws SQLException;
+
+	default boolean mergeIfExists(Connection conn, String tableName, ColumnList columnsExpected) {
+		return false;
+	}
 
 //	int deleteJdbcByName(String name) throws SQLException;
 

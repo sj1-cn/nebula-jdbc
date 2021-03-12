@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import cc1sj.tinyasm.AdvAsmProxyMagicClassAdvAsmBuilder;
 import cc1sj.tinyasm.util.TinyAsmTestUtils;
 
 public class JdbcRepositoryBuilderTinyASMifierTest {
@@ -60,6 +61,26 @@ public class JdbcRepositoryBuilderTinyASMifierTest {
 
 	}
 
+	@Test
+	public void test_UserAutoIncrementJdbcRepositoryMagicBuilder_Build() throws Exception {
+		Class<?> expectedClazz = UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy.class;
+		String codeExpected = TinyAsmTestUtils.toString(expectedClazz);
+		String codeActual = TinyAsmTestUtils.toString(expectedClazz.getName(),
+				AdvAsmProxyMagicClassAdvAsmBuilder.dumpMagic(UserAutoIncrementJdbcRepositoryMagicBuilder.class, expectedClazz.getName()));
+
+		assertEquals("Code", codeExpected, codeActual);
+	}
+
+//	@Test
+//	public void test_ProxyMagic_Build() throws Exception {
+//		Class<?> expectedClazz = UsingSimplePojoClassSampleMagicBuilderAdvAsmProxy.class;
+//		String codeExpected = TinyAsmTestUtils.toString(expectedClazz);
+//		String codeActual = TinyAsmTestUtils.toString(expectedClazz.getName(),
+//				AdvAsmProxyMagicClassAdvAsmBuilder.dumpMagic(UsingSimplePojoClassSampleMagicBuilder.class, expectedClazz.getName()));
+//
+//		assertEquals("Code", codeExpected, codeActual);
+//	}
+	
 	@Test
 	public void test_UserAutoIncrementJdbcRepository_dump() throws Exception {
 		Class<?> expectedClazz = UserAutoIncrementJdbcRepository.class;

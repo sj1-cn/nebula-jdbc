@@ -60,77 +60,77 @@ public class Arguments {
 
 	{
 		register(char.class, String.class, code -> {
-			code.STATIC(String.class, "valueOf").parameter(char.class).reTurn(String.class).INVOKE();
+			code.STATIC(String.class, "valueOf").parameter(char.class).return_(String.class).INVOKE();
 		}, code -> {
 			code.LOADConst(0);
-			code.VIRTUAL(String.class, "charAt").parameter(int.class).reTurn(char.class).INVOKE();
+			code.VIRTUAL(String.class, "charAt").parameter(int.class).return_(char.class).INVOKE();
 		});
 
 		register(Boolean.class, boolean.class, code -> {
-			code.VIRTUAL(Boolean.class, "booleanValue").reTurn(boolean.class).INVOKE();
+			code.VIRTUAL(Boolean.class, "booleanValue").return_(boolean.class).INVOKE();
 		}, code -> {
-			code.STATIC(Boolean.class, "valueOf").parameter(boolean.class).reTurn(Boolean.class).INVOKE();
+			code.STATIC(Boolean.class, "valueOf").parameter(boolean.class).return_(Boolean.class).INVOKE();
 		});
 
 		register(Byte.class, byte.class, code -> {
-			code.VIRTUAL(Byte.class, "byteValue").reTurn(byte.class).INVOKE();
+			code.VIRTUAL(Byte.class, "byteValue").return_(byte.class).INVOKE();
 		}, code -> {
-			code.STATIC(Byte.class, "valueOf").parameter(byte.class).reTurn(Byte.class).INVOKE();
+			code.STATIC(Byte.class, "valueOf").parameter(byte.class).return_(Byte.class).INVOKE();
 		});
 
 		register(Short.class, short.class, code -> {
-			code.VIRTUAL(Short.class, "shortValue").reTurn(short.class).INVOKE();
+			code.VIRTUAL(Short.class, "shortValue").return_(short.class).INVOKE();
 		}, code -> {
-			code.STATIC(Short.class, "valueOf").parameter(short.class).reTurn(Short.class).INVOKE();
+			code.STATIC(Short.class, "valueOf").parameter(short.class).return_(Short.class).INVOKE();
 		});
 
 		register(Integer.class, int.class, code -> {
-			code.VIRTUAL(Integer.class, "intValue").reTurn(int.class).INVOKE();
+			code.VIRTUAL(Integer.class, "intValue").return_(int.class).INVOKE();
 		}, code -> {
-			code.STATIC(Integer.class, "valueOf").parameter(int.class).reTurn(Integer.class).INVOKE();
+			code.STATIC(Integer.class, "valueOf").parameter(int.class).return_(Integer.class).INVOKE();
 		});
 
 		register(Long.class, long.class, code -> {
-			code.VIRTUAL(Long.class, "longValue").reTurn(long.class).INVOKE();
+			code.VIRTUAL(Long.class, "longValue").return_(long.class).INVOKE();
 		}, code -> {
-			code.STATIC(Long.class, "valueOf").parameter(long.class).reTurn(Long.class).INVOKE();
+			code.STATIC(Long.class, "valueOf").parameter(long.class).return_(Long.class).INVOKE();
 		});
 
 		register(Character.class, String.class, code -> {//
-			code.VIRTUAL(Character.class, "charValue").reTurn(char.class).INVOKE();
-			code.STATIC(String.class, "valueOf").parameter(char.class).reTurn(String.class).INVOKE();
+			code.VIRTUAL(Character.class, "charValue").return_(char.class).INVOKE();
+			code.STATIC(String.class, "valueOf").parameter(char.class).return_(String.class).INVOKE();
 		}, code -> {
 			code.LOADConst(0);
-			code.VIRTUAL(String.class, "charAt").parameter(int.class).reTurn(char.class).INVOKE();
-			code.STATIC(Character.class, "valueOf").parameter(char.class).reTurn(Character.class).INVOKE();
+			code.VIRTUAL(String.class, "charAt").parameter(int.class).return_(char.class).INVOKE();
+			code.STATIC(Character.class, "valueOf").parameter(char.class).return_(Character.class).INVOKE();
 		});
 
 		register(Float.class, float.class, code -> {
-			code.VIRTUAL(Float.class, "floatValue").reTurn(float.class).INVOKE();
+			code.VIRTUAL(Float.class, "floatValue").return_(float.class).INVOKE();
 		}, code -> {
-			code.STATIC(Float.class, "valueOf").parameter(float.class).reTurn(Float.class).INVOKE();
+			code.STATIC(Float.class, "valueOf").parameter(float.class).return_(Float.class).INVOKE();
 		});
 
 		register(Double.class, double.class, code -> {
-			code.VIRTUAL(Double.class, "doubleValue").reTurn(double.class).INVOKE();
+			code.VIRTUAL(Double.class, "doubleValue").return_(double.class).INVOKE();
 		}, code -> {
-			code.STATIC(Double.class, "valueOf").parameter(double.class).reTurn(Double.class).INVOKE();
+			code.STATIC(Double.class, "valueOf").parameter(double.class).return_(Double.class).INVOKE();
 		});
 
 		register(Date.class, java.sql.Date.class, code -> {
-			code.STATIC(TypeUtil.class, "dateValueOf").parameter(Date.class).reTurn(java.sql.Date.class).INVOKE();
+			code.STATIC(TypeUtil.class, "dateValueOf").parameter(Date.class).return_(java.sql.Date.class).INVOKE();
 		}, code -> {
-			code.STATIC(TypeUtil.class, "dateValueOf").parameter(java.sql.Date.class).reTurn(Date.class).INVOKE();
+			code.STATIC(TypeUtil.class, "dateValueOf").parameter(java.sql.Date.class).return_(Date.class).INVOKE();
 		});
 		register(Date.class, java.sql.Time.class, code -> {
-			code.STATIC(TypeUtil.class, "timeValueOf").parameter(Date.class).reTurn(java.sql.Time.class).INVOKE();
+			code.STATIC(TypeUtil.class, "timeValueOf").parameter(Date.class).return_(java.sql.Time.class).INVOKE();
 		}, code -> {
-			code.STATIC(TypeUtil.class, "dateValueOf").parameter(java.sql.Time.class).reTurn(Date.class).INVOKE();
+			code.STATIC(TypeUtil.class, "dateValueOf").parameter(java.sql.Time.class).return_(Date.class).INVOKE();
 		});
 		register(Date.class, java.sql.Timestamp.class, code -> {
-			code.STATIC(TypeUtil.class, "timestampValueOf").parameter(Date.class).reTurn(java.sql.Timestamp.class).INVOKE();
+			code.STATIC(TypeUtil.class, "timestampValueOf").parameter(Date.class).return_(java.sql.Timestamp.class).INVOKE();
 		}, code -> {
-			code.STATIC(TypeUtil.class, "dateValueOf").parameter(java.sql.Timestamp.class).reTurn(Date.class).INVOKE();
+			code.STATIC(TypeUtil.class, "dateValueOf").parameter(java.sql.Timestamp.class).return_(Date.class).INVOKE();
 		});
 	}
 

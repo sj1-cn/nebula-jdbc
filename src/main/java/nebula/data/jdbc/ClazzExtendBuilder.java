@@ -8,12 +8,12 @@ public class ClazzExtendBuilder {
 	
 	public byte[] make(String clazzExtend, String targetClazz, ClazzDefinition clazz) {
 		// public class UserImpl extends User implements EntityTime {
-		ClassBody cw = ClassBuilder.make(clazzExtend).eXtend(targetClazz).implement(ClassExtend.class).body();
+		ClassBody cw = ClassBuilder.class_(clazzExtend).extends_(targetClazz).implements_(ClassExtend.class).body();
 
-		cw.field("createAt", java.sql.Timestamp.class);
-		cw.field("updateAt", java.sql.Timestamp.class);
+		cw.private_().field("createAt", java.sql.Timestamp.class);
+		cw.private_().field("updateAt", java.sql.Timestamp.class);
 
-		cw.publicMethod("<init>").parameter(clazz.fieldsAll.map(f -> new Field(f.fieldName, f.clazz))).code(mv -> {
+		cw.public_().method("<init>").parameter(clazz.fieldsAll.map(f -> new Field(f.fieldName, f.clazz))).code(mv -> {
 			mv.LINE();
 			mv.LOAD(0);
 			for (FieldMapper fieldMapper : clazz.fields) {

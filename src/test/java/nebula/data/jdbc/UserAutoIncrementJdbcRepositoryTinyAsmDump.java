@@ -9,7 +9,6 @@ import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
 import cc1sj.tinyasm.Annotation;
 import cc1sj.tinyasm.Clazz;
-import nebula.jdbc.builders.schema.JDBC;
 import nebula.data.jdbc.JdbcRepository;
 import java.sql.Connection;
 import nebula.data.query.OrderBy;
@@ -40,12 +39,12 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 	}
 
 	public byte[] dump(String className) throws Exception {
-		ClassBody classBody = ClassBuilder.make(className, Clazz.of(Object.class),Clazz.of(JdbcRepository.class,Clazz.of(User.class)))
+		ClassBody classBody = ClassBuilder.class_(className, Clazz.of(Object.class),Clazz.of(JdbcRepository.class,Clazz.of(User.class)))
 			.access(ACC_PUBLIC | ACC_SUPER).body();
 
-		classBody.field("conn", Clazz.of(Connection.class));
-		classBody.field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
-		classBody.field("sqlHelper", Clazz.of(SqlHelper.class));
+		classBody.private_().field("conn", Clazz.of(Connection.class));
+		classBody.private_().field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
+		classBody.private_().field("sqlHelper", Clazz.of(SqlHelper.class));
 		__init_(classBody);
 		_setConnection(classBody);
 		_initJdbc(classBody);
@@ -55,15 +54,15 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		_insertJdbc(classBody);
 		_updateJdbc(classBody);
 		_deleteByIdJdbc(classBody);
+		_bridge_findByIdJdbc(classBody);
 		_bridge_updateJdbc(classBody);
 		_bridge_insertJdbc(classBody);
-		_bridge_findByIdJdbc(classBody);
 
 		return classBody.end().toByteArray();
 	}
 
 	protected void __init_(ClassBody classBody) {
-		MethodCode code = classBody.publicMethod("<init>").begin();
+		MethodCode code = classBody.public_().method("<init>").begin();
 
 		code.LINE();
 		code.LOAD("this");
@@ -90,7 +89,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 	}
 
 	protected void _setConnection(ClassBody classBody) {
-		MethodCode code = classBody.publicMethod("setConnection")
+		MethodCode code = classBody.public_().method("setConnection")
 			.parameter("conn",Connection.class).begin();
 
 		code.LINE();
@@ -105,8 +104,8 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 	}
 
 	protected void _initJdbc(ClassBody classBody) {
-		MethodCode code = classBody.publicMethod("initJdbc")
-			.tHrow(SQLException.class ).begin();
+		MethodCode code = classBody.public_().method("initJdbc")
+			.throws_(SQLException.class ).begin();
 
 		code.LINE();
 		code.NEW(ColumnList.class);
@@ -146,11 +145,12 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
+		code.LOAD("this");
 		code.GETFIELD_OF_THIS("conn");
 		code.LOADConst("USER");
 		code.LOAD("columnList");
-		code.STATIC(JDBC.class, "mergeIfExists")
-			.reTurn(boolean.class)
+		code.VIRTUAL("mergeIfExists")
+			.return_(boolean.class)
 			.parameter(Connection.class)
 			.parameter(String.class)
 			.parameter(ColumnList.class).INVOKE();
@@ -162,10 +162,10 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.GETFIELD_OF_THIS("conn");
 		code.LOADConst("CREATE TABLE USER(id INTEGER(10) PRIMARY KEY AUTO_INCREMENT,name VARCHAR(256),description VARCHAR(256),createAt TIMESTAMP,updateAt TIMESTAMP)");
 		code.INTERFACE(Connection.class, "prepareStatement")
-			.reTurn(PreparedStatement.class)
+			.return_(PreparedStatement.class)
 			.parameter(String.class).INVOKE();
 		code.INTERFACE(PreparedStatement.class, "execute")
-			.reTurn(boolean.class).INVOKE();
+			.return_(boolean.class).INVOKE();
 		code.POP();
 
 		code.visitLabel(label7OfIFNE);
@@ -177,149 +177,11 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 	}
 
 	protected void _listJdbc(ClassBody classBody) {
-		MethodCode code = classBody.publicMethod(Clazz.of(PageList.class,Clazz.of(User.class)), "listJdbc")
-			.tHrow(SQLException.class )
-			.parameter("start",int.class)
-			.parameter("max",int.class).begin();
-
-		code.LINE();
-		code.NEW(PageListImpl.class);
-		code.DUP();
-		code.LOAD("start");
-		code.LOAD("max");
-		code.SPECIAL(PageListImpl.class, "<init>")
-			.parameter(int.class)
-			.parameter(int.class).INVOKE();
-		code.STORE("datas",Clazz.of(PageListImpl.class,Clazz.of(User.class)));
-
-		code.LINE();
-		code.LOAD("this");
-		code.GETFIELD_OF_THIS("sqlHelper");
-		code.LOADConst("id,name,description,createAt,updateAt");
-		code.VIRTUAL(SqlHelper.class, "select")
-			.reTurn(Select.class)
-			.parameter(String.class).INVOKE();
-		code.LOADConst("USER");
-		code.VIRTUAL(Select.class, "from")
-			.reTurn(Select.class)
-			.parameter(String.class).INVOKE();
-		code.LOAD("start");
-		code.VIRTUAL(Select.class, "offset")
-			.reTurn(Select.class)
-			.parameter(int.class).INVOKE();
-		code.LOAD("max");
-		code.VIRTUAL(Select.class, "max")
-			.reTurn(Select.class)
-			.parameter(int.class).INVOKE();
-		code.VIRTUAL(Select.class, "toSQL")
-			.reTurn(String.class).INVOKE();
-		code.STORE("sql",String.class);
-
-		code.LINE();
-		code.LOAD("this");
-		code.GETFIELD_OF_THIS("conn");
-		code.LOAD("sql");
-		code.INTERFACE(Connection.class, "prepareStatement")
-			.reTurn(PreparedStatement.class)
-			.parameter(String.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "executeQuery")
-			.reTurn(ResultSet.class).INVOKE();
-		code.STORE("resultSet",ResultSet.class);
-		Label label6OfGOTO = new Label();
-
-		code.visitLabel(label6OfGOTO);
-
-		code.LINE();
-		code.LOAD("resultSet");
-		code.INTERFACE(ResultSet.class, "next")
-			.reTurn(boolean.class).INVOKE();
-		Label label4OfIFEQ = new Label();
-		code.IFEQ(label4OfIFEQ);
-
-		code.LINE();
-		code.LOAD("datas");
-		code.LOAD("this");
-		code.GETFIELD_OF_THIS("mapper");
-		code.LOAD("resultSet");
-		code.VIRTUAL(UserExtendJdbcRowMapper.class, "map")
-			.reTurn(UserExtend.class)
-			.parameter(ResultSet.class).INVOKE();
-		code.VIRTUAL(PageListImpl.class, "add")
-			.reTurn(boolean.class)
-			.parameter(Object.class).INVOKE();
-		code.POP();
-		code.GOTO(label6OfGOTO);
-
-		code.visitLabel(label4OfIFEQ);
-
-		code.LINE();
-		code.LOAD("resultSet");
-		code.INTERFACE(ResultSet.class, "close").INVOKE();
-
-		code.LINE();
-		code.LOAD("this");
-		code.GETFIELD_OF_THIS("sqlHelper");
-		code.LOADConst("count(1)");
-		code.VIRTUAL(SqlHelper.class, "select")
-			.reTurn(Select.class)
-			.parameter(String.class).INVOKE();
-		code.LOADConst("USER");
-		code.VIRTUAL(Select.class, "from")
-			.reTurn(Select.class)
-			.parameter(String.class).INVOKE();
-		code.VIRTUAL(Select.class, "toSQL")
-			.reTurn(String.class).INVOKE();
-		code.STORE("sqlCount",String.class);
-
-		code.LINE();
-		code.LOAD("this");
-		code.GETFIELD_OF_THIS("conn");
-		code.INTERFACE(Connection.class, "createStatement")
-			.reTurn(Statement.class).INVOKE();
-		code.LOAD("sqlCount");
-		code.INTERFACE(Statement.class, "executeQuery")
-			.reTurn(ResultSet.class)
-			.parameter(String.class).INVOKE();
-		code.STORE("resultSetCount",ResultSet.class);
-
-		code.LINE();
-		code.LOAD("resultSetCount");
-		code.INTERFACE(ResultSet.class, "next")
-			.reTurn(boolean.class).INVOKE();
-		code.STORE("result",boolean.class);
-
-		code.LINE();
-		code.LOAD("resultSetCount");
-		code.LOADConst(1);
-		code.INTERFACE(ResultSet.class, "getInt")
-			.reTurn(int.class)
-			.parameter(int.class).INVOKE();
-		code.STORE("totalSize",int.class);
-
-		code.LINE();
-		code.LOAD("resultSetCount");
-		code.INTERFACE(ResultSet.class, "close").INVOKE();
-
-		code.LINE();
-		code.LOAD("datas");
-		code.LOAD("totalSize");
-		code.VIRTUAL(PageListImpl.class, "totalSize")
-			.parameter(int.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("datas");
-		code.RETURNTop();
-
-		code.END();
-	}
-
-	protected void _listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int(ClassBody classBody) {
-		MethodCode code = classBody.publicMethod(Clazz.of(PageList.class,Clazz.of(User.class)), "listJdbc")
-			.tHrow(SQLException.class )
-			.parameter("condition",Clazz.of(Condition.class))
-			.parameter("orderBy",Clazz.of(OrderBy.class))
-			.parameter("start",int.class)
-			.parameter("max",int.class).begin();
+		MethodCode code = classBody.public_().method("listJdbc")
+			.return_(Clazz.of(PageList.class,Clazz.of(User.class)) )
+			.throws_(SQLException.class )
+			.parameter("start",Clazz.of(int.class))
+			.parameter("max",Clazz.of(int.class)).begin();
 
 		code.LINE();
 		code.NEW(PageListImpl.class);
@@ -336,30 +198,22 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.GETFIELD_OF_THIS("sqlHelper");
 		code.LOADConst("id,name,description,createAt,updateAt");
 		code.VIRTUAL(SqlHelper.class, "select")
-			.reTurn(Select.class)
+			.return_(Select.class)
 			.parameter(String.class).INVOKE();
 		code.LOADConst("USER");
 		code.VIRTUAL(Select.class, "from")
-			.reTurn(Select.class)
+			.return_(Select.class)
 			.parameter(String.class).INVOKE();
-		code.LOAD("condition");
-		code.VIRTUAL(Select.class, "where")
-			.reTurn(Select.class)
-			.parameter(Condition.class).INVOKE();
-		code.LOAD("orderBy");
-		code.VIRTUAL(Select.class, "orderby")
-			.reTurn(Select.class)
-			.parameter(OrderBy.class).INVOKE();
 		code.LOAD("start");
 		code.VIRTUAL(Select.class, "offset")
-			.reTurn(Select.class)
+			.return_(Select.class)
 			.parameter(int.class).INVOKE();
 		code.LOAD("max");
 		code.VIRTUAL(Select.class, "max")
-			.reTurn(Select.class)
+			.return_(Select.class)
 			.parameter(int.class).INVOKE();
 		code.VIRTUAL(Select.class, "toSQL")
-			.reTurn(String.class).INVOKE();
+			.return_(String.class).INVOKE();
 		code.STORE("sql",String.class);
 
 		code.LINE();
@@ -367,21 +221,18 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.GETFIELD_OF_THIS("conn");
 		code.LOAD("sql");
 		code.INTERFACE(Connection.class, "prepareStatement")
-			.reTurn(PreparedStatement.class)
+			.return_(PreparedStatement.class)
 			.parameter(String.class).INVOKE();
 		code.INTERFACE(PreparedStatement.class, "executeQuery")
-			.reTurn(ResultSet.class).INVOKE();
+			.return_(ResultSet.class).INVOKE();
 		code.STORE("resultSet",ResultSet.class);
-		Label label6OfGOTO = new Label();
-
-		code.visitLabel(label6OfGOTO);
 
 		code.LINE();
-		code.LOAD("resultSet");
-		code.INTERFACE(ResultSet.class, "next")
-			.reTurn(boolean.class).INVOKE();
-		Label label4OfIFEQ = new Label();
-		code.IFEQ(label4OfIFEQ);
+		Label label4OfGOTO = new Label();
+		code.GOTO(label4OfGOTO);
+		Label label6OfIFNE = new Label();
+
+		code.visitLabel(label6OfIFNE);
 
 		code.LINE();
 		code.LOAD("datas");
@@ -389,15 +240,20 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.GETFIELD_OF_THIS("mapper");
 		code.LOAD("resultSet");
 		code.VIRTUAL(UserExtendJdbcRowMapper.class, "map")
-			.reTurn(UserExtend.class)
+			.return_(UserExtend.class)
 			.parameter(ResultSet.class).INVOKE();
 		code.INTERFACE(PageList.class, "add")
-			.reTurn(boolean.class)
+			.return_(boolean.class)
 			.parameter(Object.class).INVOKE();
 		code.POP();
-		code.GOTO(label6OfGOTO);
 
-		code.visitLabel(label4OfIFEQ);
+		code.visitLabel(label4OfGOTO);
+
+		code.LINE();
+		code.LOAD("resultSet");
+		code.INTERFACE(ResultSet.class, "next")
+			.return_(boolean.class).INVOKE();
+		code.IFNE(label6OfIFNE);
 
 		code.LINE();
 		code.LOAD("resultSet");
@@ -408,42 +264,192 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.GETFIELD_OF_THIS("sqlHelper");
 		code.LOADConst("count(1)");
 		code.VIRTUAL(SqlHelper.class, "select")
-			.reTurn(Select.class)
+			.return_(Select.class)
 			.parameter(String.class).INVOKE();
 		code.LOADConst("USER");
 		code.VIRTUAL(Select.class, "from")
-			.reTurn(Select.class)
+			.return_(Select.class)
 			.parameter(String.class).INVOKE();
-		code.LOAD("condition");
-		code.VIRTUAL(Select.class, "where")
-			.reTurn(Select.class)
-			.parameter(Condition.class).INVOKE();
 		code.VIRTUAL(Select.class, "toSQL")
-			.reTurn(String.class).INVOKE();
+			.return_(String.class).INVOKE();
 		code.STORE("sqlCount",String.class);
 
 		code.LINE();
 		code.LOAD("this");
 		code.GETFIELD_OF_THIS("conn");
 		code.INTERFACE(Connection.class, "createStatement")
-			.reTurn(Statement.class).INVOKE();
+			.return_(Statement.class).INVOKE();
 		code.LOAD("sqlCount");
 		code.INTERFACE(Statement.class, "executeQuery")
-			.reTurn(ResultSet.class)
+			.return_(ResultSet.class)
 			.parameter(String.class).INVOKE();
 		code.STORE("resultSetCount",ResultSet.class);
 
 		code.LINE();
 		code.LOAD("resultSetCount");
 		code.INTERFACE(ResultSet.class, "next")
-			.reTurn(boolean.class).INVOKE();
-		code.POP();
+			.return_(boolean.class).INVOKE();
+		code.STORE("result",boolean.class);
 
 		code.LINE();
 		code.LOAD("resultSetCount");
 		code.LOADConst(1);
 		code.INTERFACE(ResultSet.class, "getInt")
-			.reTurn(int.class)
+			.return_(int.class)
+			.parameter(int.class).INVOKE();
+		code.STORE("totalSize",int.class);
+
+		code.LINE();
+		code.LOAD("resultSetCount");
+		code.INTERFACE(ResultSet.class, "close").INVOKE();
+
+		code.LINE();
+		code.LOAD("datas");
+		code.LOAD("totalSize");
+		code.INTERFACE(PageList.class, "totalSize")
+			.parameter(int.class).INVOKE();
+
+		code.LINE();
+		code.LOAD("datas");
+		code.RETURNTop();
+
+		code.END();
+	}
+
+	protected void _listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int(ClassBody classBody) {
+		MethodCode code = classBody.public_().method("listJdbc")
+			.return_(Clazz.of(PageList.class,Clazz.of(User.class)) )
+			.throws_(SQLException.class )
+			.parameter("condition",Clazz.of(Condition.class))
+			.parameter("orderBy",Clazz.of(OrderBy.class))
+			.parameter("start",Clazz.of(int.class))
+			.parameter("max",Clazz.of(int.class)).begin();
+
+		code.LINE();
+		code.NEW(PageListImpl.class);
+		code.DUP();
+		code.LOAD("start");
+		code.LOAD("max");
+		code.SPECIAL(PageListImpl.class, "<init>")
+			.parameter(int.class)
+			.parameter(int.class).INVOKE();
+		code.STORE("datas",Clazz.of(PageList.class,Clazz.of(User.class)));
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("sqlHelper");
+		code.LOADConst("id,name,description,createAt,updateAt");
+		code.VIRTUAL(SqlHelper.class, "select")
+			.return_(Select.class)
+			.parameter(String.class).INVOKE();
+		code.LOADConst("USER");
+		code.VIRTUAL(Select.class, "from")
+			.return_(Select.class)
+			.parameter(String.class).INVOKE();
+		code.LOAD("condition");
+		code.VIRTUAL(Select.class, "where")
+			.return_(Select.class)
+			.parameter(Condition.class).INVOKE();
+		code.LOAD("orderBy");
+		code.VIRTUAL(Select.class, "orderby")
+			.return_(Select.class)
+			.parameter(OrderBy.class).INVOKE();
+		code.LOAD("start");
+		code.VIRTUAL(Select.class, "offset")
+			.return_(Select.class)
+			.parameter(int.class).INVOKE();
+		code.LOAD("max");
+		code.VIRTUAL(Select.class, "max")
+			.return_(Select.class)
+			.parameter(int.class).INVOKE();
+		code.VIRTUAL(Select.class, "toSQL")
+			.return_(String.class).INVOKE();
+		code.STORE("sql",String.class);
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("conn");
+		code.LOAD("sql");
+		code.INTERFACE(Connection.class, "prepareStatement")
+			.return_(PreparedStatement.class)
+			.parameter(String.class).INVOKE();
+		code.INTERFACE(PreparedStatement.class, "executeQuery")
+			.return_(ResultSet.class).INVOKE();
+		code.STORE("resultSet",ResultSet.class);
+
+		code.LINE();
+		Label label4OfGOTO = new Label();
+		code.GOTO(label4OfGOTO);
+		Label label6OfIFNE = new Label();
+
+		code.visitLabel(label6OfIFNE);
+
+		code.LINE();
+		code.LOAD("datas");
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("mapper");
+		code.LOAD("resultSet");
+		code.VIRTUAL(UserExtendJdbcRowMapper.class, "map")
+			.return_(UserExtend.class)
+			.parameter(ResultSet.class).INVOKE();
+		code.INTERFACE(PageList.class, "add")
+			.return_(boolean.class)
+			.parameter(Object.class).INVOKE();
+		code.POP();
+
+		code.visitLabel(label4OfGOTO);
+
+		code.LINE();
+		code.LOAD("resultSet");
+		code.INTERFACE(ResultSet.class, "next")
+			.return_(boolean.class).INVOKE();
+		code.IFNE(label6OfIFNE);
+
+		code.LINE();
+		code.LOAD("resultSet");
+		code.INTERFACE(ResultSet.class, "close").INVOKE();
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("sqlHelper");
+		code.LOADConst("count(1)");
+		code.VIRTUAL(SqlHelper.class, "select")
+			.return_(Select.class)
+			.parameter(String.class).INVOKE();
+		code.LOADConst("USER");
+		code.VIRTUAL(Select.class, "from")
+			.return_(Select.class)
+			.parameter(String.class).INVOKE();
+		code.LOAD("condition");
+		code.VIRTUAL(Select.class, "where")
+			.return_(Select.class)
+			.parameter(Condition.class).INVOKE();
+		code.VIRTUAL(Select.class, "toSQL")
+			.return_(String.class).INVOKE();
+		code.STORE("sqlCount",String.class);
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("conn");
+		code.INTERFACE(Connection.class, "createStatement")
+			.return_(Statement.class).INVOKE();
+		code.LOAD("sqlCount");
+		code.INTERFACE(Statement.class, "executeQuery")
+			.return_(ResultSet.class)
+			.parameter(String.class).INVOKE();
+		code.STORE("resultSetCount",ResultSet.class);
+
+		code.LINE();
+		code.LOAD("resultSetCount");
+		code.INTERFACE(ResultSet.class, "next")
+			.return_(boolean.class).INVOKE();
+		code.STORE("result",boolean.class);
+
+		code.LINE();
+		code.LOAD("resultSetCount");
+		code.LOADConst(1);
+		code.INTERFACE(ResultSet.class, "getInt")
+			.return_(int.class)
 			.parameter(int.class).INVOKE();
 		code.STORE("totalSize",int.class);
 
@@ -465,12 +471,10 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 	}
 
 	protected void _findByIdJdbc(ClassBody classBody) {
-		MethodCode code = classBody.publicMethod(User.class, "findByIdJdbc")
-			.tHrow(SQLException.class )
+		MethodCode code = classBody.public_().method("findByIdJdbc")
+			.return_(User.class )
+			.throws_(SQLException.class )
 			.parameter("id",long.class).begin();
-		code.define("preparedStatement",PreparedStatement.class);
-		code.define("resultSet",ResultSet.class);
-		code.define("datas",Clazz.of(List.class,Clazz.of(User.class)));
 
 		code.LINE();
 		code.NEW(ArrayList.class);
@@ -483,7 +487,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.GETFIELD_OF_THIS("conn");
 		code.LOADConst("SELECT id, name, description, createAt, updateAt FROM USER WHERE id = ?");
 		code.INTERFACE(Connection.class, "prepareStatement")
-			.reTurn(PreparedStatement.class)
+			.return_(PreparedStatement.class)
 			.parameter(String.class).INVOKE();
 		code.STORE("preparedStatement",PreparedStatement.class);
 
@@ -498,18 +502,15 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("preparedStatement");
 		code.INTERFACE(PreparedStatement.class, "executeQuery")
-			.reTurn(ResultSet.class).INVOKE();
+			.return_(ResultSet.class).INVOKE();
 		code.STORE("resultSet",ResultSet.class);
-		Label label7OfGOTO = new Label();
-
-		code.visitLabel(label7OfGOTO);
 
 		code.LINE();
-		code.LOAD("resultSet");
-		code.INTERFACE(ResultSet.class, "next")
-			.reTurn(boolean.class).INVOKE();
-		Label label5OfIFEQ = new Label();
-		code.IFEQ(label5OfIFEQ);
+		Label label5OfGOTO = new Label();
+		code.GOTO(label5OfGOTO);
+		Label label7OfIFNE = new Label();
+
+		code.visitLabel(label7OfIFNE);
 
 		code.LINE();
 		code.LOAD("datas");
@@ -517,21 +518,26 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.GETFIELD_OF_THIS("mapper");
 		code.LOAD("resultSet");
 		code.VIRTUAL(UserExtendJdbcRowMapper.class, "map")
-			.reTurn(UserExtend.class)
+			.return_(UserExtend.class)
 			.parameter(ResultSet.class).INVOKE();
 		code.INTERFACE(List.class, "add")
-			.reTurn(boolean.class)
+			.return_(boolean.class)
 			.parameter(Object.class).INVOKE();
 		code.POP();
-		code.GOTO(label7OfGOTO);
 
-		code.visitLabel(label5OfIFEQ);
+		code.visitLabel(label5OfGOTO);
+
+		code.LINE();
+		code.LOAD("resultSet");
+		code.INTERFACE(ResultSet.class, "next")
+			.return_(boolean.class).INVOKE();
+		code.IFNE(label7OfIFNE);
 
 		code.LINE();
 		code.LOAD("datas");
 		code.LOADConst(0);
 		code.INTERFACE(List.class, "get")
-			.reTurn(Object.class)
+			.return_(Object.class)
 			.parameter(int.class).INVOKE();
 		code.CHECKCAST(User.class);
 		code.RETURNTop();
@@ -540,17 +546,18 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 	}
 
 	protected void _insertJdbc(ClassBody classBody) {
-		MethodCode code = classBody.publicMethod(User.class, "insertJdbc")
-			.tHrow(SQLException.class )
+		MethodCode code = classBody.public_().method("insertJdbc")
+			.return_(User.class )
+			.throws_(SQLException.class )
 			.parameter("data",User.class).begin();
 
 		code.LINE();
 		code.LOADConstNULL();
-		code.STORE("preparedStatement",PreparedStatement.class);
+		code.STORE("resultSet",ResultSet.class);
 
 		code.LINE();
-		code.LOADConstNULL();
-		code.STORE("rs",ResultSet.class);
+		code.LOADConst(0);
+		code.STORE("result",boolean.class);
 
 		code.LINE();
 		code.LOAD("this");
@@ -558,17 +565,17 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOADConst("INSERT INTO USER(name,description,createAt,updateAt) VALUES(?,?,?,?)");
 		code.LOADConst(1);
 		code.INTERFACE(Connection.class, "prepareStatement")
-			.reTurn(PreparedStatement.class)
+			.return_(PreparedStatement.class)
 			.parameter(String.class)
 			.parameter(int.class).INVOKE();
-		code.STORE("preparedStatement");
+		code.STORE("preparedStatement",PreparedStatement.class);
 
 		code.LINE();
 		code.LOAD("preparedStatement");
 		code.LOADConst(1);
 		code.LOAD("data");
 		code.VIRTUAL(User.class, "getName")
-			.reTurn(String.class).INVOKE();
+			.return_(String.class).INVOKE();
 		code.INTERFACE(PreparedStatement.class, "setString")
 			.parameter(int.class)
 			.parameter(String.class).INVOKE();
@@ -578,7 +585,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOADConst(2);
 		code.LOAD("data");
 		code.VIRTUAL(User.class, "getDescription")
-			.reTurn(String.class).INVOKE();
+			.return_(String.class).INVOKE();
 		code.INTERFACE(PreparedStatement.class, "setString")
 			.parameter(int.class)
 			.parameter(String.class).INVOKE();
@@ -588,7 +595,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("preparedStatement");
 		code.LOADConst(3);
 		code.VIRTUAL("bindInsertExtend")
-			.reTurn(int.class)
+			.return_(int.class)
 			.parameter(PreparedStatement.class)
 			.parameter(int.class).INVOKE();
 		code.POP();
@@ -596,31 +603,31 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("preparedStatement");
 		code.INTERFACE(PreparedStatement.class, "executeUpdate")
-			.reTurn(int.class).INVOKE();
+			.return_(int.class).INVOKE();
 		Label label7OfIFLE = new Label();
 		code.IFLE(label7OfIFLE);
 
 		code.LINE();
 		code.LOAD("preparedStatement");
 		code.INTERFACE(PreparedStatement.class, "getGeneratedKeys")
-			.reTurn(ResultSet.class).INVOKE();
-		code.STORE("rs");
+			.return_(ResultSet.class).INVOKE();
+		code.STORE("resultSet");
 
 		code.LINE();
-		code.LOAD("rs");
+		code.LOAD("resultSet");
 		code.INTERFACE(ResultSet.class, "next")
-			.reTurn(boolean.class).INVOKE();
-		code.POP();
+			.return_(boolean.class).INVOKE();
+		code.STORE("result");
 
 		code.LINE();
 		code.LOAD("this");
-		code.LOAD("rs");
+		code.LOAD("resultSet");
 		code.LOADConst(1);
 		code.INTERFACE(ResultSet.class, "getLong")
-			.reTurn(long.class)
+			.return_(long.class)
 			.parameter(int.class).INVOKE();
 		code.VIRTUAL("findByIdJdbc")
-			.reTurn(User.class)
+			.return_(User.class)
 			.parameter(long.class).INVOKE();
 		code.RETURNTop();
 
@@ -634,17 +641,18 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 	}
 
 	protected void _updateJdbc(ClassBody classBody) {
-		MethodCode code = classBody.publicMethod(User.class, "updateJdbc")
-			.tHrow(SQLException.class )
+		MethodCode code = classBody.public_().method("updateJdbc")
+			.return_(User.class )
+			.throws_(SQLException.class )
 			.parameter("data",User.class).begin();
 
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("data");
 		code.VIRTUAL(User.class, "getId")
-			.reTurn(long.class).INVOKE();
+			.return_(long.class).INVOKE();
 		code.VIRTUAL("findByIdJdbc")
-			.reTurn(User.class)
+			.return_(User.class)
 			.parameter(long.class).INVOKE();
 		code.CHECKCAST(ClassExtend.class);
 		code.STORE("extend",ClassExtend.class);
@@ -652,11 +660,11 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("extend");
 		code.INTERFACE(ClassExtend.class, "getUpdateAt")
-			.reTurn(Timestamp.class).INVOKE();
+			.return_(Timestamp.class).INVOKE();
 		code.LOAD("data");
 		code.CHECKCAST(ClassExtend.class);
 		code.INTERFACE(ClassExtend.class, "getUpdateAt")
-			.reTurn(Timestamp.class).INVOKE();
+			.return_(Timestamp.class).INVOKE();
 		Label label2OfIF_ACMPNE = new Label();
 		code.IF_ACMPNE(label2OfIF_ACMPNE);
 
@@ -671,7 +679,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.GETFIELD_OF_THIS("conn");
 		code.LOADConst("UPDATE USER SET name=?,description=?,updateAt=? WHERE id=?");
 		code.INTERFACE(Connection.class, "prepareStatement")
-			.reTurn(PreparedStatement.class)
+			.return_(PreparedStatement.class)
 			.parameter(String.class).INVOKE();
 		code.STORE("preparedStatement",PreparedStatement.class);
 
@@ -680,7 +688,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOADConst(1);
 		code.LOAD("data");
 		code.VIRTUAL(User.class, "getName")
-			.reTurn(String.class).INVOKE();
+			.return_(String.class).INVOKE();
 		code.INTERFACE(PreparedStatement.class, "setString")
 			.parameter(int.class)
 			.parameter(String.class).INVOKE();
@@ -690,7 +698,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOADConst(2);
 		code.LOAD("data");
 		code.VIRTUAL(User.class, "getDescription")
-			.reTurn(String.class).INVOKE();
+			.return_(String.class).INVOKE();
 		code.INTERFACE(PreparedStatement.class, "setString")
 			.parameter(int.class)
 			.parameter(String.class).INVOKE();
@@ -700,7 +708,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("preparedStatement");
 		code.LOADConst(3);
 		code.VIRTUAL("bindUpdateExtend")
-			.reTurn(int.class)
+			.return_(int.class)
 			.parameter(PreparedStatement.class)
 			.parameter(int.class).INVOKE();
 		code.POP();
@@ -710,7 +718,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOADConst(4);
 		code.LOAD("data");
 		code.VIRTUAL(User.class, "getId")
-			.reTurn(long.class).INVOKE();
+			.return_(long.class).INVOKE();
 		code.INTERFACE(PreparedStatement.class, "setLong")
 			.parameter(int.class)
 			.parameter(long.class).INVOKE();
@@ -718,7 +726,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("preparedStatement");
 		code.INTERFACE(PreparedStatement.class, "executeUpdate")
-			.reTurn(int.class).INVOKE();
+			.return_(int.class).INVOKE();
 		Label label9OfIFLE = new Label();
 		code.IFLE(label9OfIFLE);
 
@@ -726,9 +734,9 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("this");
 		code.LOAD("data");
 		code.VIRTUAL(User.class, "getId")
-			.reTurn(long.class).INVOKE();
+			.return_(long.class).INVOKE();
 		code.VIRTUAL("findByIdJdbc")
-			.reTurn(User.class)
+			.return_(User.class)
 			.parameter(long.class).INVOKE();
 		code.RETURNTop();
 
@@ -742,8 +750,9 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 	}
 
 	protected void _deleteByIdJdbc(ClassBody classBody) {
-		MethodCode code = classBody.publicMethod(int.class, "deleteByIdJdbc")
-			.tHrow(SQLException.class )
+		MethodCode code = classBody.public_().method("deleteByIdJdbc")
+			.return_(int.class )
+			.throws_(SQLException.class )
 			.parameter("id",long.class).begin();
 
 		code.LINE();
@@ -751,7 +760,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.GETFIELD_OF_THIS("conn");
 		code.LOADConst("DELETE USER WHERE id=?");
 		code.INTERFACE(Connection.class, "prepareStatement")
-			.reTurn(PreparedStatement.class)
+			.return_(PreparedStatement.class)
 			.parameter(String.class).INVOKE();
 		code.STORE("preparedStatement",PreparedStatement.class);
 
@@ -766,15 +775,33 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("preparedStatement");
 		code.INTERFACE(PreparedStatement.class, "executeUpdate")
-			.reTurn(int.class).INVOKE();
+			.return_(int.class).INVOKE();
+		code.RETURNTop();
+
+		code.END();
+	}
+
+	protected void _bridge_findByIdJdbc(ClassBody classBody) {
+		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "findByIdJdbc")
+			.return_(Object.class )
+			.throws_(SQLException.class )
+			.parameter("var1",long.class).begin();
+
+		code.LINE();
+		code.LOAD("this");
+		code.LOAD("var1");
+		code.VIRTUAL("findByIdJdbc")
+			.return_(User.class)
+			.parameter(long.class).INVOKE();
 		code.RETURNTop();
 
 		code.END();
 	}
 
 	protected void _bridge_updateJdbc(ClassBody classBody) {
-		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, Object.class, "updateJdbc")
-			.tHrow(SQLException.class )
+		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "updateJdbc")
+			.return_(Object.class )
+			.throws_(SQLException.class )
 			.parameter("var1",Object.class).begin();
 
 		code.LINE();
@@ -782,7 +809,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("var1");
 		code.CHECKCAST(User.class);
 		code.VIRTUAL("updateJdbc")
-			.reTurn(User.class)
+			.return_(User.class)
 			.parameter(User.class).INVOKE();
 		code.RETURNTop();
 
@@ -790,8 +817,9 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 	}
 
 	protected void _bridge_insertJdbc(ClassBody classBody) {
-		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, Object.class, "insertJdbc")
-			.tHrow(SQLException.class )
+		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "insertJdbc")
+			.return_(Object.class )
+			.throws_(SQLException.class )
 			.parameter("var1",Object.class).begin();
 
 		code.LINE();
@@ -799,24 +827,8 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("var1");
 		code.CHECKCAST(User.class);
 		code.VIRTUAL("insertJdbc")
-			.reTurn(User.class)
+			.return_(User.class)
 			.parameter(User.class).INVOKE();
-		code.RETURNTop();
-
-		code.END();
-	}
-
-	protected void _bridge_findByIdJdbc(ClassBody classBody) {
-		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, Object.class, "findByIdJdbc")
-			.tHrow(SQLException.class )
-			.parameter("var1",long.class).begin();
-
-		code.LINE();
-		code.LOAD("this");
-		code.LOAD("var1");
-		code.VIRTUAL("findByIdJdbc")
-			.reTurn(User.class)
-			.parameter(long.class).INVOKE();
 		code.RETURNTop();
 
 		code.END();

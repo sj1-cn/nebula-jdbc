@@ -28,11 +28,11 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 	public byte[] dump(String clazzRepository, String clazzTarget, String clazzExtend, String clazzRowMapper,
 			ClazzDefinition clazzDefinition) {
-		classBody = ClassBuilder.make(clazzRepository).implement(JdbcRepository.class, clazzTarget).body();
+		classBody = ClassBuilder.class_(clazzRepository).implements_(JdbcRepository.class, clazzTarget).body();
 
-		classBody.field("conn", Connection.class);
-		classBody.field("mapper", clazzRowMapper);
-		classBody.field("sqlHelper", SqlHelper.class);
+		classBody.private_().field("conn", Connection.class);
+		classBody.private_().field("mapper", clazzRowMapper);
+		classBody.private_().field("sqlHelper", SqlHelper.class);
 		__init_(clazzExtend, clazzRowMapper);
 		_setConnection();
 		_initJdbc(clazzDefinition.tablename, clazzDefinition.fieldsAll);
@@ -51,7 +51,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 	// @formatter:off
 	private void __init_(String clazzExtend,String clazzRowMapper) {
-		MethodCode code = classBody.publicMethod("<init>").begin();
+		MethodCode code = classBody.public_().method("<init>").begin();
 			code.LINE();
 			code.LOAD("this");
 			code.SPECIAL(Object.class, "<init>").INVOKE();
@@ -77,7 +77,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 	}
 
 	private void _setConnection() {
-		MethodCode code = classBody.publicMethod("setConnection")
+		MethodCode code = classBody.public_().method("setConnection")
 				.parameter("conn", Connection.class).begin();
 			code.LINE();
 			code.LOAD("this");
@@ -134,8 +134,8 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 		classBody.method(ACC_PUBLIC, "listJdbc")
 			.parameter("start", int.class)
 			.parameter("max", int.class)
-			.reTurn(PageList.class, clazzTarget)
-			.tHrow(SQLException.class)
+			.return_(PageList.class, clazzTarget)
+			.throws_(SQLException.class)
 //			.friendly(code -> {
 //				String[] genericParameterClazz = { clazzTarget };
 //				code.define("datas", Clazz.of(PageList.class.getName(), genericParameterClazz));

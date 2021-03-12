@@ -1,6 +1,6 @@
 package nebula.data.jdbc;
 
-public class User {
+public class User{
 	private long id;
 	private String name;
 	private String description;
