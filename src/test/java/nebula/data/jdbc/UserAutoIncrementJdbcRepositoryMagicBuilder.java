@@ -1,6 +1,6 @@
 package nebula.data.jdbc;
 
-import static cc1sj.tinyasm.Adv.__;
+import static cc1sj.tinyasm.Adv.*;
 import static cc1sj.tinyasm.Adv._b;
 import static cc1sj.tinyasm.Adv._if;
 import static cc1sj.tinyasm.Adv._return;
@@ -64,23 +64,25 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 		columnList.addColumn("description VARCHAR(256)");
 		columnList.addColumn("createAt TIMESTAMP");
 		columnList.addColumn("updateAt TIMESTAMP");
-		if (!mergeIfExists(conn, "USER", columnList)) {
+		_if(isFalse(mergeIfExists(conn, "USER", columnList))).then(c -> {
 			// @formatter:off
 			conn.prepareStatement("CREATE TABLE USER(id INTEGER(10) PRIMARY KEY AUTO_INCREMENT,name VARCHAR(256),description VARCHAR(256),createAt TIMESTAMP,updateAt TIMESTAMP)").execute();
 			// @formatter:on
-		}
+		});
 	}
 
 	@SuppressWarnings("unused")
 	@Override
 	public PageList<User> listJdbc(int start, int max) throws SQLException {
-		PageList<User> datas = __(PageList.class, User.class, "datas", new_(PageListImpl.class, User.class, new Object[] { start, max }));
+		final PageList<User> datas = __(PageList.class, User.class, "datas",
+				new_(PageListImpl.class, User.class, new Object[] { start, max }));
 
 		// @formatter:off
-		String sql = __("sql",sqlHelper.select("id,name,description,createAt,updateAt").from("USER").offset(start).max(max).toSQL());
+		final String sql = __("sql",sqlHelper.select("id,name,description,createAt,updateAt").from("USER").offset(start).max(max).toSQL());
 		// @formatter:on
 
 		final ResultSet resultSet = __("resultSet", conn.prepareStatement(sql).executeQuery());
+
 		_while(isTrue(resultSet.next())).block(c -> {
 			datas.add(mapper.map(resultSet));
 		});
@@ -99,14 +101,14 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 	@SuppressWarnings("unused")
 	@Override
 	public PageList<User> listJdbc(Condition condition, OrderBy orderBy, int start, int max) throws SQLException {
-
 		final PageList<User> datas = __(PageList.class, User.class, "datas", new_(PageListImpl.class, User.class, params(start, max)));
-//
-//		// @formatter:off
+
+		// @formatter:off
 		final String sql =__("sql", sqlHelper.select("id,name,description,createAt,updateAt").from("USER").where(condition).orderby(orderBy).offset(start).max(max).toSQL());
-//		// @formatter:on
+		// @formatter:on
 
 		final ResultSet resultSet = __("resultSet", conn.prepareStatement(sql).executeQuery());
+
 		_while(isTrue(resultSet.next())).block(c -> {
 			datas.add(mapper.map(resultSet));
 		});
@@ -124,12 +126,10 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 
 	@Override
 	public User findByIdJdbc(long id) throws SQLException {
-		PreparedStatement preparedStatement = __("preparedStatement", null_(PreparedStatement.class));
-
 		List<User> datas = __(List.class, User.class, "datas", new_(ArrayList.class, User.class));
 
 		// @formatter:off
-		preparedStatement =__("preparedStatement", conn.prepareStatement("SELECT id, name, description, createAt, updateAt FROM USER WHERE id = ?"));
+		 PreparedStatement preparedStatement = __("preparedStatement", conn.prepareStatement("SELECT id, name, description, createAt, updateAt FROM USER WHERE id = ?"));
 		// @formatter:on
 
 		preparedStatement.setLong(1, id);
@@ -161,21 +161,18 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 			resultSet.next();
 
 			_return(findByIdJdbc(resultSet.getLong(1)));
-		}).else_(c -> {
-			_return(null_(User.class));
 		});
-
-		return null;
+		
+		return _return(null_(User.class));
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public User updateJdbc(User data) throws SQLException {
 		ClassExtend extend = __(ClassExtend.class, "extend", findByIdJdbc(data.getId()));
 		ClassExtend dataExtend = __(ClassExtend.class, "dataExtend", data);
-//		_if(isEqual(extend.getUpdateAt(), dataExtend.getUpdateAt())) {
-//			return null;
-//		}
+		_if(isEqual(extend.getUpdateAt(), dataExtend.getUpdateAt())).then(c -> {
+			_return(null_(User.class));
+		});
 
 		// @formatter:off
 		PreparedStatement preparedStatement =__("preparedStatement", conn.prepareStatement("UPDATE USER SET name=?,description=?,updateAt=? WHERE id=?"));
@@ -186,9 +183,9 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 		bindUpdateExtend(preparedStatement, 3);
 		preparedStatement.setLong(4, data.getId());
 
-		if (preparedStatement.executeUpdate() > 0) {
-			return _return(findByIdJdbc(data.getId()));
-		}
+		_if(isGreaterThan(preparedStatement.executeUpdate(), 0)).then(c -> {
+			_return(findByIdJdbc(data.getId()));
+		});
 		return null;
 	}
 

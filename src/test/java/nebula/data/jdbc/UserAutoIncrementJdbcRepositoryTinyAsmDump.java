@@ -550,10 +550,6 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.STORE("resultSet",ResultSet.class);
 
 		code.LINE();
-		code.LOADConst(0);
-		code.STORE("result",boolean.class);
-
-		code.LINE();
 		code.LOAD("this");
 		code.GETFIELD_OF_THIS("conn");
 		code.LOADConst("INSERT INTO USER(name,description,createAt,updateAt) VALUES(?,?,?,?)");
@@ -598,8 +594,8 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("preparedStatement");
 		code.INTERFACE(PreparedStatement.class, "executeUpdate")
 			.return_(int.class).INVOKE();
-		Label label7OfIFLE = new Label();
-		code.IFLE(label7OfIFLE);
+		Label label6OfIFLE = new Label();
+		code.IFLE(label6OfIFLE);
 
 		code.LINE();
 		code.LOAD("preparedStatement");
@@ -611,7 +607,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("resultSet");
 		code.INTERFACE(ResultSet.class, "next")
 			.return_(boolean.class).INVOKE();
-		code.STORE("result");
+		code.POP();
 
 		code.LINE();
 		code.LOAD("this");
@@ -625,7 +621,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 			.parameter(long.class).INVOKE();
 		code.RETURNTop();
 
-		code.visitLabel(label7OfIFLE);
+		code.visitLabel(label6OfIFLE);
 
 		code.LINE();
 		code.LOADConstNULL();

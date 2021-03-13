@@ -101,7 +101,6 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		PreparedStatement preparedStatement = conn.prepareStatement("SELECT id, name, description, createAt, updateAt FROM USER WHERE id = ?");
 		// @formatter:on
 
-//		Object key = keys[0];
 		preparedStatement.setLong(1, id);
 
 		ResultSet resultSet = preparedStatement.executeQuery();
@@ -109,14 +108,13 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		while (resultSet.next()) {
 			datas.add(mapper.map(resultSet));
 		}
+		
 		return datas.get(0);
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public User insertJdbc(User data) throws SQLException {
 		ResultSet resultSet = null;
-		boolean result = false;
 
 		// @formatter:off
 		PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO USER(name,description,createAt,updateAt) VALUES(?,?,?,?)",PreparedStatement.RETURN_GENERATED_KEYS);
@@ -129,7 +127,7 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 
 		if (preparedStatement.executeUpdate() > 0) {
 			resultSet = preparedStatement.getGeneratedKeys();
-			result = resultSet.next();
+			resultSet.next();
 
 			return findByIdJdbc(resultSet.getLong(1));
 		} else {
