@@ -3,11 +3,13 @@ package nebula.data.jdbc;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 import cc1sj.tinyasm.Adv;
 import cc1sj.tinyasm.AdvClassBuilder;
 import cc1sj.tinyasm.AdvContext;
 import cc1sj.tinyasm.AdvMagicRuntime;
+import cc1sj.tinyasm.AdvRuntimeReferNameObject;
 import cc1sj.tinyasm.ClassBody;
 import cc1sj.tinyasm.ConsumerWithException;
 import cc1sj.tinyasm.MethodCode;
@@ -18,11 +20,11 @@ import nebula.jdbc.builders.schema.ColumnList;
 
 public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ extends UserAutoIncrementJdbcRepositoryMagicBuilder
 		implements AdvMagicRuntime {
-
+	
 	private byte _magicNumber;
 	private ThreadLocal<AdvContext> _contextThreadLocal;
 	private AdvClassBuilder _classBuilder;
-
+	
 	public byte get__MagicNumber() {
 		return this._magicNumber;
 	}
@@ -36,11 +38,11 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 		this._magicNumber = _magicNumber;
 	}
 
+
 	@Override
 	public AdvClassBuilder get__ClassBuilder() {
 		return _classBuilder;
 	}
-
 	@Override
 	public void set__ClassBuilder(AdvClassBuilder _classBuilder) {
 		this._classBuilder = _classBuilder;
@@ -64,8 +66,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 			objEval.accept(c);
 			eval_param0.accept(c);
 			eval_param1.accept(c);
-			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "list").parameter(int.class).parameter(int.class)
-					.return_(PageList.class).INVOKE();
+			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "list").parameter(int.class).parameter(int.class).return_(PageList.class).INVOKE();
 		});
 		byte magicNumber = (byte) (80 + codeIndex);
 		if (Adv.canProxy(PageList.class)) {
@@ -86,8 +87,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 			eval_param0.accept(c);
 			eval_param1.accept(c);
 			eval_param2.accept(c);
-			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "list").parameter(Condition.class).parameter(int.class)
-					.parameter(int.class).return_(PageList.class).INVOKE();
+			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "list").parameter(Condition.class).parameter(int.class).parameter(int.class).return_(PageList.class).INVOKE();
 		});
 		byte magicNumber = (byte) (80 + codeIndex);
 		if (Adv.canProxy(PageList.class)) {
@@ -110,8 +110,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 			eval_param1.accept(c);
 			eval_param2.accept(c);
 			eval_param3.accept(c);
-			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "list").parameter(Condition.class).parameter(OrderBy.class)
-					.parameter(int.class).parameter(int.class).return_(PageList.class).INVOKE();
+			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "list").parameter(Condition.class).parameter(OrderBy.class).parameter(int.class).parameter(int.class).return_(PageList.class).INVOKE();
 		});
 		byte magicNumber = (byte) (80 + codeIndex);
 		if (Adv.canProxy(PageList.class)) {
@@ -207,8 +206,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 			objEval.accept(c);
 			eval_param0.accept(c);
 			eval_param1.accept(c);
-			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "bindInsertExtend").parameter(PreparedStatement.class)
-					.parameter(int.class).return_(int.class).INVOKE();
+			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "bindInsertExtend").parameter(PreparedStatement.class).parameter(int.class).return_(int.class).INVOKE();
 		});
 		return 80 + codeIndex;
 	}
@@ -222,8 +220,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 			objEval.accept(c);
 			eval_param0.accept(c);
 			eval_param1.accept(c);
-			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "bindUpdateExtend").parameter(PreparedStatement.class)
-					.parameter(int.class).return_(int.class).INVOKE();
+			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "bindUpdateExtend").parameter(PreparedStatement.class).parameter(int.class).return_(int.class).INVOKE();
 		});
 		return 80 + codeIndex;
 	}
@@ -246,8 +243,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 			objEval.accept(c);
 			eval_param0.accept(c);
 			eval_param1.accept(c);
-			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "listJdbc").parameter(int.class).parameter(int.class)
-					.return_(PageList.class).INVOKE();
+			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "listJdbc").parameter(int.class).parameter(int.class).return_(PageList.class).INVOKE();
 		});
 		byte magicNumber = (byte) (80 + codeIndex);
 		if (Adv.canProxy(PageList.class)) {
@@ -270,8 +266,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 			eval_param1.accept(c);
 			eval_param2.accept(c);
 			eval_param3.accept(c);
-			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "listJdbc").parameter(Condition.class).parameter(OrderBy.class)
-					.parameter(int.class).parameter(int.class).return_(PageList.class).INVOKE();
+			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "listJdbc").parameter(Condition.class).parameter(OrderBy.class).parameter(int.class).parameter(int.class).return_(PageList.class).INVOKE();
 		});
 		byte magicNumber = (byte) (80 + codeIndex);
 
@@ -289,8 +284,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 		byte codeIndex = context.push(User.class, c -> {
 			objEval.accept(c);
 			eval_param0.accept(c);
-			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "findByIdJdbc").parameter(long.class).return_(Object.class)
-					.INVOKE();
+			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "findByIdJdbc").parameter(long.class).return_(Object.class).INVOKE();
 			c.CHECKCAST(User.class);
 		});
 		byte magicNumber = (byte) (80 + codeIndex);
@@ -308,8 +302,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 		byte codeIndex = context.push(User.class, c -> {
 			objEval.accept(c);
 			eval_param0.accept(c);
-			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "insertJdbc").parameter(Object.class).return_(Object.class)
-					.INVOKE();
+			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "insertJdbc").parameter(Object.class).return_(Object.class).INVOKE();
 			c.CHECKCAST(User.class);
 		});
 		byte magicNumber = (byte) (80 + codeIndex);
@@ -327,8 +320,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 		byte codeIndex = context.push(User.class, c -> {
 			objEval.accept(c);
 			eval_param0.accept(c);
-			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "updateJdbc").parameter(Object.class).return_(Object.class)
-					.INVOKE();
+			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "updateJdbc").parameter(Object.class).return_(Object.class).INVOKE();
 			c.CHECKCAST(User.class);
 		});
 		byte magicNumber = (byte) (80 + codeIndex);
@@ -346,8 +338,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 		byte codeIndex = context.push(int.class, c -> {
 			objEval.accept(c);
 			eval_param0.accept(c);
-			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "deleteByIdJdbc").parameter(long.class).return_(int.class)
-					.INVOKE();
+			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "deleteByIdJdbc").parameter(long.class).return_(int.class).INVOKE();
 		});
 		return 80 + codeIndex;
 	}
@@ -365,10 +356,9 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 			eval_param0.accept(c);
 			eval_param1.accept(c);
 			eval_param2.accept(c);
-			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "mergeIfExists").parameter(Connection.class)
-					.parameter(String.class).parameter(ColumnList.class).return_(boolean.class).INVOKE();
+			c.VIRTUAL("nebula.data.jdbc.UserAutoIncrementJdbcRepository", "mergeIfExists").parameter(Connection.class).parameter(String.class).parameter(ColumnList.class).return_(boolean.class).INVOKE();
 		});
-
+	
 		return false;
 	}
 
@@ -404,38 +394,36 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 		return super.deleteByIdJdbc(param0);
 	}
 
-	public void _bridge_updateJdbc(ClassBody classBody) {
-		MethodCode code = ((MethodHeader) classBody.method(4161, "updateJdbc").return_(Object.class).parameter("params0", Object.class))
-				.throws_("java/sql/SQLException").begin();
-		code.LINE();
-		code.LOAD("this");
-		code.LOAD("params0");
-		code.CHECKCAST(User.class);
-		code.VIRTUAL("updateJdbc").parameter(User.class).return_(User.class).INVOKE();
-		code.RETURNTop();
-		code.END();
-	}
-
-	public void _bridge_insertJdbc(ClassBody classBody) {
-		MethodCode code = ((MethodHeader) classBody.method(4161, "insertJdbc").return_(Object.class).parameter("params0", Object.class))
-				.throws_("java/sql/SQLException").begin();
-		code.LINE();
-		code.LOAD("this");
-		code.LOAD("params0");
-		code.CHECKCAST(User.class);
-		code.VIRTUAL("insertJdbc").parameter(User.class).return_(User.class).INVOKE();
-		code.RETURNTop();
-		code.END();
-	}
-
-	public void _bridge_findByIdJdbc(ClassBody classBody) {
-		MethodCode code = ((MethodHeader) classBody.method(4161, "findByIdJdbc").return_(Object.class).parameter("params0", long.class))
-				.throws_("java/sql/SQLException").begin();
-		code.LINE();
-		code.LOAD("this");
-		code.LOAD("params0");
-		code.VIRTUAL("findByIdJdbc").parameter(long.class).return_(User.class).INVOKE();
-		code.RETURNTop();
-		code.END();
-	}
+	  
+	  public void $_updateJdbc(ClassBody classBody) {
+	    MethodCode code = ((MethodHeader)classBody.method(4161, "updateJdbc").return_(Object.class).parameter("params0", Object.class)).throws_("java/sql/SQLException").begin();
+	    code.LINE();
+	    code.LOAD("this");
+	    code.LOAD("params0");
+	    code.CHECKCAST(User.class);
+	    code.VIRTUAL("updateJdbc").parameter(User.class).return_(User.class).INVOKE();
+	    code.RETURNTop();
+	    code.END();
+	  }
+	  
+	  public void $_insertJdbc(ClassBody classBody) {
+	    MethodCode code = ((MethodHeader)classBody.method(4161, "insertJdbc").return_(Object.class).parameter("params0", Object.class)).throws_("java/sql/SQLException").begin();
+	    code.LINE();
+	    code.LOAD("this");
+	    code.LOAD("params0");
+	    code.CHECKCAST(User.class);
+	    code.VIRTUAL("insertJdbc").parameter(User.class).return_(User.class).INVOKE();
+	    code.RETURNTop();
+	    code.END();
+	  }
+	  
+	  public void $_findByIdJdbc(ClassBody classBody) {
+	    MethodCode code = ((MethodHeader)classBody.method(4161, "findByIdJdbc").return_(Object.class).parameter("params0", long.class)).throws_("java/sql/SQLException").begin();
+	    code.LINE();
+	    code.LOAD("this");
+	    code.LOAD("params0");
+	    code.VIRTUAL("findByIdJdbc").parameter(long.class).return_(User.class).INVOKE();
+	    code.RETURNTop();
+	    code.END();
+	  }
 }
