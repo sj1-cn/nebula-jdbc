@@ -648,21 +648,25 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.STORE("extend",ClassExtend.class);
 
 		code.LINE();
+		code.LOAD("data");
+		code.CHECKCAST(ClassExtend.class);
+		code.STORE("dataExtend",ClassExtend.class);
+
+		code.LINE();
 		code.LOAD("extend");
 		code.INTERFACE(ClassExtend.class, "getUpdateAt")
 			.return_(Timestamp.class).INVOKE();
-		code.LOAD("data");
-		code.CHECKCAST(ClassExtend.class);
+		code.LOAD("dataExtend");
 		code.INTERFACE(ClassExtend.class, "getUpdateAt")
 			.return_(Timestamp.class).INVOKE();
-		Label label2OfIF_ACMPNE = new Label();
-		code.IF_ACMPNE(label2OfIF_ACMPNE);
+		Label label3OfIF_ACMPNE = new Label();
+		code.IF_ACMPNE(label3OfIF_ACMPNE);
 
 		code.LINE();
 		code.LOADConstNULL();
 		code.RETURNTop();
 
-		code.visitLabel(label2OfIF_ACMPNE);
+		code.visitLabel(label3OfIF_ACMPNE);
 
 		code.LINE();
 		code.LOAD("this");
@@ -717,8 +721,8 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("preparedStatement");
 		code.INTERFACE(PreparedStatement.class, "executeUpdate")
 			.return_(int.class).INVOKE();
-		Label label9OfIFLE = new Label();
-		code.IFLE(label9OfIFLE);
+		Label label10OfIFLE = new Label();
+		code.IFLE(label10OfIFLE);
 
 		code.LINE();
 		code.LOAD("this");
@@ -730,7 +734,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 			.parameter(long.class).INVOKE();
 		code.RETURNTop();
 
-		code.visitLabel(label9OfIFLE);
+		code.visitLabel(label10OfIFLE);
 
 		code.LINE();
 		code.LOADConstNULL();

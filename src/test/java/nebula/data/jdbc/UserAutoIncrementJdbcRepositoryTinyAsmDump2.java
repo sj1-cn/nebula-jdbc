@@ -1,42 +1,5 @@
 package nebula.data.jdbc;
 
-import org.objectweb.asm.Label;
-
-import cc1sj.tinyasm.ClassBody;
-import cc1sj.tinyasm.ClassBuilder;
-import cc1sj.tinyasm.MethodCode;
-import org.objectweb.asm.Type;
-
-import static cc1sj.tinyasm.Adv.*;
-import static org.objectweb.asm.Opcodes.*;
-import cc1sj.tinyasm.Annotation;
-import cc1sj.tinyasm.Clazz;
-import nebula.data.jdbc.JdbcRepository;
-import java.sql.Connection;
-import nebula.data.query.OrderBy;
-import nebula.data.jdbc.JdbcRepositoryBase;
-import java.sql.Timestamp;
-import java.sql.PreparedStatement;
-import nebula.data.jdbc.User;
-import nebula.jdbc.builders.queries.Select;
-import nebula.data.jdbc.UserExtendJdbcRowMapper;
-import nebula.data.jdbc.UserExtend;
-import java.util.ArrayList;
-import java.sql.SQLException;
-import java.util.List;
-import java.lang.Long;
-import nebula.data.jdbc.ClassExtend;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.lang.Object;
-import nebula.data.query.Condition;
-import nebula.data.jdbc.SqlHelper;
-import nebula.jdbc.builders.schema.ColumnList;
-import java.lang.String;
-import nebula.data.jdbc.PageListImpl;
-import nebula.data.jdbc.PageList;
-
-@SuppressWarnings("unused")
 public class UserAutoIncrementJdbcRepositoryTinyAsmDump2 extends UserAutoIncrementJdbcRepositoryTinyAsmDump {
 
 	public static byte[] dump() throws Exception {

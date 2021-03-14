@@ -50,7 +50,6 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 		});
 	}
 
-//	
 	@Override
 	public void setConnection(Connection conn) {
 		__(this.conn, conn);
@@ -162,7 +161,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 
 			_return(findByIdJdbc(resultSet.getLong(1)));
 		});
-		
+
 		return _return(null_(User.class));
 	}
 
@@ -186,16 +185,16 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 		_if(isGreaterThan(preparedStatement.executeUpdate(), 0)).then(c -> {
 			_return(findByIdJdbc(data.getId()));
 		});
-		return null;
+		return _return(null_(User.class));
 	}
 
 	@Override
-	public int deleteByIdJdbc(long key) throws SQLException {
+	public int deleteByIdJdbc(long id) throws SQLException {
 //		// @formatter:off
 		PreparedStatement preparedStatement = __("preparedStatement", conn.prepareStatement("DELETE USER WHERE id=?"));
 //		// @formatter:on
 //
-		preparedStatement.setLong(1, key);
+		preparedStatement.setLong(1, id);
 
 		return _return(preparedStatement.executeUpdate());
 	}
