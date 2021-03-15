@@ -27,11 +27,10 @@ public class UsingUserExtendJdbcRowMapperMagicBuilder {
 	}
 
 	public static byte[] dump() {
-		UsingUserExtendJdbcRowMapperMagicBuilder magicBuilderProxy = AdvMagic.build("nebula.data.jdbc.UsingUserExtendJdbcRowMapper",
-				UsingUserExtendJdbcRowMapperMagicBuilder.class);
+		UsingUserExtendJdbcRowMapperMagicBuilder magicBuilderProxy = AdvMagic.build(UsingUserExtendJdbcRowMapperMagicBuilder.class);
 
 //		magicBuilderProxy.dumpInit("sayNothing");
 
-		return AdvMagic.dump(magicBuilderProxy);
+		return AdvMagic.dump("nebula.data.jdbc.UsingUserExtendJdbcRowMapper", magicBuilderProxy);
 	}
 }

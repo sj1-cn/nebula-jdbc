@@ -441,10 +441,10 @@ public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 //	}
 
 	public static byte[] dump(String clazzRepository2, Class<User> clazzEntity, Class<?> classEntityImpl, EntityDefinition entityDefinition) {
-		JdbcRepositoryMagicBuilder magicBuilderProxy = AdvMagic.build(clazzRepository2, JdbcRepositoryMagicBuilder.class);
+		JdbcRepositoryMagicBuilder magicBuilderProxy = AdvMagic.build(JdbcRepositoryMagicBuilder.class);
 
 		magicBuilderProxy.dumpInit(clazzRepository2, clazzEntity, classEntityImpl, entityDefinition);
 
-		return AdvMagic.dump(magicBuilderProxy, clazzEntity);
+		return AdvMagic.dump(clazzRepository2, magicBuilderProxy, clazzEntity);
 	}
 }

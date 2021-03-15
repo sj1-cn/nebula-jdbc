@@ -45,9 +45,7 @@ public class JdbcRepositoryBuilderTinyASMifierTest {
 	public void test_UserAutoIncrementJdbcRepository_MagicBuilder_Build() throws Exception {
 		Class<?> expectedClazz = UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_.class;
 		String codeExpected = TinyAsmTestUtils.toString(expectedClazz);
-		String codeActual = TinyAsmTestUtils.toString(expectedClazz.getName(),
-				AdvAsmProxyMagicClassAdvAsmBuilder.dumpMagic(UserAutoIncrementJdbcRepositoryMagicBuilder.class, expectedClazz.getName(),
-						UserAutoIncrementJdbcRepository.class.getName()));
+		String codeActual = TinyAsmTestUtils.toString(expectedClazz.getName(), AdvAsmProxyMagicClassAdvAsmBuilder.dumpMagic(UserAutoIncrementJdbcRepositoryMagicBuilder.class, expectedClazz.getName()));
 
 		assertEquals("Code", codeExpected, codeActual);
 	}
