@@ -1,10 +1,13 @@
 package nebula.data.jdbc;
 
-import static cc1sj.tinyasm.Adv.*;
+import static cc1sj.tinyasm.Adv.__;
 import static cc1sj.tinyasm.Adv._b;
 import static cc1sj.tinyasm.Adv._if;
+import static cc1sj.tinyasm.Adv._line;
 import static cc1sj.tinyasm.Adv._return;
 import static cc1sj.tinyasm.Adv._while;
+import static cc1sj.tinyasm.Adv.isEqual;
+import static cc1sj.tinyasm.Adv.isFalse;
 import static cc1sj.tinyasm.Adv.isGreaterThan;
 import static cc1sj.tinyasm.Adv.isTrue;
 import static cc1sj.tinyasm.Adv.new_;
@@ -19,7 +22,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import cc1sj.tinyasm.Adv;
 import cc1sj.tinyasm.AdvClassBuilder;
 import cc1sj.tinyasm.AdvMagic;
 import cc1sj.tinyasm.boolean_;
@@ -35,20 +37,14 @@ import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
 public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 
 	final private Connection conn = private_().field("conn", Connection.class);
-//	final private UserExtendJdbcRowMapper mapper = private_().field("mapper", UserExtendJdbcRowMapper.class);
 	final private SqlHelper sqlHelper = private_().field("sqlHelper", SqlHelper.class);
 
-//	public UserAutoIncrementJdbcRepositoryMagicBuilder() {
-//		mapper = new UserExtendJdbcRowMapper();
-//		sqlHelper = new SqlHelper();
-//	}
 	public void __init_(AdvClassBuilder classBody) {
 		classBody.public_().method("<init>").code(code -> {
 			code.LINE();
 			code.LOAD("this");
 			code.SPECIAL(Object.class, "<init>").INVOKE();
 
-//			__(mapper, new_(UserExtendJdbcRowMapper.class));
 			__(sqlHelper, new_(SqlHelper.class));
 
 			code.LINE();
@@ -96,8 +92,7 @@ public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 			if (hasAutoIncrment) {
 				$sql = JDBC.sql("CREATE TABLE ${tablename}(${columndefinitions}))", $entityDefinition.getTablename(), String.join(",", columnDefinitions));
 			} else {
-				$sql = JDBC.sql("CREATE TABLE ${tablename}(${columndefinitions},PRIMARY KEY(${keys}))", $entityDefinition.getTablename(), String.join(",", columnDefinitions),
-						String.join(",", keys));
+				$sql = JDBC.sql("CREATE TABLE ${tablename}(${columndefinitions},PRIMARY KEY(${keys}))", $entityDefinition.getTablename(), String.join(",", columnDefinitions), String.join(",", keys));
 			}
 
 			// @formatter:off
@@ -109,7 +104,7 @@ public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 	@SuppressWarnings("unused")
 	@Override
 	public PageList<User> listJdbc(int start, int max) throws SQLException {
-		final PageList<User> datas = __(PageList.class, User.class, "datas", new_(PageListImpl.class, User.class, new Object[] { start, max }));
+		final PageList<User> datas = __(PageList.class, $clazzEntity, "datas", new_(PageListImpl.class, $clazzEntity, new Object[] { start, max }));
 
 		String $sqlColumns = String.join(",", $entityDefinition.fieldsAll.map(f -> f.column.getName()));
 
@@ -119,26 +114,53 @@ public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 
 		final ResultSet resultSet = __("resultSet", conn.prepareStatement(sql).executeQuery());
 
-		_while(isTrue(resultSet.next())).block(c -> {
-			datas.add(new_(UserExtend.class, Adv.params(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"),
-					resultSet.getTimestamp("createAt"), resultSet.getTimestamp("updateAt"))));
+		_while(isTrue(resultSet.next())).block(code -> {
+
+			code.LINE();
+			code.LOAD("datas");
+			code.NEW($clazzEntityImpl);
+			code.DUP();
+
+			FieldList $fields = $entityDefinition.getFieldsAll();
+
+			Class<?>[] clazzes = new Class<?>[$fields.size()];
+			for (int i = 0; i < $fields.size(); i++) {
+				FieldMapper fieldMapper = $fields.get(i);
+				String name = fieldMapper.fieldName;
+				JdbcMapping jdbcMapping = JDBC.map(fieldMapper.clazz);
+				assert jdbcMapping != null : name + "'s type [" + fieldMapper.clazz.getName() + "] has not jdbc type";
+				Class<?> jdbcClazz = jdbcMapping.jdbcClazz;
+				Class<?> pojoClazz = fieldMapper.clazz;
+				clazzes[i] = pojoClazz;
+
+				code.LOAD("resultSet");
+				code.LOADConst(name);
+				code.INTERFACE(ResultSet.class, jdbcMapping.getname).parameter(String.class).return_((Class<?>) jdbcClazz).INVOKE();
+				arguments.fromJdbcClazz(pojoClazz, jdbcClazz).accept(code);
+			}
+
+			code.SPECIAL($clazzEntityImpl, "<init>").parameter(clazzes).INVOKE();
+			code.INTERFACE(PageList.class, "add").return_(boolean.class).parameter(Object.class).INVOKE();
+			code.POP();
 		});
 		resultSet.close();
 
-		final String sqlCount = __("sqlCount", sqlHelper.select("count(1)").from("USER").toSQL());
+		final String sqlCount = __("sqlCount", sqlHelper.select("count(1)").from($entityDefinition.getTablename()).toSQL());
 		final ResultSet resultSetCount = __("resultSetCount", conn.createStatement().executeQuery(sqlCount));
 		final boolean_ result = _b("result", resultSetCount.next());
 		final int totalSize = __("totalSize", resultSetCount.getInt(1));
 		resultSetCount.close();
 		datas.totalSize(totalSize);
 
-		return _return(datas);
+		_return(datas);
+
+		return null;
 	}
 
 	@SuppressWarnings("unused")
 	@Override
 	public PageList<User> listJdbc(Condition condition, OrderBy orderBy, int start, int max) throws SQLException {
-		final PageList<User> datas = __(PageList.class, User.class, "datas", new_(PageListImpl.class, User.class, params(start, max)));
+		final PageList<User> datas = __(PageList.class, $clazzEntity, "datas", new_(PageListImpl.class, $clazzEntity, params(start, max)));
 
 		String sqlColumns = String.join(",", $entityDefinition.fieldsAll.map(f -> f.column.getName()));
 		// @formatter:off
@@ -147,25 +169,51 @@ public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 
 		final ResultSet resultSet = __("resultSet", conn.prepareStatement(sql).executeQuery());
 
-		_while(isTrue(resultSet.next())).block(c -> {
-			datas.add(new_(UserExtend.class, Adv.params(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"),
-					resultSet.getTimestamp("createAt"), resultSet.getTimestamp("updateAt"))));
+		_while(isTrue(resultSet.next())).block(code -> {
+			code.LINE();
+			code.LOAD("datas");
+			code.NEW($clazzEntityImpl);
+			code.DUP();
+
+			FieldList maps = $entityDefinition.getFieldsAll();
+
+			Class<?>[] clazzes = new Class<?>[maps.size()];
+			for (int i = 0; i < maps.size(); i++) {
+				FieldMapper fieldMapper = maps.get(i);
+				String name = fieldMapper.fieldName;
+				JdbcMapping jdbcMapping = JDBC.map(fieldMapper.clazz);
+				assert jdbcMapping != null : name + "'s type [" + fieldMapper.clazz.getName() + "] has not jdbc type";
+				Class<?> jdbcClazz = jdbcMapping.jdbcClazz;
+				Class<?> pojoClazz = fieldMapper.clazz;
+				clazzes[i] = pojoClazz;
+
+				code.LOAD("resultSet");
+				code.LOADConst(name);
+				code.INTERFACE(ResultSet.class, jdbcMapping.getname).parameter(String.class).return_((Class<?>) jdbcClazz).INVOKE();
+				arguments.fromJdbcClazz(pojoClazz, jdbcClazz).accept(code);
+			}
+
+			code.SPECIAL($clazzEntityImpl, "<init>").parameter(clazzes).INVOKE();
+			code.INTERFACE(PageList.class, "add").return_(boolean.class).parameter(Object.class).INVOKE();
+			code.POP();
 		});
 		resultSet.close();
 
-		final String sqlCount = __("sqlCount", sqlHelper.select("count(1)").from("USER").where(condition).toSQL());
+		final String sqlCount = __("sqlCount", sqlHelper.select("count(1)").from($entityDefinition.getTablename()).where(condition).toSQL());
 		final ResultSet resultSetCount = __("resultSetCount", conn.createStatement().executeQuery(sqlCount));
 		final boolean_ result = _b("result", resultSetCount.next());
 		final int totalSize = __("totalSize", resultSetCount.getInt(1));
 		resultSetCount.close();
 		datas.totalSize(totalSize);
 
-		return _return(datas);
+		_return(datas);
+
+		return null;
 	}
 
 	@Override
 	public User findByIdJdbc(long id) throws SQLException {
-		final List<User> datas = __(List.class, User.class, "datas", new_(ArrayList.class, User.class));
+		final List<?> datas = __(List.class, $clazzEntity, "datas", new_(ArrayList.class, $clazzEntity));
 
 		List<Column> $selAllColoumns = $entityDefinition.fieldsAll.map(f -> f.column);
 		List<Column> $sqlKeys = $entityDefinition.fieldsAll.filter(f -> f.primaryKey).map(f -> f.column);
@@ -180,12 +228,39 @@ public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 
 		ResultSet resultSet = __("resultSet", preparedStatement.executeQuery());
 
-		_while(isTrue(resultSet.next())).block(c -> {
-			datas.add(new_(UserExtend.class, Adv.params(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"),
-					resultSet.getTimestamp("createAt"), resultSet.getTimestamp("updateAt"))));
+		_while(isTrue(resultSet.next())).block(code -> {
+
+			code.LINE();
+			code.LOAD("datas");
+			code.NEW($clazzEntityImpl);
+			code.DUP();
+
+			FieldList maps = $entityDefinition.getFieldsAll();
+
+			Class<?>[] clazzes = new Class<?>[maps.size()];
+			for (int i = 0; i < maps.size(); i++) {
+				FieldMapper fieldMapper = maps.get(i);
+				String name = fieldMapper.fieldName;
+				JdbcMapping jdbcMapping = JDBC.map(fieldMapper.clazz);
+				assert jdbcMapping != null : name + "'s type [" + fieldMapper.clazz.getName() + "] has not jdbc type";
+				Class<?> jdbcClazz = jdbcMapping.jdbcClazz;
+				Class<?> pojoClazz = fieldMapper.clazz;
+				clazzes[i] = pojoClazz;
+
+				code.LOAD("resultSet");
+				code.LOADConst(name);
+				code.INTERFACE(ResultSet.class, jdbcMapping.getname).parameter(String.class).return_((Class<?>) jdbcClazz).INVOKE();
+				arguments.fromJdbcClazz(pojoClazz, jdbcClazz).accept(code);
+			}
+
+			code.SPECIAL($clazzEntityImpl, "<init>").parameter(clazzes).INVOKE();
+			code.INTERFACE(List.class, "add").return_(boolean.class).parameter(Object.class).INVOKE();
+			code.POP();
 		});
 
-		return _return(datas.get(0));
+		_return(datas.get(0));
+
+		return null;
 	}
 
 	@Override
@@ -194,35 +269,32 @@ public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 		if (hasAutoIncrment) {
 			List<String> names = $entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.getName());
 			List<String> values = $entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> "?");
-//		{
-//			code.define("preparedStatement", PreparedStatement.class);
-//			code.line().setNull("preparedStatement");
-//
-//			code.define("rs", ResultSet.class);
-//			code.line().setNull("rs");
-//		}
+
 			String sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", $entityDefinition.tablename, String.join(",", names), String.join(",", values));
 			// @formatter:off
 			PreparedStatement preparedStatement = __("preparedStatement", conn.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS));
 			// @formatter:on
 
-			preparedStatement.setString(1, data.getName());
-			preparedStatement.setString(2, data.getDescription());
-			// int i = 1;
-			// for (FieldMapper fieldMapper : $entityDefinition.fields) {
-			// if (!"YES".equals(fieldMapper.column.getAutoIncrment())) {
-			// Class<?> jdbcClazz = fieldMapper.clazz;
-			// JdbcMapping jdbcMapping = JDBC.map(jdbcClazz);
-			//
-			// code.line().Var("preparedStatement").Interface(jdbcMapping.setName).invokeVoid(Const(i++),
-			// p -> {
-			// p.Var("data").Virtual(fieldMapper.getName).Return(fieldMapper.clazz).Invoke();
-			// arguments.toJdbcClazz(jdbcClazz, jdbcMapping.jdbcClazz).accept(p);
-			// });
-			// }
-			// }
+			int i = 1;
+			for (FieldMapper field : $entityDefinition.fields) {
+				if (!"YES".equals(field.column.getAutoIncrment())) {
+					Class<?> jdbcClazz = field.clazz;
+					JdbcMapping jdbc = JDBC.map(jdbcClazz);
 
-			bindInsertExtend(preparedStatement, 3);
+					int fieldIndex = i;
+					_line(code -> {
+						code.LOAD("preparedStatement");
+						code.LOADConst(fieldIndex);
+						code.LOAD("data");
+						code.VIRTUAL($clazzEntity, field.getName).return_(field.clazz).INVOKE();
+						arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(code);
+						code.INTERFACE(PreparedStatement.class, jdbc.setName).parameter(int.class).parameter(jdbc.jdbcClazz).INVOKE();
+					});
+					i++;
+				}
+			}
+
+			bindInsertExtend(preparedStatement, i++);
 
 			_if(isGreaterThan(preparedStatement.executeUpdate(), 0)).then(c -> {
 				__(resultSet, preparedStatement.getGeneratedKeys());
@@ -242,19 +314,20 @@ public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 			PreparedStatement preparedStatement = __("preparedStatement", conn.prepareStatement(sql));
 			// @formatter:on
 
-			preparedStatement.setString(1, data.getName());
-			preparedStatement.setString(2, data.getDescription());
-
-//
-//		int i = 1;
-//		for (FieldMapper field : $entityDefinition.fields) {
-//				JdbcMapping jdbcMapping = JDBC.map(field.clazz);
-//			
-//				code.line().Var("preparedStatement").Interface(jdbcMapping.setName).invokeVoid(Const(i++), p -> {
-//					p.Var("data").Virtual(field.getName).Return(field.clazz).Invoke();
-//					arguments.toJdbcClazz(field.clazz, jdbcMapping.jdbcClazz).accept(p);
-//				});
-//		}
+			int i = 1;
+			for (FieldMapper field : $entityDefinition.fields) {
+				JdbcMapping jdbc = JDBC.map(field.clazz);
+				int fieldIndex = i;
+				_line(code -> {
+					code.LOAD("preparedStatement");
+					code.LOADConst(fieldIndex);
+					code.LOAD("data");
+					code.VIRTUAL($clazzEntity, field.getName).return_(field.clazz).INVOKE();
+					arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(code);
+					code.INTERFACE(PreparedStatement.class, jdbc.setName).parameter(int.class).parameter(jdbc.jdbcClazz).INVOKE();
+				});
+				i++;
+			}
 
 			bindInsertExtend(preparedStatement, 4);
 			_if(isGreaterThan(preparedStatement.executeUpdate(), 0)).then(c -> {
@@ -263,7 +336,9 @@ public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 
 		}
 
-		return _return(null_(User.class));
+		_return(null_($clazzEntity));
+
+		return null;
 	}
 
 	@Override
@@ -271,7 +346,7 @@ public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 		ClassExtend extend = __(ClassExtend.class, "extend", findByIdJdbc(data.getId()));
 		ClassExtend dataExtend = __(ClassExtend.class, "dataExtend", data);
 		_if(isEqual(extend.getUpdateAt(), dataExtend.getUpdateAt())).then(c -> {
-			_return(null_(User.class));
+			_return(null_($clazzEntity));
 		});
 
 		FieldList fieldsAll = $entityDefinition.fieldsAll;
@@ -279,47 +354,57 @@ public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 		ListMap<String, FieldMapper> othersWithoutCreate = fieldsAll.filter(f -> !f.primaryKey && !"createAt".equals(f.fieldName));
 		ListMap<String, FieldMapper> othersWithoutExtend = $entityDefinition.fields.filter(f -> !f.primaryKey);
 
-		String sql = JDBC.sql("UPDATE ${tablename} SET ${setvalues} WHERE ${causes}", $entityDefinition.tablename,
-				String.join(",", othersWithoutCreate.map(f -> f.fieldName + "=?")), String.join(" AND ", keys.map(f -> f.fieldName + "=?")));
+		String sql = JDBC.sql("UPDATE ${tablename} SET ${setvalues} WHERE ${causes}", $entityDefinition.tablename, String.join(",", othersWithoutCreate.map(f -> f.fieldName + "=?")), String.join(" AND ", keys.map(f -> f.fieldName + "=?")));
 
 		// @formatter:off
 		PreparedStatement preparedStatement =__("preparedStatement", conn.prepareStatement(sql));
 		// @formatter:on
 
 //		// preparedStatement.setString(1, data.getName());
-//		int i = 1;
-//		for (FieldMapper field : othersWithoutExtend) {
-//			JdbcMapping jdbc = JDBC.map(field.clazz);
-//
-//			code.line().Var("preparedStatement").Interface(jdbc.setName).invokeVoid(Const(i++), p -> {
-//				p.Var("data").Virtual(field.getName).Return(field.clazz).Invoke();
-//				arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(p);
-//			});
-//
-//		}
+		int i = 1;
+		for (FieldMapper field : othersWithoutExtend) {
+			JdbcMapping jdbc = JDBC.map(field.clazz);
 
-		preparedStatement.setString(1, data.getName());
-		preparedStatement.setString(2, data.getDescription());
+			int fieldIndex = i;
+			_line(code -> {
+				code.LOAD("preparedStatement");
+				code.LOADConst(fieldIndex);
+				code.LOAD("data");
+				code.VIRTUAL($clazzEntity, field.getName).return_(field.clazz).INVOKE();
+				arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(code);
+				code.INTERFACE(PreparedStatement.class, jdbc.setName).parameter(int.class).parameter(jdbc.jdbcClazz).INVOKE();
+			});
+			i++;
+		}
 
-		bindUpdateExtend(preparedStatement, 3);
+		bindUpdateExtend(preparedStatement, i++);
 
-//		// preparedStatement.setLong(3, data.getId());
-//		for (FieldMapper field : keys) {
-//			
-//			JdbcMapping jdbc = JDBC.map(field.clazz);
-//		
-//			code.line().Var("preparedStatement").Interface(jdbc.setName).invokeVoid(Const(i++), p -> {
-//				p.Var("data").Virtual(field.getName).Return(field.clazz).Invoke();
-//				arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(p);
-//			});					
-//		}
+		// preparedStatement.setLong(3, data.getId());
+		for (FieldMapper field : keys) {
 
-		preparedStatement.setLong(4, data.getId());
+			JdbcMapping jdbc = JDBC.map(field.clazz);
+
+			int fieldIndex = i;
+			_line(code -> {
+				code.LOAD("preparedStatement");
+				code.LOADConst(fieldIndex);
+				code.LOAD("data");
+				code.VIRTUAL($clazzEntity, field.getName).return_(field.clazz).INVOKE();
+				arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(code);
+				code.INTERFACE(PreparedStatement.class, jdbc.setName).parameter(int.class).parameter(jdbc.jdbcClazz).INVOKE();
+			});
+			i++;
+		}
+
+//		preparedStatement.setLong(4, data.getId());
 
 		_if(isGreaterThan(preparedStatement.executeUpdate(), 0)).then(c -> {
 			_return(findByIdJdbc(data.getId()));
 		});
-		return _return(null_(User.class));
+
+		_return(null_($clazzEntity));
+
+		return null;
 	}
 
 	@Override
@@ -336,23 +421,24 @@ public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 //
 		preparedStatement.setLong(1, id);
 
-		return _return(preparedStatement.executeUpdate());
+		_return(preparedStatement.executeUpdate());
+
+		return 0;
 	}
 
-	public static byte[] dump() {
-		JdbcRepositoryMagicBuilder magicBuilderProxy = AdvMagic.build("nebula.data.jdbc.UserAutoIncrementJdbcRepository", JdbcRepositoryMagicBuilder.class);
+//	public static byte[] dump() {
+//		JdbcRepositoryMagicBuilder magicBuilderProxy = AdvMagic.build("nebula.data.jdbc.UserAutoIncrementJdbcRepository", JdbcRepositoryMagicBuilder.class);
+//
+////		magicBuilderProxy.dumpInit("sayNothing");
+//
+//		return AdvMagic.dump(magicBuilderProxy);
+//	}
 
-//		magicBuilderProxy.dumpInit("sayNothing");
-
-		return AdvMagic.dump(magicBuilderProxy);
-	}
-
-	public static byte[] dump(String clazzRepository2, Class<?> clazzEntity, Class<?> classEntityImpl, EntityDefinition entityDefinition) {
-
-		JdbcRepositoryMagicBuilder magicBuilderProxy = AdvMagic.build("nebula.data.jdbc.UserAutoIncrementJdbcRepository", JdbcRepositoryMagicBuilder.class);
+	public static byte[] dump(String clazzRepository2, Class<User> clazzEntity, Class<?> classEntityImpl, EntityDefinition entityDefinition) {
+		JdbcRepositoryMagicBuilder magicBuilderProxy = AdvMagic.build(clazzRepository2, JdbcRepositoryMagicBuilder.class, clazzEntity);
 
 		magicBuilderProxy.dumpInit(clazzRepository2, clazzEntity, classEntityImpl, entityDefinition);
 
-		return AdvMagic.dump(magicBuilderProxy);
+		return AdvMagic.dump(magicBuilderProxy, clazzEntity);
 	}
 }

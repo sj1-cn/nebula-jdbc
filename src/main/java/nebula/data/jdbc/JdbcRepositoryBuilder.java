@@ -26,8 +26,7 @@ import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
 
 public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
-	public byte[] dump(String clazzRepository, String clazzTarget, String clazzExtend, String clazzRowMapper,
-			EntityDefinition clazzDefinition) {
+	public byte[] dump(String clazzRepository, String clazzTarget, String clazzExtend, String clazzRowMapper, EntityDefinition clazzDefinition) {
 		classBody = ClassBuilder.class_(clazzRepository).implements_(JdbcRepository.class, clazzTarget).body();
 
 		classBody.private_().field("conn", Connection.class);

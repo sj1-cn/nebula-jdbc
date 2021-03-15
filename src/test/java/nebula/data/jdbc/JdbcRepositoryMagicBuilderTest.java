@@ -203,7 +203,7 @@ public class JdbcRepositoryMagicBuilderTest extends TestBase {
 		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER).autoIncrement()));
 		clazzFields.push(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
 		clazzFields.push(new FieldMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
-		entityDefinition = new EntityDefinition(User.class.getSimpleName(), UserMoreComplex.class.getName(), User.class.getSimpleName(), clazzFields);
+		entityDefinition = new EntityDefinition(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserAutoIncrementJdbcRepository.class.getName();
 
@@ -212,5 +212,23 @@ public class JdbcRepositoryMagicBuilderTest extends TestBase {
 		String codeActual = toString(clazzRepository, codeRepository);
 		String codeExpected = TinyAsmTestUtils.toString(clazzRepository);
 		assertEquals("Code", codeExpected, codeActual);
+	}
+	
+
+	@Test
+	public void testUserAutoIncrementJdbcRepository_UserAnother() {
+//		FieldList clazzFields = new FieldList();
+//		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER).autoIncrement()));
+//		clazzFields.push(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
+//		clazzFields.push(new FieldMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
+//		entityDefinition = new EntityDefinition(UserAnother.class.getSimpleName(), UserAnother.class.getName(), UserAnother.class.getSimpleName(), clazzFields);
+//
+//		String clazzRepository = UserAnotherAutoIncrementJdbcRepository.class.getName();
+//
+//		byte[] codeRepository = JdbcRepositoryMagicBuilder.dump(clazzRepository, UserAnother.class, UserAnotherExtend.class, entityDefinition);
+//
+//		String codeActual = toString(clazzRepository, codeRepository);
+//		String codeExpected = TinyAsmTestUtils.toString(clazzRepository);
+//		assertEquals("Code", codeExpected, codeActual);
 	}
 }
