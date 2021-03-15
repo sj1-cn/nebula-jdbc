@@ -18,7 +18,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -50,7 +49,7 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testMockRunning() throws SQLException, InstantiationException, IllegalAccessException {
+	public void testMockRunning() throws Exception {
 
 		FieldList clazzFields = new FieldList();
 		clazzFields.push(new FieldMapper("id", "getId", long.class, INTEGER("ID")));
@@ -64,8 +63,7 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 
 		String targetClazz = User.class.getName();
 		String clazzExtend = targetClazz + "Extend";
-		EntityDefinition clazzDefinition = new EntityDefinition(User.class.getSimpleName(),User.class.getName(), User.class.getSimpleName(),
-				clazzFields);
+		EntityDefinition clazzDefinition = new EntityDefinition(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 		byte[] codeClazzExtend = clazzExtendBuilder.make(clazzExtend, targetClazz, clazzDefinition);
 		classLoader.defineClassByName(clazzExtend, codeClazzExtend);
 
@@ -77,7 +75,7 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 		assertEquals("Code", codeExpected, codeActual);
 
 		Class<JdbcRowMapper<?>> rowMapper = (Class<JdbcRowMapper<?>>) classLoader.defineClassByName(clazzRowMapper, code);
-		JdbcRowMapper<?> mapper = rowMapper.newInstance();
+		JdbcRowMapper<?> mapper = rowMapper.getConstructor().newInstance();
 		User user = (User) mapper.map(resultSet);
 
 		assertEquals(1047L, user.getId());
@@ -94,8 +92,7 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 
 		String targetClazz = User.class.getName();
 		String clazzExtend = targetClazz + "Extend";
-		EntityDefinition clazzDefinition = new EntityDefinition(User.class.getSimpleName(), User.class.getName(),User.class.getSimpleName(),
-				clazzFields);
+		EntityDefinition clazzDefinition = new EntityDefinition(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 		byte[] codeClazzExtend = clazzExtendBuilder.make(clazzExtend, targetClazz, clazzDefinition);
 		classLoader.defineClassByName(clazzExtend, codeClazzExtend);
 
@@ -127,8 +124,7 @@ public class JdbcRowMapperBuilderTest extends TestBase {
 
 		String targetClazz = UserMoreComplex.class.getName();
 		String clazzExtend = targetClazz + "Extend";
-		EntityDefinition clazzDefinition = new EntityDefinition(UserMoreComplex.class.getSimpleName(),User.class.getName(), UserMoreComplex.class.getSimpleName(),
-				clazzFields);
+		EntityDefinition clazzDefinition = new EntityDefinition(UserMoreComplex.class.getSimpleName(), User.class.getName(), UserMoreComplex.class.getSimpleName(), clazzFields);
 		byte[] codeClazzExtend = clazzExtendBuilder.make(clazzExtend, targetClazz, clazzDefinition);
 		classLoader.defineClassByName(clazzExtend, codeClazzExtend);
 

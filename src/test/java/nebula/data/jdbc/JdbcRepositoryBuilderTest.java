@@ -84,7 +84,7 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 		Class<JdbcRepository<User>> clazzJdbcRepository = (Class<JdbcRepository<User>>) classLoader.defineClassByName(clazzRepository,
 				codeRepository);
 
-		JdbcRepository<User> userRepository = clazzJdbcRepository.newInstance();
+		JdbcRepository<User> userRepository = clazzJdbcRepository.getConstructor().newInstance();
 		userRepository.setConnection(connection);
 
 		connection.createStatement().execute("CREATE TABLE USER (id INTEGER PRIMARY KEY,description VARCHAR)");
