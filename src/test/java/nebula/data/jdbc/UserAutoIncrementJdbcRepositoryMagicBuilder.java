@@ -31,14 +31,15 @@ import nebula.jdbc.builders.schema.ColumnList;
 
 public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 
-	final private Connection conn = private_().field("conn", Connection.class);
-//	final private UserExtendJdbcRowMapper mapper = private_().field("mapper", UserExtendJdbcRowMapper.class);
-	final private SqlHelper sqlHelper = private_().field("sqlHelper", SqlHelper.class);
+	private Connection conn;// = private_().field("conn", Connection.class);
+	private SqlHelper sqlHelper;// = private_().field("sqlHelper", SqlHelper.class);
 
-//	public UserAutoIncrementJdbcRepositoryMagicBuilder() {
-//		mapper = new UserExtendJdbcRowMapper();
-//		sqlHelper = new SqlHelper();
-//	}
+	//这个将来要取消掉
+	public void __init_fields(AdvClassBuilder classBody) {
+		conn = private_().field("conn", Connection.class);
+		sqlHelper = private_().field("sqlHelper", SqlHelper.class);
+	}
+	
 	public void __init_(AdvClassBuilder classBody) {
 		classBody.public_().method("<init>").code(code -> {
 			code.LINE();
