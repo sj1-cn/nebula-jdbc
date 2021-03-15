@@ -34,7 +34,7 @@ import nebula.jdbc.TestBase;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 
 public class JdbcRepositoryBuilderTest extends TestBase {
-	ClazzDefinition clazzDefinition;
+	EntityDefinition clazzDefinition;
 	JdbcRowMapperBuilder jdbcRowMapperBuilder;
 
 	JdbcRepositoryBuilder jdbcRepositoryBuilder;
@@ -54,7 +54,7 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 		clazzFields.push(new FieldMapper("name", "getName", String.class, VARCHAR("name")));
 		clazzFields.push(new FieldMapper("description", "getDescription", String.class, VARCHAR("description")));
 
-		clazzDefinition = new ClazzDefinition(User.class.getSimpleName(),User.class.getName(),  User.class.getSimpleName(), clazzFields);
+		clazzDefinition = new EntityDefinition(User.class.getSimpleName(),User.class.getName(),  User.class.getSimpleName(), clazzFields);
 	}
 
 	@After
@@ -152,7 +152,7 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 		clazzFields.push(new FieldMapper(true, "name", "getName", String.class, VARCHAR("name")));
 		clazzFields.push(new FieldMapper("description", "getDescription", String.class, VARCHAR("description")));
 
-		clazzDefinition = new ClazzDefinition(User.class.getSimpleName(), User.class.getName(),User.class.getSimpleName(), clazzFields);
+		clazzDefinition = new EntityDefinition(User.class.getSimpleName(), User.class.getName(),User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserKeysJdbcRepository.class.getName();
 		String clazzTarget = User.class.getName();
@@ -183,7 +183,7 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 		clazzFields.push(new FieldMapper("date", "getDate", java.sql.Date.class, DATE("date")));
 		clazzFields.push(new FieldMapper("time", "getTime", java.sql.Time.class, TIME("time")));
 		clazzFields.push(new FieldMapper("timestamp", "getTimestamp", java.sql.Timestamp.class, TIMESTAMP("timestamp")));
-		clazzDefinition = new ClazzDefinition(UserMoreComplex.class.getSimpleName(), UserMoreComplex.class.getName(),UserMoreComplex.class.getSimpleName(), clazzFields);
+		clazzDefinition = new EntityDefinition(UserMoreComplex.class.getSimpleName(), UserMoreComplex.class.getName(),UserMoreComplex.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserMoreComplexAutoIncrementJdbcRepository.class.getName();
 		String clazzTarget = UserMoreComplex.class.getName();
@@ -203,7 +203,7 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER).autoIncrement()));
 		clazzFields.push(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
 		clazzFields.push(new FieldMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
-		clazzDefinition = new ClazzDefinition(User.class.getSimpleName(),UserMoreComplex.class.getName(), User.class.getSimpleName(), clazzFields);
+		clazzDefinition = new EntityDefinition(User.class.getSimpleName(),UserMoreComplex.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserAutoIncrementJdbcRepository.class.getName();
 		String clazzTarget = User.class.getName();

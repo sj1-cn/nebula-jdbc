@@ -24,9 +24,9 @@ public class RepositoryFactory {
 		this.conn = conn;
 	}
 
-	Map<String, ClazzDefinition> clazzDefinations = new HashMap<>();
+	Map<String, EntityDefinition> clazzDefinations = new HashMap<>();
 
-	public ClazzDefinition build(Class<?> type) {
+	public EntityDefinition build(Class<?> type) {
 		if (clazzDefinations.containsKey(type.getName())) return clazzDefinations.get(type.getName());
 
 		String name = type.getSimpleName();
@@ -54,7 +54,7 @@ public class RepositoryFactory {
 			}
 		}
 
-		ClazzDefinition clazzDefinition = new ClazzDefinition(name, type.getName(), tablename, fields);
+		EntityDefinition clazzDefinition = new EntityDefinition(name, type.getName(), tablename, fields);
 		clazzDefinations.put(type.getName(), clazzDefinition);
 		return clazzDefinition;
 	}
@@ -63,14 +63,14 @@ public class RepositoryFactory {
 	public <T> Class<T> getClazzExtend(Class<T> clazzTarget) {
 		if (clazzExtends.containsKey(clazzTarget.getName())) return (Class<T>) clazzExtends.get(clazzTarget.getName());
 
-		ClazzDefinition clazzDefinition = build(clazzTarget);
+		EntityDefinition clazzDefinition = build(clazzTarget);
 
 		Class<T> clazzClazzExtend = makeClazzExtend(clazzDefinition);
 		return clazzClazzExtend;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Class<T> actualClazz(ClazzDefinition clazzDefinition) {
+	public <T> Class<T> actualClazz(EntityDefinition clazzDefinition) {
 		if (clazzExtends.containsKey(clazzDefinition.clazz)) return (Class<T>) clazzExtends.get(clazzDefinition.clazz);
 		Class<T> clazzClazzExtend = makeClazzExtend(clazzDefinition);
 		return clazzClazzExtend;
@@ -80,13 +80,13 @@ public class RepositoryFactory {
 	public <T> Repository<T> getRepository(Class<T> clazz) {
 		if (repositories.containsKey(clazz.getName())) return (Repository<T>) repositories.get(clazz.getName());
 
-		ClazzDefinition clazzDefinition = build(clazz);
+		EntityDefinition clazzDefinition = build(clazz);
 
 		return makeJdbcRepository(clazzDefinition);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Repository<T> getRepository(ClazzDefinition clazzDefinition) {
+	public <T> Repository<T> getRepository(EntityDefinition clazzDefinition) {
 		if (repositories.containsKey(clazzDefinition.clazz)) return (Repository<T>) repositories.get(clazzDefinition.clazz);
 
 		return makeJdbcRepository(clazzDefinition);
@@ -96,7 +96,7 @@ public class RepositoryFactory {
 	Map<String, Class<?>> clazzExtends = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
-	private <T> Class<T> makeClazzExtend(ClazzDefinition clazzDefinition) {
+	private <T> Class<T> makeClazzExtend(EntityDefinition clazzDefinition) {
 		String clazzTargetName = clazzDefinition.getClazz();
 		String clazzExtendName = clazzTargetName + "Extend";
 
@@ -110,7 +110,7 @@ public class RepositoryFactory {
 	private JdbcRepositoryBuilder repositoryBuilder = new JdbcRepositoryBuilder(arguments);
 	Map<String, Repository<?>> repositories = new HashMap<>();
 
-	private <T> Repository<T> makeJdbcRepository(ClazzDefinition clazzDefinition) {
+	private <T> Repository<T> makeJdbcRepository(EntityDefinition clazzDefinition) {
 		String clazzRepositoryName = clazzDefinition.clazz + "Repository";
 		String clazzTargetName = clazzDefinition.clazz;
 		String clazzExtendName = actualClazz(clazzDefinition).getName();
@@ -133,10 +133,10 @@ public class RepositoryFactory {
 	}
 
 	private JdbcRowMapperBuilder rowMapperBuilder = new JdbcRowMapperBuilder(arguments);
-	Map<ClazzDefinition, Class<?>> rowMappers = new HashMap<>();
+	Map<EntityDefinition, Class<?>> rowMappers = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
-	public <T> Class<JdbcRowMapper<T>> makeJdbcRowMapper(ClazzDefinition clazzDefinition) {
+	public <T> Class<JdbcRowMapper<T>> makeJdbcRowMapper(EntityDefinition clazzDefinition) {
 		if (rowMappers.containsKey(clazzDefinition)) return (Class<JdbcRowMapper<T>>) rowMappers.get(clazzDefinition);
 
 		String clazzExtend = clazzDefinition.clazz + "Extend";

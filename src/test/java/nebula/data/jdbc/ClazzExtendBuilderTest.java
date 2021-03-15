@@ -50,7 +50,7 @@ public class ClazzExtendBuilderTest extends TestBase {
 		clazzFields.push(new FieldMapper("name", "getName", String.class, VARCHAR("NAME")));
 		clazzFields.push(new FieldMapper("description", "getDescription", String.class, VARCHAR("description")));
 
-		ClazzDefinition clazzDefinition = new ClazzDefinition(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName().toUpperCase(), clazzFields);
+		EntityDefinition clazzDefinition = new EntityDefinition(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName().toUpperCase(), clazzFields);
 
 		String targetClazz = User.class.getName();
 		String clazzExtend = targetClazz + "Extend";
@@ -81,7 +81,7 @@ public class ClazzExtendBuilderTest extends TestBase {
 
 		String targetClazz = UserMoreComplex.class.getName();
 		String clazzExtend = targetClazz + "Extend";
-		ClazzDefinition clazzDefinition = new ClazzDefinition(UserMoreComplex.class.getSimpleName(),UserMoreComplex.class.getName(), UserMoreComplex.class.getSimpleName().toUpperCase(),
+		EntityDefinition clazzDefinition = new EntityDefinition(UserMoreComplex.class.getSimpleName(),UserMoreComplex.class.getName(), UserMoreComplex.class.getSimpleName().toUpperCase(),
 				clazzFields);
 
 		byte[] code = builder.make(clazzExtend, targetClazz, clazzDefinition);

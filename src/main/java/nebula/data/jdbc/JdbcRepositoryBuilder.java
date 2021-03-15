@@ -27,7 +27,7 @@ import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
 public class JdbcRepositoryBuilder extends RepositoryBuilder {
 
 	public byte[] dump(String clazzRepository, String clazzTarget, String clazzExtend, String clazzRowMapper,
-			ClazzDefinition clazzDefinition) {
+			EntityDefinition clazzDefinition) {
 		classBody = ClassBuilder.class_(clazzRepository).implements_(JdbcRepository.class, clazzTarget).body();
 
 		classBody.private_().field("conn", Connection.class);
@@ -130,7 +130,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 //		});
 	}
 
-	private void _listJdbc(String clazzTarget, String clazzExtend, ClazzDefinition clazzDefinition) {
+	private void _listJdbc(String clazzTarget, String clazzExtend, EntityDefinition clazzDefinition) {
 		classBody.method(ACC_PUBLIC, "listJdbc")
 			.parameter("start", int.class)
 			.parameter("max", int.class)
@@ -193,7 +193,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 	}
 	
 
-	private void _listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int(String clazzTarget, String clazzExtend, ClazzDefinition clazzDefinition) {
+	private void _listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int(String clazzTarget, String clazzExtend, EntityDefinition clazzDefinition) {
 //		classBody.method(ACC_PUBLIC, "listJdbc")
 //			.parameter("condition", Condition.class)
 //			.parameter("orderBy", OrderBy.class)
@@ -259,7 +259,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 //			});
 	}
 
-	private void _findByIdJdbc(String clazzTarget, String clazzExtend, ClazzDefinition clazzDefinition) {
+	private void _findByIdJdbc(String clazzTarget, String clazzExtend, EntityDefinition clazzDefinition) {
 //		classBody.publicMethod("findByIdJdbc")
 //			.ACC_PUBLIC()
 //			.ACC_VARARGS()
@@ -309,7 +309,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 //			});
 	}
 
-	private void _insertJdbc(String clazzTarget, String clazzExtend,ClazzDefinition clazzDefinition) {
+	private void _insertJdbc(String clazzTarget, String clazzExtend,EntityDefinition clazzDefinition) {
 //		classBody.method(ACC_PUBLIC, "insertJdbc")
 //			.parameter("data", clazzTarget)
 //			.reTurn(clazzTarget)
@@ -425,7 +425,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 //			});
 //	}
 
-	private void _updateJdbc(String clazzTarget, String clazzExtend,ClazzDefinition clazzDefinition) {
+	private void _updateJdbc(String clazzTarget, String clazzExtend,EntityDefinition clazzDefinition) {
 //		classBody.method(ACC_PUBLIC, "updateJdbc")
 //			.parameter("data", clazzTarget)
 //			.reTurn(clazzTarget)
@@ -496,7 +496,7 @@ public class JdbcRepositoryBuilder extends RepositoryBuilder {
 //			});
 	}
 
-	private void _deleteJdbc(ClazzDefinition clazzDefinition) {
+	private void _deleteJdbc(EntityDefinition clazzDefinition) {
 //		classBody.method(ACC_PUBLIC, "deleteJdbc").ACC_PUBLIC().ACC_VARARGS()
 //			.parameter("keys", Object.class, true)
 //			.reTurn(int.class)

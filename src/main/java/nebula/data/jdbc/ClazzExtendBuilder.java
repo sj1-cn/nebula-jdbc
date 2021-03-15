@@ -6,7 +6,7 @@ import cc1sj.tinyasm.Field;
 
 public class ClazzExtendBuilder {
 	
-	public byte[] make(String clazzExtend, String targetClazz, ClazzDefinition clazz) {
+	public byte[] make(String clazzExtend, String targetClazz, EntityDefinition clazz) {
 		// public class UserImpl extends User implements EntityTime {
 		ClassBody cw = ClassBuilder.class_(clazzExtend).extends_(targetClazz).implements_(ClassExtend.class).body();
 

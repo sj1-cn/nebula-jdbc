@@ -2,7 +2,7 @@ package nebula.data.jdbc;
 
 import static nebula.jdbc.builders.schema.ColumnDefinition.TIMESTAMP;
 
-public class ClazzDefinition {
+public class EntityDefinition {
 	final String name;
 	final String clazz;
 	final String tablename;
@@ -10,7 +10,7 @@ public class ClazzDefinition {
 	final FieldList fieldsExtend;
 	final FieldList fieldsAll;
 
-	public ClazzDefinition(String name,String clazz, String tablename, FieldList fields) {
+	public EntityDefinition(String name,String clazz, String tablename, FieldList fields) {
 		super();
 		this.name = name;
 		this.clazz = clazz;

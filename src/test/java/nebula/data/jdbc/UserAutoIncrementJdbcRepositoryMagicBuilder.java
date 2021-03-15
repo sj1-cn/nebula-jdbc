@@ -51,6 +51,11 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 		});
 	}
 
+	String clazzRepository;
+	String clazzTarget;
+	String clazzExtend;
+	EntityDefinition clazzDefinition;
+
 	@Override
 	public void setConnection(Connection conn) {
 		__(this.conn, conn);
@@ -84,7 +89,8 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 		final ResultSet resultSet = __("resultSet", conn.prepareStatement(sql).executeQuery());
 
 		_while(isTrue(resultSet.next())).block(c -> {
-			datas.add(new_(UserExtend.class,Adv.params(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"),resultSet.getTimestamp("createAt"),resultSet.getTimestamp("updateAt"))));
+			datas.add(new_(UserExtend.class, Adv.params(resultSet.getLong("id"), resultSet.getString("name"),
+					resultSet.getString("description"), resultSet.getTimestamp("createAt"), resultSet.getTimestamp("updateAt"))));
 		});
 		resultSet.close();
 
@@ -110,7 +116,8 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 		final ResultSet resultSet = __("resultSet", conn.prepareStatement(sql).executeQuery());
 
 		_while(isTrue(resultSet.next())).block(c -> {
-			datas.add(new_(UserExtend.class,Adv.params(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"),resultSet.getTimestamp("createAt"),resultSet.getTimestamp("updateAt"))));
+			datas.add(new_(UserExtend.class, Adv.params(resultSet.getLong("id"), resultSet.getString("name"),
+					resultSet.getString("description"), resultSet.getTimestamp("createAt"), resultSet.getTimestamp("updateAt"))));
 		});
 		resultSet.close();
 
@@ -137,7 +144,8 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 		ResultSet resultSet = __("resultSet", preparedStatement.executeQuery());
 
 		_while(isTrue(resultSet.next())).block(c -> {
-			datas.add(new_(UserExtend.class,Adv.params(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"),resultSet.getTimestamp("createAt"),resultSet.getTimestamp("updateAt"))));
+			datas.add(new_(UserExtend.class, Adv.params(resultSet.getLong("id"), resultSet.getString("name"),
+					resultSet.getString("description"), resultSet.getTimestamp("createAt"), resultSet.getTimestamp("updateAt"))));
 		});
 
 		return _return(datas.get(0));
