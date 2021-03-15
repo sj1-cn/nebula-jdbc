@@ -7,18 +7,9 @@ import static cc1sj.tinyasm.Adv.new_;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import cc1sj.tinyasm.AdvClassBuilder;
 import cc1sj.tinyasm.AdvMagic;
 
 public class UsingUserExtendJdbcRowMapperMagicBuilder {
-	public void __init_(AdvClassBuilder classBody) {
-		classBody.public_().method("<init>").code(code -> {
-			code.LINE();
-			code.LOAD("this");
-			code.SPECIAL(Object.class, "<init>").INVOKE();
-			code.RETURN();
-		});
-	}
 
 	public String test(ResultSet resultSet) throws SQLException {
 		UserExtendJdbcRowMapper mapper = __("mapper", new_(UserExtendJdbcRowMapper.class));
@@ -27,10 +18,6 @@ public class UsingUserExtendJdbcRowMapperMagicBuilder {
 	}
 
 	public static byte[] dump() {
-		UsingUserExtendJdbcRowMapperMagicBuilder magicBuilderProxy = AdvMagic.build(UsingUserExtendJdbcRowMapperMagicBuilder.class);
-
-//		magicBuilderProxy.dumpInit("sayNothing");
-
-		return AdvMagic.dump("nebula.data.jdbc.UsingUserExtendJdbcRowMapper", magicBuilderProxy);
+		return AdvMagic.dump("nebula.data.jdbc.UsingUserExtendJdbcRowMapper", UsingUserExtendJdbcRowMapperMagicBuilder.class);
 	}
 }

@@ -208,10 +208,6 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 	}
 
 	public static byte[] dump() {
-		UserAutoIncrementJdbcRepositoryMagicBuilder magicBuilderProxy = AdvMagic.build(UserAutoIncrementJdbcRepositoryMagicBuilder.class);
-
-//		magicBuilderProxy.dumpInit("sayNothing");
-
-		return AdvMagic.dump("nebula.data.jdbc.UserAutoIncrementJdbcRepository", magicBuilderProxy);
+		return AdvMagic.dump("nebula.data.jdbc.UserAutoIncrementJdbcRepository", UserAutoIncrementJdbcRepositoryMagicBuilder.class);
 	}
 }

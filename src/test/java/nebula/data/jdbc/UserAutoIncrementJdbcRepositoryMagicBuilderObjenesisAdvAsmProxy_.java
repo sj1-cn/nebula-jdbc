@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import cc1sj.tinyasm.Adv;
-import cc1sj.tinyasm.AdvClassBuilder;
 import cc1sj.tinyasm.AdvContext;
 import cc1sj.tinyasm.AdvMagicRuntime;
 import cc1sj.tinyasm.ClassBody;
@@ -24,7 +23,6 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 	private byte _magicNumber;
 	private ThreadLocal<AdvContext> _contextThreadLocal;
 	private Clazz _targetClazz;
-	private AdvClassBuilder _classBuilder;
 
 	public byte get__MagicNumber() {
 		return this._magicNumber;
@@ -47,16 +45,6 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 	@Override
 	public Clazz get__TargetClazz() {
 		return _targetClazz;
-	}
-
-	@Override
-	public AdvClassBuilder get__ClassBuilder() {
-		return _classBuilder;
-	}
-
-	@Override
-	public void set__ClassBuilder(AdvClassBuilder _classBuilder) {
-		this._classBuilder = _classBuilder;
 	}
 
 	public void init() {
