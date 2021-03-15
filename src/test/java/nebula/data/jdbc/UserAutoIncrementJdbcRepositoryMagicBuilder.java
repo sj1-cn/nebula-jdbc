@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cc1sj.tinyasm.Adv;
 import cc1sj.tinyasm.AdvClassBuilder;
 import cc1sj.tinyasm.AdvMagic;
 import cc1sj.tinyasm.boolean_;
@@ -29,7 +30,7 @@ import nebula.jdbc.builders.schema.ColumnList;
 public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 
 	final private Connection conn = private_().field("conn", Connection.class);
-	final private UserExtendJdbcRowMapper mapper = private_().field("mapper", UserExtendJdbcRowMapper.class);
+//	final private UserExtendJdbcRowMapper mapper = private_().field("mapper", UserExtendJdbcRowMapper.class);
 	final private SqlHelper sqlHelper = private_().field("sqlHelper", SqlHelper.class);
 
 //	public UserAutoIncrementJdbcRepositoryMagicBuilder() {
@@ -42,7 +43,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 			code.LOAD("this");
 			code.SPECIAL(Object.class, "<init>").INVOKE();
 
-			__(mapper, new_(UserExtendJdbcRowMapper.class));
+//			__(mapper, new_(UserExtendJdbcRowMapper.class));
 			__(sqlHelper, new_(SqlHelper.class));
 
 			code.LINE();
@@ -83,7 +84,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 		final ResultSet resultSet = __("resultSet", conn.prepareStatement(sql).executeQuery());
 
 		_while(isTrue(resultSet.next())).block(c -> {
-			datas.add(mapper.map(resultSet));
+			datas.add(new_(UserExtend.class,Adv.params(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"),resultSet.getTimestamp("createAt"),resultSet.getTimestamp("updateAt"))));
 		});
 		resultSet.close();
 
@@ -109,7 +110,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 		final ResultSet resultSet = __("resultSet", conn.prepareStatement(sql).executeQuery());
 
 		_while(isTrue(resultSet.next())).block(c -> {
-			datas.add(mapper.map(resultSet));
+			datas.add(new_(UserExtend.class,Adv.params(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"),resultSet.getTimestamp("createAt"),resultSet.getTimestamp("updateAt"))));
 		});
 		resultSet.close();
 
@@ -136,7 +137,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilder implements JdbcReposito
 		ResultSet resultSet = __("resultSet", preparedStatement.executeQuery());
 
 		_while(isTrue(resultSet.next())).block(c -> {
-			datas.add(mapper.map(resultSet));
+			datas.add(new_(UserExtend.class,Adv.params(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"),resultSet.getTimestamp("createAt"),resultSet.getTimestamp("updateAt"))));
 		});
 
 		return _return(datas.get(0));

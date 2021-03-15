@@ -13,11 +13,11 @@ import nebula.jdbc.builders.schema.ColumnList;
 
 public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 	private Connection conn;
-	private UserExtendJdbcRowMapper mapper;
+//	private UserExtendJdbcRowMapper mapper;
 	private SqlHelper sqlHelper;
 
 	public UserAutoIncrementJdbcRepository() {
-		mapper = new UserExtendJdbcRowMapper();
+//		mapper = new UserExtendJdbcRowMapper();
 		sqlHelper = new SqlHelper();
 	}
 
@@ -53,7 +53,7 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		ResultSet resultSet = conn.prepareStatement(sql).executeQuery();
 
 		while (resultSet.next()) {
-			datas.add(mapper.map(resultSet));
+			datas.add(new UserExtend(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"),resultSet.getTimestamp("createAt"),resultSet.getTimestamp("updateAt")));
 		}
 		resultSet.close();
 
@@ -79,7 +79,7 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		ResultSet resultSet = conn.prepareStatement(sql).executeQuery();
 
 		while (resultSet.next()) {
-			datas.add(mapper.map(resultSet));
+			datas.add(new UserExtend(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"),resultSet.getTimestamp("createAt"),resultSet.getTimestamp("updateAt")));
 		}
 		resultSet.close();
 
@@ -106,7 +106,7 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		ResultSet resultSet = preparedStatement.executeQuery();
 
 		while (resultSet.next()) {
-			datas.add(mapper.map(resultSet));
+			datas.add(new UserExtend(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"),resultSet.getTimestamp("createAt"),resultSet.getTimestamp("updateAt")));
 		}
 		
 		return datas.get(0);

@@ -16,7 +16,6 @@ import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import nebula.data.jdbc.User;
 import nebula.jdbc.builders.queries.Select;
-import nebula.data.jdbc.UserExtendJdbcRowMapper;
 import nebula.data.jdbc.UserExtend;
 import java.util.ArrayList;
 import java.sql.SQLException;
@@ -43,7 +42,6 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 			.access(ACC_PUBLIC | ACC_SUPER).body();
 
 		classBody.private_().field("conn", Clazz.of(Connection.class));
-		classBody.private_().field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
 		classBody.private_().field("sqlHelper", Clazz.of(SqlHelper.class));
 		__init_(classBody);
 		_setConnection(classBody);
@@ -67,13 +65,6 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("this");
 		code.SPECIAL(Object.class, "<init>").INVOKE();
-
-		code.LINE();
-		code.LOAD("this");
-		code.NEW(UserExtendJdbcRowMapper.class);
-		code.DUP();
-		code.SPECIAL(UserExtendJdbcRowMapper.class, "<init>").INVOKE();
-		code.PUTFIELD_OF_THIS("mapper");
 
 		code.LINE();
 		code.LOAD("this");
@@ -239,12 +230,39 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("datas");
-		code.LOAD("this");
-		code.GETFIELD_OF_THIS("mapper");
+		code.NEW(UserExtend.class);
+		code.DUP();
 		code.LOAD("resultSet");
-		code.VIRTUAL(UserExtendJdbcRowMapper.class, "map")
-			.return_(UserExtend.class)
-			.parameter(ResultSet.class).INVOKE();
+		code.LOADConst("id");
+		code.INTERFACE(ResultSet.class, "getLong")
+			.return_(long.class)
+			.parameter(String.class).INVOKE();
+		code.LOAD("resultSet");
+		code.LOADConst("name");
+		code.INTERFACE(ResultSet.class, "getString")
+			.return_(String.class)
+			.parameter(String.class).INVOKE();
+		code.LOAD("resultSet");
+		code.LOADConst("description");
+		code.INTERFACE(ResultSet.class, "getString")
+			.return_(String.class)
+			.parameter(String.class).INVOKE();
+		code.LOAD("resultSet");
+		code.LOADConst("createAt");
+		code.INTERFACE(ResultSet.class, "getTimestamp")
+			.return_(Timestamp.class)
+			.parameter(String.class).INVOKE();
+		code.LOAD("resultSet");
+		code.LOADConst("updateAt");
+		code.INTERFACE(ResultSet.class, "getTimestamp")
+			.return_(Timestamp.class)
+			.parameter(String.class).INVOKE();
+		code.SPECIAL(UserExtend.class, "<init>")
+			.parameter(long.class)
+			.parameter(String.class)
+			.parameter(String.class)
+			.parameter(Timestamp.class)
+			.parameter(Timestamp.class).INVOKE();
 		code.INTERFACE(PageList.class, "add")
 			.return_(boolean.class)
 			.parameter(Object.class).INVOKE();
@@ -387,12 +405,39 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("datas");
-		code.LOAD("this");
-		code.GETFIELD_OF_THIS("mapper");
+		code.NEW(UserExtend.class);
+		code.DUP();
 		code.LOAD("resultSet");
-		code.VIRTUAL(UserExtendJdbcRowMapper.class, "map")
-			.return_(UserExtend.class)
-			.parameter(ResultSet.class).INVOKE();
+		code.LOADConst("id");
+		code.INTERFACE(ResultSet.class, "getLong")
+			.return_(long.class)
+			.parameter(String.class).INVOKE();
+		code.LOAD("resultSet");
+		code.LOADConst("name");
+		code.INTERFACE(ResultSet.class, "getString")
+			.return_(String.class)
+			.parameter(String.class).INVOKE();
+		code.LOAD("resultSet");
+		code.LOADConst("description");
+		code.INTERFACE(ResultSet.class, "getString")
+			.return_(String.class)
+			.parameter(String.class).INVOKE();
+		code.LOAD("resultSet");
+		code.LOADConst("createAt");
+		code.INTERFACE(ResultSet.class, "getTimestamp")
+			.return_(Timestamp.class)
+			.parameter(String.class).INVOKE();
+		code.LOAD("resultSet");
+		code.LOADConst("updateAt");
+		code.INTERFACE(ResultSet.class, "getTimestamp")
+			.return_(Timestamp.class)
+			.parameter(String.class).INVOKE();
+		code.SPECIAL(UserExtend.class, "<init>")
+			.parameter(long.class)
+			.parameter(String.class)
+			.parameter(String.class)
+			.parameter(Timestamp.class)
+			.parameter(Timestamp.class).INVOKE();
 		code.INTERFACE(PageList.class, "add")
 			.return_(boolean.class)
 			.parameter(Object.class).INVOKE();
@@ -513,12 +558,39 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("datas");
-		code.LOAD("this");
-		code.GETFIELD_OF_THIS("mapper");
+		code.NEW(UserExtend.class);
+		code.DUP();
 		code.LOAD("resultSet");
-		code.VIRTUAL(UserExtendJdbcRowMapper.class, "map")
-			.return_(UserExtend.class)
-			.parameter(ResultSet.class).INVOKE();
+		code.LOADConst("id");
+		code.INTERFACE(ResultSet.class, "getLong")
+			.return_(long.class)
+			.parameter(String.class).INVOKE();
+		code.LOAD("resultSet");
+		code.LOADConst("name");
+		code.INTERFACE(ResultSet.class, "getString")
+			.return_(String.class)
+			.parameter(String.class).INVOKE();
+		code.LOAD("resultSet");
+		code.LOADConst("description");
+		code.INTERFACE(ResultSet.class, "getString")
+			.return_(String.class)
+			.parameter(String.class).INVOKE();
+		code.LOAD("resultSet");
+		code.LOADConst("createAt");
+		code.INTERFACE(ResultSet.class, "getTimestamp")
+			.return_(Timestamp.class)
+			.parameter(String.class).INVOKE();
+		code.LOAD("resultSet");
+		code.LOADConst("updateAt");
+		code.INTERFACE(ResultSet.class, "getTimestamp")
+			.return_(Timestamp.class)
+			.parameter(String.class).INVOKE();
+		code.SPECIAL(UserExtend.class, "<init>")
+			.parameter(long.class)
+			.parameter(String.class)
+			.parameter(String.class)
+			.parameter(Timestamp.class)
+			.parameter(Timestamp.class).INVOKE();
 		code.INTERFACE(List.class, "add")
 			.return_(boolean.class)
 			.parameter(Object.class).INVOKE();
