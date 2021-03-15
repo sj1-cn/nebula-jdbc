@@ -17,8 +17,6 @@ import static nebula.jdbc.builders.schema.ColumnDefinition.TINYINT;
 import static nebula.jdbc.builders.schema.ColumnDefinition.VARCHAR;
 import static org.junit.Assert.assertEquals;
 
-import static cc1sj.tinyasm.util.TinyAsmTestUtils.*;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;

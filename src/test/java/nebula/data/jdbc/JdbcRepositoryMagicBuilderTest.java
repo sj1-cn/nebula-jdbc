@@ -2,28 +2,11 @@ package nebula.data.jdbc;
 
 import static java.sql.JDBCType.INTEGER;
 import static java.sql.JDBCType.VARCHAR;
-import static nebula.jdbc.builders.schema.ColumnDefinition.BIGINT;
-import static nebula.jdbc.builders.schema.ColumnDefinition.BOOLEAN;
-import static nebula.jdbc.builders.schema.ColumnDefinition.CHAR;
-import static nebula.jdbc.builders.schema.ColumnDefinition.DATE;
-import static nebula.jdbc.builders.schema.ColumnDefinition.DECIMAL;
-import static nebula.jdbc.builders.schema.ColumnDefinition.DOUBLE;
-import static nebula.jdbc.builders.schema.ColumnDefinition.FLOAT;
 import static nebula.jdbc.builders.schema.ColumnDefinition.INTEGER;
-import static nebula.jdbc.builders.schema.ColumnDefinition.SMALLINT;
-import static nebula.jdbc.builders.schema.ColumnDefinition.TIME;
-import static nebula.jdbc.builders.schema.ColumnDefinition.TIMESTAMP;
-import static nebula.jdbc.builders.schema.ColumnDefinition.TINYINT;
 import static nebula.jdbc.builders.schema.ColumnDefinition.VARCHAR;
 import static org.junit.Assert.assertEquals;
 
-import static cc1sj.tinyasm.util.TinyAsmTestUtils.*;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;

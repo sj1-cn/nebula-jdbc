@@ -1,48 +1,33 @@
 package nebula.data.jdbc;
+import static org.objectweb.asm.Opcodes.ACC_BRIDGE;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_SUPER;
+import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
+
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.objectweb.asm.Label;
-import org.objectweb.asm.Handle;
-import org.objectweb.asm.Opcodes;
+
 import cc1sj.tinyasm.ClassBody;
 import cc1sj.tinyasm.ClassBuilder;
-import cc1sj.tinyasm.MethodCode;
-import org.objectweb.asm.Type;
-import static org.objectweb.asm.Opcodes.*;
-import cc1sj.tinyasm.Annotation;
 import cc1sj.tinyasm.Clazz;
-import nebula.jdbc.builders.schema.JDBC;
-import java.lang.Float;
-import nebula.jdbc.builders.schema.ColumnDefinition;
-import java.sql.Connection;
-import java.sql.Time;
-import java.lang.Double;
-import nebula.jdbc.builders.queries.Select;
-import java.lang.Integer;
-import nebula.data.jdbc.UserMoreComplexExtend;
-import java.util.ArrayList;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.lang.Character;
-import java.lang.Long;
-import nebula.data.jdbc.ClassExtend;
-import java.sql.ResultSet;
-import java.lang.Short;
-import java.lang.Boolean;
+import cc1sj.tinyasm.MethodCode;
 import nebula.data.query.Condition;
-import java.lang.String;
-import java.lang.Byte;
-import nebula.data.jdbc.PageList;
-import nebula.data.jdbc.JdbcRepository;
 import nebula.data.query.OrderBy;
-import java.sql.Timestamp;
-import java.sql.PreparedStatement;
-import java.sql.Date;
-import java.util.List;
-import nebula.data.jdbc.UserMoreComplex;
-import nebula.data.jdbc.UserMoreComplexExtendJdbcRowMapper;
-import java.sql.Statement;
-import java.lang.Object;
+import nebula.jdbc.builders.queries.Select;
+import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
-import nebula.data.jdbc.PageListImpl;
+import nebula.jdbc.builders.schema.JDBC;
 @SuppressWarnings("unused")
 public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 

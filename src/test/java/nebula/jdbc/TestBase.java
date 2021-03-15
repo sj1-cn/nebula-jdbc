@@ -1,6 +1,5 @@
 package nebula.jdbc;
 
-import static cc1sj.tinyasm.util.TinyAsmTestUtils.dumpTinyAsm;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;

@@ -1,35 +1,29 @@
 package nebula.data.jdbc;
+import static org.objectweb.asm.Opcodes.ACC_BRIDGE;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_SUPER;
+import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.objectweb.asm.Label;
-import org.objectweb.asm.Handle;
-import org.objectweb.asm.Opcodes;
+
 import cc1sj.tinyasm.ClassBody;
 import cc1sj.tinyasm.ClassBuilder;
-import cc1sj.tinyasm.MethodCode;
-import org.objectweb.asm.Type;
-import static org.objectweb.asm.Opcodes.*;
-import cc1sj.tinyasm.Annotation;
 import cc1sj.tinyasm.Clazz;
-import nebula.jdbc.builders.schema.JDBC;
-import nebula.data.jdbc.JdbcRepository;
-import nebula.jdbc.builders.schema.ColumnDefinition;
-import java.sql.Connection;
-import nebula.data.query.OrderBy;
-import java.sql.PreparedStatement;
-import nebula.data.jdbc.User;
-import nebula.jdbc.builders.queries.Select;
-import nebula.data.jdbc.UserExtendJdbcRowMapper;
-import nebula.data.jdbc.UserExtend;
-import java.util.ArrayList;
-import java.sql.SQLException;
-import java.util.List;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.lang.Object;
+import cc1sj.tinyasm.MethodCode;
 import nebula.data.query.Condition;
+import nebula.data.query.OrderBy;
+import nebula.jdbc.builders.queries.Select;
+import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
-import java.lang.String;
-import nebula.data.jdbc.PageListImpl;
-import nebula.data.jdbc.PageList;
+import nebula.jdbc.builders.schema.JDBC;
 @SuppressWarnings("unused")
 public class UserKeysJdbcRepositoryTinyAsmDump {
 

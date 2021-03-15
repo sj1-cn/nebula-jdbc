@@ -1,10 +1,12 @@
 package nebula.data.jdbc;
 
-import static cc1sj.tinyasm.Adv.*;
+import static cc1sj.tinyasm.Adv.__;
 import static cc1sj.tinyasm.Adv._b;
 import static cc1sj.tinyasm.Adv._if;
 import static cc1sj.tinyasm.Adv._return;
 import static cc1sj.tinyasm.Adv._while;
+import static cc1sj.tinyasm.Adv.isEqual;
+import static cc1sj.tinyasm.Adv.isFalse;
 import static cc1sj.tinyasm.Adv.isGreaterThan;
 import static cc1sj.tinyasm.Adv.isTrue;
 import static cc1sj.tinyasm.Adv.new_;
