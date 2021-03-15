@@ -441,7 +441,7 @@ public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 //	}
 
 	public static byte[] dump(String clazzRepository2, Class<User> clazzEntity, Class<?> classEntityImpl, EntityDefinition entityDefinition) {
-		JdbcRepositoryMagicBuilder magicBuilderProxy = AdvMagic.build(clazzRepository2, JdbcRepositoryMagicBuilder.class, clazzEntity);
+		JdbcRepositoryMagicBuilder magicBuilderProxy = AdvMagic.build(clazzRepository2, JdbcRepositoryMagicBuilder.class);
 
 		magicBuilderProxy.dumpInit(clazzRepository2, clazzEntity, classEntityImpl, entityDefinition);
 
