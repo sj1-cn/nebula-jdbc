@@ -47,7 +47,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		_setConnection(classBody);
 		_initJdbc(classBody);
 		_listJdbc(classBody);
-		_listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int(classBody);
+		_listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int_nebuladatajdbcPageList(classBody);
 		_findByIdJdbc(classBody);
 		_insertJdbc(classBody);
 		_updateJdbc(classBody);
@@ -332,7 +332,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.END();
 	}
 
-	protected void _listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int(ClassBody classBody) {
+	protected void _listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int_nebuladatajdbcPageList(ClassBody classBody) {
 		MethodCode code = classBody.public_().method("listJdbc")
 			.return_(Clazz.of(PageList.class,Clazz.of(User.class)) )
 			.throws_(SQLException.class )

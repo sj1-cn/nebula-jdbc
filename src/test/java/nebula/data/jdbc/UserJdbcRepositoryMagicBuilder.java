@@ -34,7 +34,7 @@ import nebula.jdbc.builders.schema.ColumnList;
 import nebula.jdbc.builders.schema.JDBC;
 import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
 
-public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
+public class UserJdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 
 	private Connection conn;// = private_().field("conn", Connection.class);
 	private SqlHelper sqlHelper;// = private_().field("sqlHelper", SqlHelper.class);
@@ -441,7 +441,7 @@ public class JdbcRepositoryMagicBuilder implements JdbcRepository<User> {
 //	}
 
 	public static byte[] dump(String clazzRepository2, Class<User> clazzEntity, Class<?> classEntityImpl, EntityDefinition entityDefinition) {
-		JdbcRepositoryMagicBuilder magicBuilderProxy = AdvMagic.build(JdbcRepositoryMagicBuilder.class);
+		UserJdbcRepositoryMagicBuilder magicBuilderProxy = AdvMagic.build(UserJdbcRepositoryMagicBuilder.class);
 
 		magicBuilderProxy.dumpInit(clazzRepository2, clazzEntity, classEntityImpl, entityDefinition);
 

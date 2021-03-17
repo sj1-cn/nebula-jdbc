@@ -47,144 +47,6 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 		return _targetClazz;
 	}
 
-	public void init() {
-		AdvContext context = this._contextThreadLocal.get();
-		ConsumerWithException<MethodCode> objEval = context.resolve(this);
-		context.execLine(c -> {
-			objEval.accept(c);
-			c.VIRTUAL(_targetClazz, "init").INVOKE();
-		});
-	}
-
-	@SuppressWarnings("unchecked")
-	public PageList<User> list(int param0, int param1) {
-		AdvContext context = this._contextThreadLocal.get();
-		ConsumerWithException<MethodCode> eval_param1 = context.resolve(param1);
-		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
-		ConsumerWithException<MethodCode> objEval = context.resolve(this);
-		byte codeIndex = context.push(PageList.class, c -> {
-			objEval.accept(c);
-			eval_param0.accept(c);
-			eval_param1.accept(c);
-			c.VIRTUAL(_targetClazz, "list").parameter(int.class).parameter(int.class).return_(PageList.class).INVOKE();
-		});
-		byte magicNumber = (byte) (80 + codeIndex);
-		if (Adv.canProxy(PageList.class)) {
-			return (PageList<User>) Adv.buildProxyClass(PageList.class, User.class, magicNumber);
-		} else {
-			return null;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public PageList<User> list(Condition param0, int param1, int param2) {
-		AdvContext context = this._contextThreadLocal.get();
-		ConsumerWithException<MethodCode> eval_param2 = context.resolve(param2);
-		ConsumerWithException<MethodCode> eval_param1 = context.resolve(param1);
-		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
-		ConsumerWithException<MethodCode> objEval = context.resolve(this);
-		byte codeIndex = context.push(PageList.class, c -> {
-			objEval.accept(c);
-			eval_param0.accept(c);
-			eval_param1.accept(c);
-			eval_param2.accept(c);
-			c.VIRTUAL(_targetClazz, "list").parameter(Condition.class).parameter(int.class).parameter(int.class).return_(PageList.class).INVOKE();
-		});
-		byte magicNumber = (byte) (80 + codeIndex);
-		if (Adv.canProxy(PageList.class)) {
-			return (PageList<User>) Adv.buildProxyClass(PageList.class, User.class, magicNumber);
-		} else {
-			return null;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public PageList<User> list(Condition param0, OrderBy param1, int param2, int param3) {
-		AdvContext context = this._contextThreadLocal.get();
-		ConsumerWithException<MethodCode> eval_param3 = context.resolve(param3);
-		ConsumerWithException<MethodCode> eval_param2 = context.resolve(param2);
-		ConsumerWithException<MethodCode> eval_param1 = context.resolve(param1);
-		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
-		ConsumerWithException<MethodCode> objEval = context.resolve(this);
-		byte codeIndex = context.push(PageList.class, c -> {
-			objEval.accept(c);
-			eval_param0.accept(c);
-			eval_param1.accept(c);
-			eval_param2.accept(c);
-			eval_param3.accept(c);
-			c.VIRTUAL(_targetClazz, "list").parameter(Condition.class).parameter(OrderBy.class).parameter(int.class).parameter(int.class).return_(PageList.class).INVOKE();
-		});
-		byte magicNumber = (byte) (80 + codeIndex);
-		if (Adv.canProxy(PageList.class)) {
-			return (PageList<User>) Adv.buildProxyClass(PageList.class, User.class, magicNumber);
-		} else {
-			return null;
-		}
-	}
-
-	public User findById(long param0) {
-		AdvContext context = this._contextThreadLocal.get();
-		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
-		ConsumerWithException<MethodCode> objEval = context.resolve(this);
-		byte codeIndex = context.push(User.class, c -> {
-			objEval.accept(c);
-			eval_param0.accept(c);
-			c.VIRTUAL(_targetClazz, "findById").parameter(long.class).return_(User.class).INVOKE();
-		});
-		byte magicNumber = (byte) (80 + codeIndex);
-		if (Adv.canProxy(User.class)) {
-			return (User) Adv.buildProxyClass(User.class, magicNumber);
-		} else {
-			return null;
-		}
-	}
-
-	public User insert(User param0) {
-		AdvContext context = this._contextThreadLocal.get();
-		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
-		ConsumerWithException<MethodCode> objEval = context.resolve(this);
-		byte codeIndex = context.push(User.class, c -> {
-			objEval.accept(c);
-			eval_param0.accept(c);
-			c.VIRTUAL(_targetClazz, "insert").parameter(Object.class).return_(User.class).INVOKE();
-		});
-		byte magicNumber = (byte) (80 + codeIndex);
-		if (Adv.canProxy(User.class)) {
-			return (User) Adv.buildProxyClass(User.class, magicNumber);
-		} else {
-			return null;
-		}
-	}
-
-	public User update(User param0) {
-		AdvContext context = this._contextThreadLocal.get();
-		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
-		ConsumerWithException<MethodCode> objEval = context.resolve(this);
-		byte codeIndex = context.push(User.class, c -> {
-			objEval.accept(c);
-			eval_param0.accept(c);
-			c.VIRTUAL(_targetClazz, "update").parameter(Object.class).return_(User.class).INVOKE();
-		});
-		byte magicNumber = (byte) (80 + codeIndex);
-		if (Adv.canProxy(User.class)) {
-			return (User) Adv.buildProxyClass(User.class, magicNumber);
-		} else {
-			return null;
-		}
-	}
-
-	public int deleteById(long param0) {
-		AdvContext context = this._contextThreadLocal.get();
-		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
-		ConsumerWithException<MethodCode> objEval = context.resolve(this);
-		byte codeIndex = context.push(int.class, c -> {
-			objEval.accept(c);
-			eval_param0.accept(c);
-			c.VIRTUAL(_targetClazz, "deleteById").parameter(long.class).return_(int.class).INVOKE();
-		});
-		return 80 + codeIndex;
-	}
-
 	public void setConnection(Connection param0) {
 		AdvContext context = this._contextThreadLocal.get();
 		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
@@ -194,34 +56,6 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 			eval_param0.accept(c);
 			c.VIRTUAL(_targetClazz, "setConnection").parameter(Connection.class).INVOKE();
 		});
-	}
-
-	public int bindInsertExtend(PreparedStatement param0, int param1) throws SQLException {
-		AdvContext context = this._contextThreadLocal.get();
-		ConsumerWithException<MethodCode> eval_param1 = context.resolve(param1);
-		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
-		ConsumerWithException<MethodCode> objEval = context.resolve(this);
-		byte codeIndex = context.push(int.class, c -> {
-			objEval.accept(c);
-			eval_param0.accept(c);
-			eval_param1.accept(c);
-			c.VIRTUAL(_targetClazz, "bindInsertExtend").parameter(PreparedStatement.class).parameter(int.class).return_(int.class).INVOKE();
-		});
-		return 80 + codeIndex;
-	}
-
-	public int bindUpdateExtend(PreparedStatement param0, int param1) throws SQLException {
-		AdvContext context = this._contextThreadLocal.get();
-		ConsumerWithException<MethodCode> eval_param1 = context.resolve(param1);
-		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
-		ConsumerWithException<MethodCode> objEval = context.resolve(this);
-		byte codeIndex = context.push(int.class, c -> {
-			objEval.accept(c);
-			eval_param0.accept(c);
-			eval_param1.accept(c);
-			c.VIRTUAL(_targetClazz, "bindUpdateExtend").parameter(PreparedStatement.class).parameter(int.class).return_(int.class).INVOKE();
-		});
-		return 80 + codeIndex;
 	}
 
 	public void initJdbc() throws SQLException {
@@ -270,7 +104,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 			c.VIRTUAL(_targetClazz, "listJdbc").parameter(Condition.class).parameter(OrderBy.class).parameter(int.class).parameter(int.class).return_(PageList.class).INVOKE();
 		});
 		byte magicNumber = (byte) (80 + codeIndex);
-
+	
 		if (Adv.canProxy(PageList.class)) {
 			return (PageList<User>) Adv.buildProxyClass(PageList.class, User.class, magicNumber);
 		} else {
@@ -302,7 +136,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 		byte codeIndex = context.push(User.class, c -> {
 			objEval.accept(c);
 			eval_param0.accept(c);
-			c.VIRTUAL(_targetClazz, "insertJdbc").parameter(Object.class).return_(User.class).INVOKE();
+			c.VIRTUAL(_targetClazz, "insertJdbc").parameter(User.class).return_(User.class).INVOKE();
 		});
 		byte magicNumber = (byte) (80 + codeIndex);
 		if (Adv.canProxy(User.class)) {
@@ -319,7 +153,7 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 		byte codeIndex = context.push(User.class, c -> {
 			objEval.accept(c);
 			eval_param0.accept(c);
-			c.VIRTUAL(_targetClazz, "updateJdbc").parameter(Object.class).return_(User.class).INVOKE();
+			c.VIRTUAL(_targetClazz, "updateJdbc").parameter(User.class).return_(User.class).INVOKE();
 		});
 		byte magicNumber = (byte) (80 + codeIndex);
 		if (Adv.canProxy(User.class)) {
@@ -337,6 +171,172 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 			objEval.accept(c);
 			eval_param0.accept(c);
 			c.VIRTUAL(_targetClazz, "deleteByIdJdbc").parameter(long.class).return_(int.class).INVOKE();
+		});
+		return 80 + codeIndex;
+	}
+
+	public void init() {
+		AdvContext context = this._contextThreadLocal.get();
+		ConsumerWithException<MethodCode> objEval = context.resolve(this);
+		context.execLine(c -> {
+			objEval.accept(c);
+			c.VIRTUAL(_targetClazz, "init").INVOKE();
+		});
+	}
+
+	@SuppressWarnings("unchecked")
+	public PageList<User> list(Condition param0, int param1, int param2) {
+		AdvContext context = this._contextThreadLocal.get();
+		ConsumerWithException<MethodCode> eval_param2 = context.resolve(param2);
+		ConsumerWithException<MethodCode> eval_param1 = context.resolve(param1);
+		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
+		ConsumerWithException<MethodCode> objEval = context.resolve(this);
+		byte codeIndex = context.push(PageList.class, c -> {
+			objEval.accept(c);
+			eval_param0.accept(c);
+			eval_param1.accept(c);
+			eval_param2.accept(c);
+			c.VIRTUAL(_targetClazz, "list").parameter(Condition.class).parameter(int.class).parameter(int.class).return_(PageList.class).INVOKE();
+		});
+		byte magicNumber = (byte) (80 + codeIndex);
+		if (Adv.canProxy(PageList.class)) {
+			return (PageList<User>) Adv.buildProxyClass(PageList.class, User.class, magicNumber);
+		} else {
+			return null;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public PageList<User> list(Condition param0, OrderBy param1, int param2, int param3) {
+		AdvContext context = this._contextThreadLocal.get();
+		ConsumerWithException<MethodCode> eval_param3 = context.resolve(param3);
+		ConsumerWithException<MethodCode> eval_param2 = context.resolve(param2);
+		ConsumerWithException<MethodCode> eval_param1 = context.resolve(param1);
+		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
+		ConsumerWithException<MethodCode> objEval = context.resolve(this);
+		byte codeIndex = context.push(PageList.class, c -> {
+			objEval.accept(c);
+			eval_param0.accept(c);
+			eval_param1.accept(c);
+			eval_param2.accept(c);
+			eval_param3.accept(c);
+			c.VIRTUAL(_targetClazz, "list").parameter(Condition.class).parameter(OrderBy.class).parameter(int.class).parameter(int.class).return_(PageList.class).INVOKE();
+		});
+		byte magicNumber = (byte) (80 + codeIndex);
+		if (Adv.canProxy(PageList.class)) {
+			return (PageList<User>) Adv.buildProxyClass(PageList.class, User.class, magicNumber);
+		} else {
+			return null;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public PageList<User> list(int param0, int param1) {
+		AdvContext context = this._contextThreadLocal.get();
+		ConsumerWithException<MethodCode> eval_param1 = context.resolve(param1);
+		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
+		ConsumerWithException<MethodCode> objEval = context.resolve(this);
+		byte codeIndex = context.push(PageList.class, c -> {
+			objEval.accept(c);
+			eval_param0.accept(c);
+			eval_param1.accept(c);
+			c.VIRTUAL(_targetClazz, "list").parameter(int.class).parameter(int.class).return_(PageList.class).INVOKE();
+		});
+		byte magicNumber = (byte) (80 + codeIndex);
+		if (Adv.canProxy(PageList.class)) {
+			return (PageList<User>) Adv.buildProxyClass(PageList.class, User.class, magicNumber);
+		} else {
+			return null;
+		}
+	}
+
+	public User findById(long param0) {
+		AdvContext context = this._contextThreadLocal.get();
+		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
+		ConsumerWithException<MethodCode> objEval = context.resolve(this);
+		byte codeIndex = context.push(User.class, c -> {
+			objEval.accept(c);
+			eval_param0.accept(c);
+			c.VIRTUAL(_targetClazz, "findById").parameter(long.class).return_(User.class).INVOKE();
+		});
+		byte magicNumber = (byte) (80 + codeIndex);
+		if (Adv.canProxy(User.class)) {
+			return (User) Adv.buildProxyClass(User.class, magicNumber);
+		} else {
+			return null;
+		}
+	}
+
+	public User insert(User param0) {
+		AdvContext context = this._contextThreadLocal.get();
+		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
+		ConsumerWithException<MethodCode> objEval = context.resolve(this);
+		byte codeIndex = context.push(User.class, c -> {
+			objEval.accept(c);
+			eval_param0.accept(c);
+			c.VIRTUAL(_targetClazz, "insert").parameter(User.class).return_(User.class).INVOKE();
+		});
+		byte magicNumber = (byte) (80 + codeIndex);
+		if (Adv.canProxy(User.class)) {
+			return (User) Adv.buildProxyClass(User.class, magicNumber);
+		} else {
+			return null;
+		}
+	}
+
+	public User update(User param0) {
+		AdvContext context = this._contextThreadLocal.get();
+		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
+		ConsumerWithException<MethodCode> objEval = context.resolve(this);
+		byte codeIndex = context.push(User.class, c -> {
+			objEval.accept(c);
+			eval_param0.accept(c);
+			c.VIRTUAL(_targetClazz, "update").parameter(User.class).return_(User.class).INVOKE();
+		});
+		byte magicNumber = (byte) (80 + codeIndex);
+		if (Adv.canProxy(User.class)) {
+			return Adv.buildProxyClass(User.class, magicNumber);
+		} else {
+			return null;
+		}
+	}
+
+	public int bindInsertExtend(PreparedStatement param0, int param1) throws SQLException {
+		AdvContext context = this._contextThreadLocal.get();
+		ConsumerWithException<MethodCode> eval_param1 = context.resolve(param1);
+		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
+		ConsumerWithException<MethodCode> objEval = context.resolve(this);
+		byte codeIndex = context.push(int.class, c -> {
+			objEval.accept(c);
+			eval_param0.accept(c);
+			eval_param1.accept(c);
+			c.VIRTUAL(_targetClazz, "bindInsertExtend").parameter(PreparedStatement.class).parameter(int.class).return_(int.class).INVOKE();
+		});
+		return 80 + codeIndex;
+	}
+
+	public int bindUpdateExtend(PreparedStatement param0, int param1) throws SQLException {
+		AdvContext context = this._contextThreadLocal.get();
+		ConsumerWithException<MethodCode> eval_param1 = context.resolve(param1);
+		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
+		ConsumerWithException<MethodCode> objEval = context.resolve(this);
+		byte codeIndex = context.push(int.class, c -> {
+			objEval.accept(c);
+			eval_param0.accept(c);
+			eval_param1.accept(c);
+			c.VIRTUAL(_targetClazz, "bindUpdateExtend").parameter(PreparedStatement.class).parameter(int.class).return_(int.class).INVOKE();
+		});
+		return 80 + codeIndex;
+	}
+
+	public int deleteById(long param0) {
+		AdvContext context = this._contextThreadLocal.get();
+		ConsumerWithException<MethodCode> eval_param0 = context.resolve(param0);
+		ConsumerWithException<MethodCode> objEval = context.resolve(this);
+		byte codeIndex = context.push(int.class, c -> {
+			objEval.accept(c);
+			eval_param0.accept(c);
+			c.VIRTUAL(_targetClazz, "deleteById").parameter(long.class).return_(int.class).INVOKE();
 		});
 		return 80 + codeIndex;
 	}
@@ -367,13 +367,11 @@ public class UserAutoIncrementJdbcRepositoryMagicBuilderObjenesisAdvAsmProxy_ ex
 		super.initJdbc();
 	}
 
-	@SuppressWarnings("rawtypes")
-	public PageList $_listJdbc(int param0, int param1) throws SQLException {
+	public PageList<User> $_listJdbc(int param0, int param1) throws SQLException {
 		return super.listJdbc(param0, param1);
 	}
 
-	@SuppressWarnings("rawtypes")
-	public PageList $_listJdbc(Condition param0, OrderBy param1, int param2, int param3) throws SQLException {
+	public PageList<User> $_listJdbc(Condition param0, OrderBy param1, int param2, int param3) throws SQLException {
 		return super.listJdbc(param0, param1, param2, param3);
 	}
 

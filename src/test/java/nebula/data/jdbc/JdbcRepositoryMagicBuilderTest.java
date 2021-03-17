@@ -190,7 +190,7 @@ public class JdbcRepositoryMagicBuilderTest extends TestBase {
 
 		String clazzRepository = UserAutoIncrementJdbcRepository.class.getName();
 
-		byte[] codeRepository = JdbcRepositoryMagicBuilder.dump(clazzRepository, User.class, UserExtend.class, entityDefinition);
+		byte[] codeRepository = UserJdbcRepositoryMagicBuilder.dump(clazzRepository, User.class, UserExtend.class, entityDefinition);
 
 		String codeActual = toString(clazzRepository, codeRepository);
 		String codeExpected = TinyAsmTestUtils.toString(clazzRepository);

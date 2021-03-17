@@ -16,7 +16,8 @@ public class ColumnsTest {
         assertEquals("username", columns.toSQL());
     }
 
-    @Test
+    @SuppressWarnings("deprecation")
+	@Test
     public void it_converts_to_sql_the_wildcard_for_all_columns() {
         assertThat(Columns.all().toSQL(), is("*"));
     }
@@ -35,7 +36,8 @@ public class ColumnsTest {
         assertEquals("password, email", columns.toSQL());
     }
 
-    @Test
+    @SuppressWarnings("deprecation")
+	@Test
     public void it_selects_the_count_of_rows()
     {
         columns.count();
@@ -43,7 +45,8 @@ public class ColumnsTest {
         assertThat(columns.toSQL(), is("COUNT(*)"));
     }
 
-    @Test
+    @SuppressWarnings("deprecation")
+	@Test
     public void it_selects_the_count_of_distinct_rows()
     {
         columns.countDistinct("u.id");
