@@ -1,19 +1,6 @@
 package nebula.data.jdbc;
 
-import static cc1sj.tinyasm.Adv.__;
-import static cc1sj.tinyasm.Adv._b;
-import static cc1sj.tinyasm.Adv._if;
-import static cc1sj.tinyasm.Adv._return;
-import static cc1sj.tinyasm.Adv._while;
-import static cc1sj.tinyasm.Adv.isEqual;
-import static cc1sj.tinyasm.Adv.isFalse;
-import static cc1sj.tinyasm.Adv.isGreaterThan;
-import static cc1sj.tinyasm.Adv.isTrue;
-import static cc1sj.tinyasm.Adv.new_;
-import static cc1sj.tinyasm.Adv.null_;
-import static cc1sj.tinyasm.Adv.params;
-import static cc1sj.tinyasm.Adv.private_;
-
+import static cn.sj1.tinyasm.Adv.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,10 +8,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import cc1sj.tinyasm.Adv;
-import cc1sj.tinyasm.AdvClassBuilder;
-import cc1sj.tinyasm.AdvMagic;
-import cc1sj.tinyasm.boolean_;
+import cn.sj1.tinyasm.Adv;
+import cn.sj1.tinyasm.AdvClassBuilder;
+import cn.sj1.tinyasm.AdvMagic;
+import cn.sj1.tinyasm.boolean_;
 import nebula.data.query.Condition;
 import nebula.data.query.OrderBy;
 import nebula.jdbc.builders.schema.ColumnList;

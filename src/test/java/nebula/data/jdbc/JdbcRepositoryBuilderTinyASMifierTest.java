@@ -1,12 +1,12 @@
 package nebula.data.jdbc;
 
-import static cc1sj.tinyasm.util.TinyAsmTestUtils.dumpTinyAsm;
+import static cn.sj1.tinyasm.util.TinyAsmTestUtils.dumpTinyAsm;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import cc1sj.tinyasm.AdvAsmProxyMagicClassAdvAsmBuilder;
-import cc1sj.tinyasm.util.TinyAsmTestUtils;
+import cn.sj1.tinyasm.AdvAsmProxyMagicClassAdvAsmBuilder;
+import cn.sj1.tinyasm.util.TinyAsmTestUtils;
 
 public class JdbcRepositoryBuilderTinyASMifierTest {
 
@@ -80,16 +80,16 @@ public class JdbcRepositoryBuilderTinyASMifierTest {
 		assertEquals("Code", codeExpected, codeActual);
 
 	}
-
-	@Test
-	public void test_UserAutoIncrementJdbcRepository_dumpTinyAsm_compare() throws Exception {
-		Class<?> expectedClazz = UserAutoIncrementJdbcRepository.class;
-		String codeExpected = TinyAsmTestUtils.toString(expectedClazz.getName(), dumpTinyAsm(expectedClazz));
-		String codeActual = TinyAsmTestUtils.toString(expectedClazz.getName(), UserAutoIncrementJdbcRepositoryTinyAsmDump2.dump());
-
-		assertEquals("Code", codeExpected, codeActual);
-
-	}
+//
+//	@Test
+//	public void test_UserAutoIncrementJdbcRepository_dumpTinyAsm_compare() throws Exception {
+//		Class<?> expectedClazz = UserAutoIncrementJdbcRepository.class;
+//		String codeExpected = TinyAsmTestUtils.toString(expectedClazz.getName(), dumpTinyAsm(expectedClazz));
+//		String codeActual = TinyAsmTestUtils.toString(expectedClazz.getName(), UserAutoIncrementJdbcRepositoryTinyAsmDump2.dump());
+//
+//		assertEquals("Code", codeExpected, codeActual);
+//
+//	}
 
 	@Test
 	public void UsingUserExtendJdbcRowMapper_dumpTinyAsm() throws Exception {

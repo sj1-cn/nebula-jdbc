@@ -1,13 +1,11 @@
 package nebula.data.jdbc;
 
-import static cc1sj.tinyasm.Adv.__;
-import static cc1sj.tinyasm.Adv._return;
-import static cc1sj.tinyasm.Adv.new_;
+import static cn.sj1.tinyasm.Adv.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import cc1sj.tinyasm.AdvMagic;
+import cn.sj1.tinyasm.AdvMagic;
 
 public class UsingUserExtendJdbcRowMapperMagicBuilder {
 

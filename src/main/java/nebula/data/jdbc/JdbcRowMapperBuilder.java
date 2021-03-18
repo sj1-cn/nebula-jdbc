@@ -7,9 +7,9 @@ import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import cc1sj.tinyasm.ClassBody;
-import cc1sj.tinyasm.ClassBuilder;
-import cc1sj.tinyasm.MethodCode;
+import cn.sj1.tinyasm.ClassBody;
+import cn.sj1.tinyasm.ClassBuilder;
+import cn.sj1.tinyasm.MethodCode;
 import nebula.jdbc.builders.schema.JDBC;
 import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
 
