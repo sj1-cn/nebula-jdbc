@@ -1,6 +1,6 @@
 package nebula.data.jdbc;
 
-import static nebula.data.jdbc.PojoUtil.getName;
+import static nebula.data.jdbc.PojoNameUtils.getName;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -12,22 +12,22 @@ import java.util.Map;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.JDBC;
 
-public class RepositoryFactory {
+public class JdbcRepositoryFactory {
 
 	Connection conn;
 
-	Arguments arguments = new Arguments();
+	private final PrimativeTypeConverters primativeTypeConverters = new PrimativeTypeConverters();
+	private final MyClassLoader classLoader = new MyClassLoader();
 
-	private MyClassLoader classLoader = new MyClassLoader();
-
-	public RepositoryFactory(Connection conn) {
+	Map<String, EntityPojoDbMappingDefinitions> cachedClazzDefinations = new HashMap<>();
+	
+	public JdbcRepositoryFactory(Connection conn) {
 		this.conn = conn;
 	}
 
-	Map<String, EntityDefinition> clazzDefinations = new HashMap<>();
 
-	public EntityDefinition build(Class<?> type) {
-		if (clazzDefinations.containsKey(type.getName())) return clazzDefinations.get(type.getName());
+	public EntityPojoDbMappingDefinitions build(Class<?> type) {
+		if (cachedClazzDefinations.containsKey(type.getName())) return cachedClazzDefinations.get(type.getName());
 
 		String name = type.getSimpleName();
 		String tablename = name.toUpperCase();
@@ -54,24 +54,24 @@ public class RepositoryFactory {
 			}
 		}
 
-		EntityDefinition clazzDefinition = new EntityDefinition(name, type.getName(), tablename, fields);
-		clazzDefinations.put(type.getName(), clazzDefinition);
+		EntityPojoDbMappingDefinitions clazzDefinition = new EntityPojoDbMappingDefinitions(name, type.getName(), tablename, fields);
+		cachedClazzDefinations.put(type.getName(), clazzDefinition);
 		return clazzDefinition;
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T> Class<T> getClazzExtend(Class<T> clazzTarget) {
-		if (clazzExtends.containsKey(clazzTarget.getName())) return (Class<T>) clazzExtends.get(clazzTarget.getName());
+		if (cachedEntityImplClasses.containsKey(clazzTarget.getName())) return (Class<T>) cachedEntityImplClasses.get(clazzTarget.getName());
 
-		EntityDefinition clazzDefinition = build(clazzTarget);
+		EntityPojoDbMappingDefinitions clazzDefinition = build(clazzTarget);
 
 		Class<T> clazzClazzExtend = makeClazzExtend(clazzDefinition);
 		return clazzClazzExtend;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Class<T> actualClazz(EntityDefinition clazzDefinition) {
-		if (clazzExtends.containsKey(clazzDefinition.clazz)) return (Class<T>) clazzExtends.get(clazzDefinition.clazz);
+	public <T> Class<T> actualClazz(EntityPojoDbMappingDefinitions clazzDefinition) {
+		if (cachedEntityImplClasses.containsKey(clazzDefinition.entityPojoClassName)) return (Class<T>) cachedEntityImplClasses.get(clazzDefinition.entityPojoClassName);
 		Class<T> clazzClazzExtend = makeClazzExtend(clazzDefinition);
 		return clazzClazzExtend;
 	}
@@ -80,39 +80,39 @@ public class RepositoryFactory {
 	public <T> Repository<T> getRepository(Class<T> clazz) {
 		if (repositories.containsKey(clazz.getName())) return (Repository<T>) repositories.get(clazz.getName());
 
-		EntityDefinition clazzDefinition = build(clazz);
+		EntityPojoDbMappingDefinitions clazzDefinition = build(clazz);
 
 		return makeJdbcRepository(clazzDefinition);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Repository<T> getRepository(EntityDefinition clazzDefinition) {
-		if (repositories.containsKey(clazzDefinition.clazz)) return (Repository<T>) repositories.get(clazzDefinition.clazz);
+	public <T> Repository<T> getRepository(EntityPojoDbMappingDefinitions clazzDefinition) {
+		if (repositories.containsKey(clazzDefinition.entityPojoClassName)) return (Repository<T>) repositories.get(clazzDefinition.entityPojoClassName);
 
 		return makeJdbcRepository(clazzDefinition);
 	}
 
-	private EntityImplBuilder clazzExtendBuilder = new EntityImplBuilder();
-	Map<String, Class<?>> clazzExtends = new HashMap<>();
+	private EntityImplBuilder entityImplBuilder = new EntityImplBuilder();
+	Map<String, Class<?>> cachedEntityImplClasses = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
-	private <T> Class<T> makeClazzExtend(EntityDefinition clazzDefinition) {
-		String clazzTargetName = clazzDefinition.getClazz();
-		String clazzExtendName = clazzTargetName + "Extend";
+	private <T> Class<T> makeClazzExtend(EntityPojoDbMappingDefinitions clazzDefinition) {
+		String entityPojoClassName = clazzDefinition.getEntityPojoClassName();
+		String entityPojoImplClassName = entityPojoClassName + "Extend";
 
-		byte[] codeClazzExtend = clazzExtendBuilder.make(clazzExtendName, clazzTargetName, clazzDefinition);
+		byte[] codeImpl = entityImplBuilder.make(entityPojoImplClassName, entityPojoClassName, clazzDefinition);
 
-		Class<T> clazzClazzExtend = (Class<T>) classLoader.defineClassByName(clazzExtendName, codeClazzExtend);
-		clazzExtends.put(clazzTargetName, clazzClazzExtend);
+		Class<T> clazzClazzExtend = (Class<T>) classLoader.defineClassByName(entityPojoImplClassName, codeImpl);
+		cachedEntityImplClasses.put(entityPojoClassName, clazzClazzExtend);
 		return clazzClazzExtend;
 	}
 
-	private UserJdbcRepositoryTinyAsmBuilder repositoryBuilder = new UserJdbcRepositoryTinyAsmBuilder(arguments);
+	private JdbcRepositoryBuilder repositoryBuilder = new JdbcRepositoryBuilder(primativeTypeConverters);
 	Map<String, Repository<?>> repositories = new HashMap<>();
 
-	private <T> Repository<T> makeJdbcRepository(EntityDefinition clazzDefinition) {
-		String clazzRepositoryName = clazzDefinition.clazz + "Repository";
-		String clazzTargetName = clazzDefinition.clazz;
+	private <T> Repository<T> makeJdbcRepository(EntityPojoDbMappingDefinitions clazzDefinition) {
+		String clazzRepositoryName = clazzDefinition.entityPojoClassName + "Repository";
+		String clazzTargetName = clazzDefinition.entityPojoClassName;
 		String clazzExtendName = actualClazz(clazzDefinition).getName();
 
 		byte[] codeRepository = repositoryBuilder.dump(clazzRepositoryName, clazzTargetName, clazzExtendName,
@@ -124,7 +124,7 @@ public class RepositoryFactory {
 					codeRepository);
 			JdbcRepository<T> jdbcRepository = clazzJdbcRepository.getConstructor().newInstance();
 			jdbcRepository.setConnection(this.conn);
-			repositories.put(clazzDefinition.clazz, jdbcRepository);
+			repositories.put(clazzDefinition.entityPojoClassName, jdbcRepository);
 			return jdbcRepository;
 		} catch (Exception e) {
 			throw new RuntimeException(e);

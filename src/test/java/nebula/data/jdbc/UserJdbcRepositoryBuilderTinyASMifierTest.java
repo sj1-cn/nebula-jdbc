@@ -34,11 +34,11 @@ public class UserJdbcRepositoryBuilderTinyASMifierTest {
 		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
 		clazzFields.push(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
 		clazzFields.push(new FieldMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
-		EntityDefinition entityDefinition = new EntityDefinition(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
+		EntityPojoDbMappingDefinitions entityDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserJdbcRepository.class.getName();
 
-		byte[] codeRepository = UserJdbcRepositoryTinyAsmBuilder.dumpStatic(clazzRepository, User.class.getName(), UserExtend.class.getName(), entityDefinition);
+		byte[] codeRepository = JdbcRepositoryBuilder.dumpStatic(clazzRepository, User.class.getName(), UserExtend.class.getName(), entityDefinition);
 
 		String codeExpected = TinyAsmTestUtils.toString(expectedClazz);
 
@@ -55,11 +55,11 @@ public class UserJdbcRepositoryBuilderTinyASMifierTest {
 		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, INTEGER("id").primarykey().autoIncrement()));
 		clazzFields.push(new FieldMapper("name", "getName", String.class, VARCHAR("name")));
 		clazzFields.push(new FieldMapper("description", "getDescription", String.class, VARCHAR("description")));
-		EntityDefinition entityDefinition = new EntityDefinition(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
+		EntityPojoDbMappingDefinitions entityDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserAutoIncrementJdbcRepository.class.getName();
 
-		byte[] codeRepository = UserJdbcRepositoryTinyAsmBuilder.dumpStatic(clazzRepository, User.class.getName(), UserExtend.class.getName(), entityDefinition);
+		byte[] codeRepository = JdbcRepositoryBuilder.dumpStatic(clazzRepository, User.class.getName(), UserExtend.class.getName(), entityDefinition);
 
 		String codeExpected = TinyAsmTestUtils.toString(expectedClazz);
 

@@ -23,10 +23,10 @@ import nebula.jdbc.builders.schema.ColumnDefinition;
 public class UserJdbcRepositoryTinyAsmTest extends TestBase {
 
 	String clazz;
-	Arguments arguments = new Arguments();
+	PrimativeTypeConverters arguments = new PrimativeTypeConverters();
 	Connection connection;
 	JdbcRepository<User> userRepository;
-	EntityDefinition entityDefinition;
+	EntityPojoDbMappingDefinitions entityDefinition;
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -37,11 +37,11 @@ public class UserJdbcRepositoryTinyAsmTest extends TestBase {
 		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
 		clazzFields.push(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
 		clazzFields.push(new FieldMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
-		entityDefinition = new EntityDefinition(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
+		entityDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserJdbcRepository.class.getName();
 
-		byte[] codeRepository = UserJdbcRepositoryTinyAsmBuilder.dumpStatic(clazzRepository, User.class.getName(), UserExtend.class.getName(), entityDefinition);
+		byte[] codeRepository = JdbcRepositoryBuilder.dumpStatic(clazzRepository, User.class.getName(), UserExtend.class.getName(), entityDefinition);
 
 		TinyAsmClassLoaderForTest classLoader = new TinyAsmClassLoaderForTest();
 

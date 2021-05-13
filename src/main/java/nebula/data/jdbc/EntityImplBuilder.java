@@ -9,11 +9,11 @@ import cn.sj1.tinyasm.core.Field;
 import cn.sj1.tinyasm.core.MethodCode;
 
 public class EntityImplBuilder {
-	EntityDefinition clazz;
+	EntityPojoDbMappingDefinitions clazz;
 	String clazzExtend;
 	String targetClazz;
 
-	public byte[] make(String clazzExtend, String targetClazz, EntityDefinition clazz)  {
+	public byte[] make(String clazzExtend, String targetClazz, EntityPojoDbMappingDefinitions clazz)  {
 		this.clazzExtend = clazzExtend;
 		this.targetClazz = targetClazz;
 		this.clazz = clazz;
@@ -50,12 +50,12 @@ public class EntityImplBuilder {
 		code.LINE();
 		code.LOAD("this");
 		
-		for (FieldMapper fieldMapper : clazz.fields) {
+		for (FieldMapper fieldMapper : clazz.entityFields) {
 			code.LOAD(fieldMapper.fieldName);
 		}
-		Class<?>[] clazzes = new Class<?>[clazz.fields.size()];
-		for (int i = 0; i < clazz.fields.size(); i++) {
-			clazzes[i] = clazz.fields.get(i).clazz;
+		Class<?>[] clazzes = new Class<?>[clazz.entityFields.size()];
+		for (int i = 0; i < clazz.entityFields.size(); i++) {
+			clazzes[i] = clazz.entityFields.get(i).clazz;
 		}
 		
 		code.SPECIAL(targetClazz, "<init>").parameter(clazzes).INVOKE();

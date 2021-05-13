@@ -20,11 +20,11 @@ import nebula.jdbc.TestBase;
 
 public class RepositoryFactoryTest extends TestBase {
 
-	RepositoryFactory repositoryFactory;
+	JdbcRepositoryFactory repositoryFactory;
 
 	@Before
 	public void before() {
-		repositoryFactory = new RepositoryFactory(super.openConnection(this.getClass().getName()));
+		repositoryFactory = new JdbcRepositoryFactory(super.openConnection(this.getClass().getName()));
 	}
 
 	@After

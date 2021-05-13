@@ -22,19 +22,19 @@ import cn.sj1.tinyasm.core.MethodCode;
 //java.util: Date, Optional (around any other supported type), and UUID
 //
 //java.util.Collection and Java arrays (stored as SQL arrays). Some additional setup may be required depending on the type of array element.
-public class Arguments {
+public class PrimativeTypeConverters {
 
 	static Consumer<MethodCode> doNothing = f -> {
 	};
-	Map<Class<?>, Map<Class<?>, Entry>> arguments = new HashMap<>();
+	Map<Class<?>, Map<Class<?>, ConverterEntry>> arguments = new HashMap<>();
 
-	static class Entry {
-		Consumer<MethodCode> convert;
-		Consumer<MethodCode> revert;
+	static class ConverterEntry {
+		Consumer<MethodCode> convertFromPrimaryType;
+		Consumer<MethodCode> revertToPrimaryType;
 
-		public Entry(Consumer<MethodCode> convert, Consumer<MethodCode> revert) {
-			this.convert = convert;
-			this.revert = revert;
+		public ConverterEntry(Consumer<MethodCode> convert, Consumer<MethodCode> revert) {
+			this.convertFromPrimaryType = convert;
+			this.revertToPrimaryType = revert;
 		}
 
 	}
@@ -43,19 +43,19 @@ public class Arguments {
 		if (!arguments.containsKey(toClazz)) {
 			arguments.put(toClazz, new HashMap<>());
 		}
-		arguments.get(toClazz).put(fromClazz, new Entry(convert, revert));
+		arguments.get(toClazz).put(fromClazz, new ConverterEntry(convert, revert));
 	}
 
 	Consumer<MethodCode> toJdbcClazz(Class<?> pojoClazz, Class<?> jdbcClazz) {
 		if (pojoClazz == jdbcClazz) return doNothing;
 		if (!arguments.containsKey(jdbcClazz)) return doNothing;
-		return arguments.get(jdbcClazz).get(pojoClazz).convert;
+		return arguments.get(jdbcClazz).get(pojoClazz).convertFromPrimaryType;
 	}
 
 	Consumer<MethodCode> fromJdbcClazz(Class<?> pojoClazz, Class<?> jdbcClazz) {
 		if (pojoClazz == jdbcClazz) return doNothing;
 		if (!arguments.containsKey(jdbcClazz)) return doNothing;
-		return arguments.get(jdbcClazz).get(pojoClazz).revert;
+		return arguments.get(jdbcClazz).get(pojoClazz).revertToPrimaryType;
 	}
 
 	{

@@ -32,16 +32,16 @@ import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
 @SuppressWarnings("unused")
 public class JdbcRepositoryBuilder {
 
-	public static byte[] dumpStatic(String clazzRepository, String classEntity, String classEntityImpl, EntityDefinition entityDefinition) throws Exception {
-		JdbcRepositoryBuilder userJdbcRepositoryTinyAsmBuilder = new JdbcRepositoryBuilder(new Arguments());
+	public static byte[] dumpStatic(String clazzRepository, String classEntity, String classEntityImpl, EntityPojoDbMappingDefinitions entityDefinition) throws Exception {
+		JdbcRepositoryBuilder userJdbcRepositoryTinyAsmBuilder = new JdbcRepositoryBuilder(new PrimativeTypeConverters());
 		return userJdbcRepositoryTinyAsmBuilder.dump(clazzRepository, classEntity, classEntityImpl, entityDefinition);
 	}
 
-	public JdbcRepositoryBuilder(Arguments $_arguments) {
+	public JdbcRepositoryBuilder(PrimativeTypeConverters $_arguments) {
 		this.$_arguments = $_arguments;
 	}
 
-	public byte[] dump(String clazzRepository, String classEntity, String classEntityImpl, EntityDefinition entityDefinition) {
+	public byte[] dump(String clazzRepository, String classEntity, String classEntityImpl, EntityPojoDbMappingDefinitions entityDefinition) {
 		try {
 			this.dumpInit(clazzRepository, classEntity, classEntityImpl, entityDefinition);
 			return this.doDump(clazzRepository);
@@ -53,17 +53,17 @@ public class JdbcRepositoryBuilder {
 	String $_clazzRepository;
 	String $_clazzEntity;
 	String $_clazzEntityImpl;
-	EntityDefinition $_entityDefinition;
-	Arguments $_arguments;
+	EntityPojoDbMappingDefinitions $_entityDefinition;
+	PrimativeTypeConverters $_arguments;
 	private boolean $_hasAutoIncrment = true;
 	private String $_tableName;
 
-	public void dumpInit(String clazzRepository, String classEntity, String classEntityImpl, EntityDefinition entityDefinition) {
+	public void dumpInit(String clazzRepository, String classEntity, String classEntityImpl, EntityPojoDbMappingDefinitions entityDefinition) {
 		this.$_clazzRepository = clazzRepository;
 		this.$_clazzEntity = classEntity;
 		this.$_clazzEntityImpl = classEntityImpl;
 		this.$_entityDefinition = entityDefinition;
-		this.$_tableName = entityDefinition.tablename;
+		this.$_tableName = entityDefinition.jdbcTablename;
 	}
 
 	public byte[] doDump(String className) throws Exception {
@@ -131,9 +131,9 @@ public class JdbcRepositoryBuilder {
 
 		String $_sql;
 		if (hasAutoIncrment) {
-			$_sql = JDBC.sql("CREATE TABLE ${tablename}(${columndefinitions}))", $_entityDefinition.getTablename(), String.join(",", columnDefinitions));
+			$_sql = JDBC.sql("CREATE TABLE ${tablename}(${columndefinitions}))", $_entityDefinition.getJdbcTablename(), String.join(",", columnDefinitions));
 		} else {
-			$_sql = JDBC.sql("CREATE TABLE ${tablename}(${columndefinitions},PRIMARY KEY(${keys}))", $_entityDefinition.getTablename(), String.join(",", columnDefinitions), String.join(",", keys));
+			$_sql = JDBC.sql("CREATE TABLE ${tablename}(${columndefinitions},PRIMARY KEY(${keys}))", $_entityDefinition.getJdbcTablename(), String.join(",", columnDefinitions), String.join(",", keys));
 		}
 
 		MethodCode code = classBody.public_().method("initJdbc").throws_(SQLException.class).begin();
@@ -429,7 +429,7 @@ public class JdbcRepositoryBuilder {
 		List<Column> $selAllColoumns = $_entityDefinition.fieldsAll.map(f -> f.column);
 		List<Column> $_sqlKeys = $_entityDefinition.fieldsAll.filter(f -> f.primaryKey).map(f -> f.column);
 
-		String $_sql = Select.columns(ColumnList.namesOf($selAllColoumns)).from($_entityDefinition.tablename).where(ColumnList.namesOf($_sqlKeys)).toSQL();
+		String $_sql = Select.columns(ColumnList.namesOf($selAllColoumns)).from($_entityDefinition.jdbcTablename).where(ColumnList.namesOf($_sqlKeys)).toSQL();
 
 		MethodCode code = classBody.public_().method("findByIdJdbc").return_($_clazzEntity).throws_(SQLException.class).parameter("id", long.class).begin();
 
@@ -488,14 +488,14 @@ public class JdbcRepositoryBuilder {
 	}
 
 	protected void _insertJdbc(ClassBody classBody) {
-		FieldList fields = $_entityDefinition.fields;
+		FieldList fields = $_entityDefinition.entityFields;
 		boolean hasAutoIncrment = fields.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
 		FieldMapper keyField = fields.filter(f -> f.isPrimaryKey()).get(0);
 
 		if (hasAutoIncrment) {
 			List<String> names = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.getName());
 			List<String> values = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> "?");
-			String $_sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", $_entityDefinition.tablename, String.join(",", names), String.join(",", values));
+			String $_sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", $_entityDefinition.jdbcTablename, String.join(",", names), String.join(",", values));
 
 			MethodCode code = classBody.public_().method("insertJdbc").return_($_clazzEntity).throws_(SQLException.class).parameter("data", $_clazzEntity).begin();
 
@@ -512,7 +512,7 @@ public class JdbcRepositoryBuilder {
 			code.STORE("preparedStatement", PreparedStatement.class);
 
 			int $i = 1;
-			for (FieldMapper field : $_entityDefinition.fields) {
+			for (FieldMapper field : $_entityDefinition.entityFields) {
 				if (!"YES".equals(field.column.getAutoIncrment())) {
 					JdbcMapping jdbc = JDBC.map(field.clazz);
 					int fieldIndex = $i;
@@ -571,7 +571,7 @@ public class JdbcRepositoryBuilder {
 
 			List<String> names = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.getName());
 			List<String> values = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> "?");
-			String $_sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", $_entityDefinition.tablename, String.join(",", names), String.join(",", values));
+			String $_sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", $_entityDefinition.jdbcTablename, String.join(",", names), String.join(",", values));
 
 			MethodCode code = classBody.public_().method("insertJdbc").return_($_clazzEntity).throws_(SQLException.class).parameter("data", $_clazzEntity).begin();
 
@@ -583,7 +583,7 @@ public class JdbcRepositoryBuilder {
 			code.STORE("preparedStatement", PreparedStatement.class);
 
 			int $i = 1;
-			for (FieldMapper field : $_entityDefinition.fields) {
+			for (FieldMapper field : $_entityDefinition.entityFields) {
 				JdbcMapping jdbc = JDBC.map(field.clazz);
 				int fieldIndex = $i;
 				code.LINE();
@@ -631,8 +631,8 @@ public class JdbcRepositoryBuilder {
 		FieldList $_fieldsAll = $_entityDefinition.fieldsAll;
 		ListMap<String, FieldMapper> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
 		ListMap<String, FieldMapper> $_othersWithoutCreate = $_fieldsAll.filter(f -> !f.primaryKey && !"createAt".equals(f.fieldName));
-		ListMap<String, FieldMapper> $_othersWithoutExtend = $_entityDefinition.fields.filter(f -> !f.primaryKey);
-		String $_sql = JDBC.sql("UPDATE ${tablename} SET ${setvalues} WHERE ${causes}", $_entityDefinition.tablename, String.join(",", $_othersWithoutCreate.map(f -> f.fieldName + "=?")),
+		ListMap<String, FieldMapper> $_othersWithoutExtend = $_entityDefinition.entityFields.filter(f -> !f.primaryKey);
+		String $_sql = JDBC.sql("UPDATE ${tablename} SET ${setvalues} WHERE ${causes}", $_entityDefinition.jdbcTablename, String.join(",", $_othersWithoutCreate.map(f -> f.fieldName + "=?")),
 				String.join(" AND ", $_keys.map(f -> f.fieldName + "=?")));
 
 		MethodCode code = classBody.public_().method("updateJdbc").return_($_clazzEntity).throws_(SQLException.class).parameter("data", $_clazzEntity).begin();
@@ -732,7 +732,7 @@ public class JdbcRepositoryBuilder {
 	protected void _deleteByIdJdbc(ClassBody classBody) {
 		FieldList $_fieldsAll = $_entityDefinition.fieldsAll;
 		ListMap<String, FieldMapper> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
-		String $_sql = JDBC.sql("DELETE ${tablename} WHERE ${causes}", $_entityDefinition.tablename, String.join(" AND ", $_keys.map(f -> f.column.getName() + "=?")));
+		String $_sql = JDBC.sql("DELETE ${tablename} WHERE ${causes}", $_entityDefinition.jdbcTablename, String.join(" AND ", $_keys.map(f -> f.column.getName() + "=?")));
 
 		MethodCode code = classBody.public_().method("deleteByIdJdbc").return_(int.class).throws_(SQLException.class).parameter("id", long.class).begin();
 

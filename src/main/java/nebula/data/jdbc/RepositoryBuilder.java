@@ -1,9 +1,9 @@
 package nebula.data.jdbc;
 
 public class RepositoryBuilder {
-	Arguments arguments;
+	PrimativeTypeConverters arguments;
 
-	public RepositoryBuilder(Arguments arguments) {
+	public RepositoryBuilder(PrimativeTypeConverters arguments) {
 		this.arguments = arguments;
 	}
 

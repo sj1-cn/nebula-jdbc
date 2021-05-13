@@ -19,7 +19,7 @@ import nebula.jdbc.TestBase;
 public class UserJdbcRepositoryTest extends TestBase {
 
 	String clazz;
-	Arguments arguments = new Arguments();
+	PrimativeTypeConverters arguments = new PrimativeTypeConverters();
 	Connection connection;
 
 	@Before

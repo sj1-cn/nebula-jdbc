@@ -53,7 +53,7 @@ public class EntityImplBuilderTest extends TestBase {
 		clazzFields.push(new FieldMapper("name", "getName", String.class, VARCHAR("NAME")));
 		clazzFields.push(new FieldMapper("description", "getDescription", String.class, VARCHAR("description")));
 
-		EntityDefinition clazzDefinition = new EntityDefinition(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName().toUpperCase(), clazzFields);
+		EntityPojoDbMappingDefinitions clazzDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName().toUpperCase(), clazzFields);
 
 		String targetClazz = User.class.getName();
 		String clazzExtend = targetClazz + "Extend";
@@ -84,7 +84,7 @@ public class EntityImplBuilderTest extends TestBase {
 
 		String targetClazz = UserMoreComplex.class.getName();
 		String clazzExtend = targetClazz + "Extend";
-		EntityDefinition clazzDefinition = new EntityDefinition(UserMoreComplex.class.getSimpleName(),UserMoreComplex.class.getName(), UserMoreComplex.class.getSimpleName().toUpperCase(),
+		EntityPojoDbMappingDefinitions clazzDefinition = new EntityPojoDbMappingDefinitions(UserMoreComplex.class.getSimpleName(),UserMoreComplex.class.getName(), UserMoreComplex.class.getSimpleName().toUpperCase(),
 				clazzFields);
 
 		byte[] code = builder.make(clazzExtend, targetClazz, clazzDefinition);
