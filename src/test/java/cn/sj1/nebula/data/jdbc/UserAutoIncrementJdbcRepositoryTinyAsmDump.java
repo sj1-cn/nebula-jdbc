@@ -10,26 +10,26 @@ import static org.objectweb.asm.Opcodes.*;
 import cn.sj1.tinyasm.core.Annotation;
 import cn.sj1.tinyasm.core.Clazz;
 import java.sql.Connection;
-import nebula.data.query.OrderBy;
+import nebula.jdbc.sql.builders.schema.ColumnList;
 import cn.sj1.nebula.data.jdbc.JdbcRepository;
 import cn.sj1.nebula.data.util.SqlHelper;
+import cn.sj1.nebula.data.query.Condition;
 import cn.sj1.nebula.data.jdbc.sample.User;
 import java.sql.Timestamp;
 import cn.sj1.nebula.data.basic.PageListImpl;
 import java.sql.PreparedStatement;
-import nebula.jdbc.builders.queries.Select;
 import cn.sj1.nebula.data.jdbc.sample.UserExtend;
 import java.util.ArrayList;
 import cn.sj1.nebula.data.basic.PageList;
 import java.sql.SQLException;
+import cn.sj1.nebula.data.query.OrderBy;
 import java.util.List;
 import java.sql.ResultSet;
 import cn.sj1.nebula.data.basic.EntitySystem;
 import java.sql.Statement;
 import java.lang.Object;
-import nebula.data.query.Condition;
-import nebula.jdbc.builders.schema.ColumnList;
 import java.lang.String;
+import nebula.jdbc.sql.builders.queries.Select;
 @SuppressWarnings("unused")
 public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 
@@ -47,7 +47,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		_setConnection(classBody);
 		_initJdbc(classBody);
 		_listJdbc(classBody);
-		_listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int_cnsj1nebuladatabasicPageList(classBody);
+		_listJdbc_cnsj1nebuladataqueryCondition_cnsj1nebuladataqueryOrderBy_int_int_cnsj1nebuladatabasicPageList(classBody);
 		_toEntity(classBody);
 		_findByIdJdbc(classBody);
 		_insertJdbc(classBody);
@@ -305,7 +305,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.END();
 	}
 
-	protected void _listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int_cnsj1nebuladatabasicPageList(ClassBody classBody) {
+	protected void _listJdbc_cnsj1nebuladataqueryCondition_cnsj1nebuladataqueryOrderBy_int_int_cnsj1nebuladatabasicPageList(ClassBody classBody) {
 		MethodCode code = classBody.public_().method("listJdbc")
 			.return_(Clazz.of(PageList.class,Clazz.of(User.class)) )
 			.throws_(SQLException.class )

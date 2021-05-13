@@ -19,19 +19,19 @@ import org.objectweb.asm.Label;
 import cn.sj1.nebula.data.basic.EntitySystem;
 import cn.sj1.nebula.data.basic.PageList;
 import cn.sj1.nebula.data.basic.PageListImpl;
+import cn.sj1.nebula.data.query.Condition;
+import cn.sj1.nebula.data.query.OrderBy;
 import cn.sj1.nebula.data.util.SqlHelper;
 import cn.sj1.tinyasm.core.ClassBody;
 import cn.sj1.tinyasm.core.ClassBuilder;
 import cn.sj1.tinyasm.core.Clazz;
 import cn.sj1.tinyasm.core.MethodCode;
 import nebula.commons.list.ListMap;
-import nebula.data.query.Condition;
-import nebula.data.query.OrderBy;
-import nebula.jdbc.builders.queries.Select;
-import nebula.jdbc.builders.schema.Column;
-import nebula.jdbc.builders.schema.ColumnList;
-import nebula.jdbc.builders.schema.JDBC;
-import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
+import nebula.jdbc.sql.builders.queries.Select;
+import nebula.jdbc.sql.builders.schema.Column;
+import nebula.jdbc.sql.builders.schema.ColumnList;
+import nebula.jdbc.sql.builders.schema.JDBC;
+import nebula.jdbc.sql.builders.schema.JDBC.JdbcMapping;
 
 @SuppressWarnings("unused")
 public class TinyAsmJdbcRepositoryBuilder {

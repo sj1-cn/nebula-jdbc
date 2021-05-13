@@ -1,8 +1,8 @@
 package cn.sj1.nebula.data.jdbc;
 
 import cn.sj1.nebula.data.basic.PageList;
-import nebula.data.query.Condition;
-import nebula.data.query.OrderBy;
+import cn.sj1.nebula.data.query.Condition;
+import cn.sj1.nebula.data.query.OrderBy;
 
 /**
  * Database access for pets.

@@ -6,10 +6,10 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import cn.sj1.nebula.data.basic.PageList;
-import nebula.data.query.Condition;
-import nebula.data.query.OrderBy;
-import nebula.jdbc.builders.schema.ColumnList;
-import nebula.jdbc.builders.schema.JDBC;
+import cn.sj1.nebula.data.query.Condition;
+import cn.sj1.nebula.data.query.OrderBy;
+import nebula.jdbc.sql.builders.schema.ColumnList;
+import nebula.jdbc.sql.builders.schema.JDBC;
 
 public interface JdbcRepository<T> extends Repository<T> {
 	void setConnection(Connection conn);

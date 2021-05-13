@@ -6,7 +6,7 @@ package nebula.jdbc.statements;
 import java.sql.SQLException;
 import java.util.Arrays;
 
-import nebula.jdbc.builders.HasSQLRepresentation;
+import nebula.jdbc.sql.builders.HasSQLRepresentation;
 
 @SuppressWarnings("serial")
 public class SQLError extends RuntimeException {

@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import nebula.jdbc.builders.queries.Select;
+import nebula.jdbc.sql.builders.queries.Select;
 
 public abstract class Criteria {
     private final Map<String, String[]> request;

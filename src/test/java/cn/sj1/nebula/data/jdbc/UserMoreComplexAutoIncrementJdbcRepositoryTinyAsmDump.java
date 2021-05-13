@@ -16,7 +16,6 @@ import cn.sj1.nebula.data.jdbc.JdbcRepository;
 import cn.sj1.nebula.data.util.SqlHelper;
 import java.lang.Double;
 import cn.sj1.nebula.data.basic.PageListImpl;
-import nebula.jdbc.builders.queries.Select;
 import java.lang.Integer;
 import java.util.ArrayList;
 import cn.sj1.nebula.data.basic.PageList;
@@ -28,19 +27,20 @@ import java.sql.ResultSet;
 import java.lang.Short;
 import cn.sj1.nebula.data.basic.EntitySystem;
 import java.lang.Boolean;
-import nebula.data.query.Condition;
 import java.lang.String;
 import java.lang.Byte;
-import nebula.data.query.OrderBy;
+import nebula.jdbc.sql.builders.schema.ColumnList;
 import cn.sj1.nebula.data.jdbc.sample.UserMoreComplex;
+import cn.sj1.nebula.data.query.Condition;
 import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import cn.sj1.nebula.data.jdbc.sample.UserMoreComplexExtend;
 import java.sql.Date;
+import cn.sj1.nebula.data.query.OrderBy;
 import java.util.List;
 import java.sql.Statement;
 import java.lang.Object;
-import nebula.jdbc.builders.schema.ColumnList;
+import nebula.jdbc.sql.builders.queries.Select;
 @SuppressWarnings("unused")
 public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 
@@ -58,7 +58,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		_setConnection(classBody);
 		_initJdbc(classBody);
 		_listJdbc(classBody);
-		_listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int_cnsj1nebuladatabasicPageList(classBody);
+		_listJdbc_cnsj1nebuladataqueryCondition_cnsj1nebuladataqueryOrderBy_int_int_cnsj1nebuladatabasicPageList(classBody);
 		_toEntity(classBody);
 		_findByIdJdbc(classBody);
 		_insertJdbc(classBody);
@@ -382,7 +382,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.END();
 	}
 
-	protected void _listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int_cnsj1nebuladatabasicPageList(ClassBody classBody) {
+	protected void _listJdbc_cnsj1nebuladataqueryCondition_cnsj1nebuladataqueryOrderBy_int_int_cnsj1nebuladatabasicPageList(ClassBody classBody) {
 		MethodCode code = classBody.public_().method("listJdbc")
 			.return_(Clazz.of(PageList.class,Clazz.of(UserMoreComplex.class)) )
 			.throws_(SQLException.class )

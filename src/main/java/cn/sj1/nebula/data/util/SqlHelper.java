@@ -1,6 +1,6 @@
 package cn.sj1.nebula.data.util;
 
-import nebula.jdbc.builders.queries.Select;
+import nebula.jdbc.sql.builders.queries.Select;
 
 public class SqlHelper {
 

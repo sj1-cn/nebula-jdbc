@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 import com.dbal.jdbc.QueryParameters;
 
-import nebula.jdbc.builders.queries.Update;
+import nebula.jdbc.sql.builders.queries.Update;
 
 public class UpdateStatement extends SQLStatement {
     private final Update update;

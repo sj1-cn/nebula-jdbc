@@ -3,8 +3,8 @@ package cn.sj1.nebula.data.jdbc;
 import static cn.sj1.tinyasm.tools.TinyAsmTestUtils.dumpTinyAsm;
 import static java.sql.JDBCType.INTEGER;
 import static java.sql.JDBCType.VARCHAR;
-import static nebula.jdbc.builders.schema.ColumnDefinition.INTEGER;
-import static nebula.jdbc.builders.schema.ColumnDefinition.VARCHAR;
+import static nebula.jdbc.sql.builders.schema.ColumnDefinition.INTEGER;
+import static nebula.jdbc.sql.builders.schema.ColumnDefinition.VARCHAR;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
@@ -12,7 +12,7 @@ import org.junit.Test;
 import cn.sj1.nebula.data.jdbc.sample.User;
 import cn.sj1.nebula.data.jdbc.sample.UserExtend;
 import cn.sj1.tinyasm.tools.TinyAsmTestUtils;
-import nebula.jdbc.builders.schema.ColumnDefinition;
+import nebula.jdbc.sql.builders.schema.ColumnDefinition;
 
 public class TinyAsmJdbcRepositoryBuilderTinyASMifierTest {
 

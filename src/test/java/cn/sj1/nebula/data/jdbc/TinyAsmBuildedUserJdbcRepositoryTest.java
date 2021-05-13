@@ -23,9 +23,9 @@ import cn.sj1.nebula.data.jdbc.FieldList;
 import cn.sj1.nebula.data.jdbc.TinyAsmPrimativeTypeConverters;
 import cn.sj1.nebula.data.jdbc.sample.User;
 import cn.sj1.nebula.data.jdbc.sample.UserExtend;
-import nebula.data.query.Condition;
+import cn.sj1.nebula.data.query.Condition;
 import nebula.jdbc.TestBase;
-import nebula.jdbc.builders.schema.ColumnDefinition;
+import nebula.jdbc.sql.builders.schema.ColumnDefinition;
 
 public class TinyAsmBuildedUserJdbcRepositoryTest extends TestBase {
 

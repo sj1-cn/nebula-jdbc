@@ -13,10 +13,10 @@ import cn.sj1.nebula.data.basic.PageListImpl;
 import cn.sj1.nebula.data.jdbc.JdbcRepository;
 import cn.sj1.nebula.data.jdbc.sample.UserMoreComplex;
 import cn.sj1.nebula.data.jdbc.sample.UserMoreComplexExtend;
+import cn.sj1.nebula.data.query.Condition;
+import cn.sj1.nebula.data.query.OrderBy;
 import cn.sj1.nebula.data.util.SqlHelper;
-import nebula.data.query.Condition;
-import nebula.data.query.OrderBy;
-import nebula.jdbc.builders.schema.ColumnList;
+import nebula.jdbc.sql.builders.schema.ColumnList;
 
 public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepository<UserMoreComplex> {
 	private Connection conn;

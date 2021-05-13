@@ -13,10 +13,10 @@ import cn.sj1.nebula.data.basic.PageListImpl;
 import cn.sj1.nebula.data.jdbc.JdbcRepository;
 import cn.sj1.nebula.data.jdbc.sample.User;
 import cn.sj1.nebula.data.jdbc.sample.UserExtend;
+import cn.sj1.nebula.data.query.Condition;
+import cn.sj1.nebula.data.query.OrderBy;
 import cn.sj1.nebula.data.util.SqlHelper;
-import nebula.data.query.Condition;
-import nebula.data.query.OrderBy;
-import nebula.jdbc.builders.schema.ColumnList;
+import nebula.jdbc.sql.builders.schema.ColumnList;
 
 public class UserJdbcRepository implements JdbcRepository<User> {
 	private Connection conn;

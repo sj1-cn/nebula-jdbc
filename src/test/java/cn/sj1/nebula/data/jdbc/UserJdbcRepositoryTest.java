@@ -16,7 +16,7 @@ import cn.sj1.nebula.data.basic.PageList;
 import cn.sj1.nebula.data.jdbc.JdbcRepository;
 import cn.sj1.nebula.data.jdbc.TinyAsmPrimativeTypeConverters;
 import cn.sj1.nebula.data.jdbc.sample.User;
-import nebula.data.query.Condition;
+import cn.sj1.nebula.data.query.Condition;
 import nebula.jdbc.TestBase;
 
 public class UserJdbcRepositoryTest extends TestBase {

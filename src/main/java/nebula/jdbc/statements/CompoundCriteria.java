@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import nebula.jdbc.builders.queries.Select;
+import nebula.jdbc.sql.builders.queries.Select;
 
 public class CompoundCriteria extends Criteria {
     private final List<Criteria> criteria = new ArrayList<>();
