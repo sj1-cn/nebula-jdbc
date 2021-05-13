@@ -1,6 +1,6 @@
 package nebula.data.jdbc;
 
-import static cn.sj1.tinyasm.util.TinyAsmTestUtils.dumpTinyAsm;
+import static cn.sj1.tinyasm.tools.TinyAsmTestUtils.dumpTinyAsm;
 import static nebula.jdbc.builders.schema.ColumnDefinition.BIGINT;
 import static nebula.jdbc.builders.schema.ColumnDefinition.BIT;
 import static nebula.jdbc.builders.schema.ColumnDefinition.BOOLEAN;
@@ -20,7 +20,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import cn.sj1.tinyasm.util.TinyAsmTestUtils;
+import cn.sj1.tinyasm.tools.TinyAsmTestUtils;
 import nebula.jdbc.TestBase;
 
 public class ClazzExtendBuilderTest extends TestBase {

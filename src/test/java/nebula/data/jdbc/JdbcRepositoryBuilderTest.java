@@ -27,7 +27,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import cn.sj1.tinyasm.util.TinyAsmTestUtils;
+import cn.sj1.tinyasm.tools.TinyAsmTestUtils;
 import nebula.jdbc.TestBase;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 
@@ -142,27 +142,27 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 		String codeExpected = TinyAsmTestUtils.toString(clazzRepository);
 		assertEquals("Code", codeExpected, codeActual);
 	}
-
-	@Test
-	public void testUserKeysJdbcRepository() {
-		FieldList clazzFields = new FieldList();
-		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, INTEGER("id")));
-		clazzFields.push(new FieldMapper(true, "name", "getName", String.class, VARCHAR("name")));
-		clazzFields.push(new FieldMapper("description", "getDescription", String.class, VARCHAR("description")));
-
-		clazzDefinition = new EntityDefinition(User.class.getSimpleName(), User.class.getName(),User.class.getSimpleName(), clazzFields);
-
-		String clazzRepository = UserKeysJdbcRepository.class.getName();
-		String clazzTarget = User.class.getName();
-		String clazzRowMapper = UserExtendJdbcRowMapper.class.getName();
-		String clazzExtend = clazzTarget + "Extend";
-
-		byte[] codeRepository = jdbcRepositoryBuilder.dump(clazzRepository, clazzTarget, clazzExtend, clazzRowMapper, clazzDefinition);
-
-		String codeActual = toString(clazzRepository, codeRepository);
-		String codeExpected = TinyAsmTestUtils.toString(clazzRepository);
-		assertEquals("Code", codeExpected, codeActual);
-	}
+//
+//	@Test
+//	public void testUserKeysJdbcRepository() {
+//		FieldList clazzFields = new FieldList();
+//		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, INTEGER("id")));
+//		clazzFields.push(new FieldMapper(true, "name", "getName", String.class, VARCHAR("name")));
+//		clazzFields.push(new FieldMapper("description", "getDescription", String.class, VARCHAR("description")));
+//
+//		clazzDefinition = new EntityDefinition(User.class.getSimpleName(), User.class.getName(),User.class.getSimpleName(), clazzFields);
+//
+//		String clazzRepository = UserKeysJdbcRepository.class.getName();
+//		String clazzTarget = User.class.getName();
+//		String clazzRowMapper = UserExtendJdbcRowMapper.class.getName();
+//		String clazzExtend = clazzTarget + "Extend";
+//
+//		byte[] codeRepository = jdbcRepositoryBuilder.dump(clazzRepository, clazzTarget, clazzExtend, clazzRowMapper, clazzDefinition);
+//
+//		String codeActual = toString(clazzRepository, codeRepository);
+//		String codeExpected = TinyAsmTestUtils.toString(clazzRepository);
+//		assertEquals("Code", codeExpected, codeActual);
+//	}
 
 	@Test
 	public void testUserMoreComplexAutoIncrementJdbcRepository() {

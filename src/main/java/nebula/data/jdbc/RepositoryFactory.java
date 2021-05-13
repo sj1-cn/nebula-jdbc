@@ -123,7 +123,7 @@ public class RepositoryFactory {
 			@SuppressWarnings("unchecked")
 			Class<JdbcRepository<T>> clazzJdbcRepository = (Class<JdbcRepository<T>>) classLoader.defineClassByName(clazzRepositoryName,
 					codeRepository);
-			JdbcRepository<T> jdbcRepository = clazzJdbcRepository.newInstance();
+			JdbcRepository<T> jdbcRepository = clazzJdbcRepository.getConstructor().newInstance();
 			jdbcRepository.setConnection(this.conn);
 			repositories.put(clazzDefinition.clazz, jdbcRepository);
 			return jdbcRepository;

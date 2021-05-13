@@ -2,23 +2,20 @@ package nebula.data.jdbc;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
-import cn.sj1.tinyasm.ClassBody;
-import cn.sj1.tinyasm.ClassBuilder;
-import cn.sj1.tinyasm.MethodCode;
+import cn.sj1.tinyasm.core.ClassBody;
+import cn.sj1.tinyasm.core.ClassBuilder;
+import cn.sj1.tinyasm.core.MethodCode;
 import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
-import cn.sj1.tinyasm.Annotation;
-import cn.sj1.tinyasm.Clazz;
-import nebula.jdbc.builders.schema.JDBC;
+import cn.sj1.tinyasm.core.Annotation;
+import cn.sj1.tinyasm.core.Clazz;
 import nebula.data.jdbc.JdbcRepository;
-import nebula.jdbc.builders.schema.ColumnDefinition;
 import java.sql.Connection;
 import nebula.data.query.OrderBy;
 import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import nebula.data.jdbc.User;
 import nebula.jdbc.builders.queries.Select;
-import nebula.data.jdbc.UserExtendJdbcRowMapper;
 import nebula.data.jdbc.UserExtend;
 import java.util.ArrayList;
 import java.sql.SQLException;
@@ -28,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.lang.Object;
 import nebula.data.query.Condition;
+import nebula.data.jdbc.SqlHelper;
 import nebula.jdbc.builders.schema.ColumnList;
 import java.lang.String;
 import nebula.data.jdbc.PageListImpl;
@@ -44,17 +42,17 @@ public class UserJdbcRepositoryTinyAsmDump {
 			.access(ACC_PUBLIC | ACC_SUPER).body();
 
 		classBody.private_().field("conn", Clazz.of(Connection.class));
-		classBody.private_().field("mapper", Clazz.of(UserExtendJdbcRowMapper.class));
+		classBody.private_().field("sqlHelper", Clazz.of(SqlHelper.class));
 		__init_(classBody);
 		_setConnection(classBody);
 		_initJdbc(classBody);
 		_listJdbc(classBody);
 		_listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int_nebuladatajdbcPageList(classBody);
+		_toEntity(classBody);
 		_findByIdJdbc(classBody);
 		_insertJdbc(classBody);
 		_updateJdbc(classBody);
 		_deleteByIdJdbc(classBody);
-		_mergeIfExists(classBody);
 		_bridge_updateJdbc(classBody);
 		_bridge_insertJdbc(classBody);
 		_bridge_findByIdJdbc(classBody);
@@ -71,10 +69,12 @@ public class UserJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.NEW(UserExtendJdbcRowMapper.class);
+		code.NEW(SqlHelper.class);
 		code.DUP();
-		code.SPECIAL(UserExtendJdbcRowMapper.class, "<init>").INVOKE();
-		code.PUTFIELD_OF_THIS("mapper");
+		code.SPECIAL(SqlHelper.class, "<init>").INVOKE();
+		code.PUTFIELD_OF_THIS("sqlHelper");
+
+		code.LINE();
 		code.RETURN();
 
 		code.END();
@@ -108,54 +108,40 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("columnList");
 		code.LOADConst("id INTEGER(10) PRIMARY KEY");
-		code.STATIC(ColumnDefinition.class, "valueOf")
-			.return_(ColumnDefinition.class)
+		code.VIRTUAL(ColumnList.class, "addColumn")
 			.parameter(String.class).INVOKE();
-		code.VIRTUAL(ColumnList.class, "push")
-			.parameter(Object.class).INVOKE();
 
 		code.LINE();
 		code.LOAD("columnList");
 		code.LOADConst("name VARCHAR(256)");
-		code.STATIC(ColumnDefinition.class, "valueOf")
-			.return_(ColumnDefinition.class)
+		code.VIRTUAL(ColumnList.class, "addColumn")
 			.parameter(String.class).INVOKE();
-		code.VIRTUAL(ColumnList.class, "push")
-			.parameter(Object.class).INVOKE();
 
 		code.LINE();
 		code.LOAD("columnList");
 		code.LOADConst("description VARCHAR(256)");
-		code.STATIC(ColumnDefinition.class, "valueOf")
-			.return_(ColumnDefinition.class)
+		code.VIRTUAL(ColumnList.class, "addColumn")
 			.parameter(String.class).INVOKE();
-		code.VIRTUAL(ColumnList.class, "push")
-			.parameter(Object.class).INVOKE();
 
 		code.LINE();
 		code.LOAD("columnList");
 		code.LOADConst("createAt TIMESTAMP");
-		code.STATIC(ColumnDefinition.class, "valueOf")
-			.return_(ColumnDefinition.class)
+		code.VIRTUAL(ColumnList.class, "addColumn")
 			.parameter(String.class).INVOKE();
-		code.VIRTUAL(ColumnList.class, "push")
-			.parameter(Object.class).INVOKE();
 
 		code.LINE();
 		code.LOAD("columnList");
 		code.LOADConst("updateAt TIMESTAMP");
-		code.STATIC(ColumnDefinition.class, "valueOf")
-			.return_(ColumnDefinition.class)
+		code.VIRTUAL(ColumnList.class, "addColumn")
 			.parameter(String.class).INVOKE();
-		code.VIRTUAL(ColumnList.class, "push")
-			.parameter(Object.class).INVOKE();
 
 		code.LINE();
+		code.LOAD("this");
 		code.LOAD("this");
 		code.GETFIELD_OF_THIS("conn");
 		code.LOADConst("USER");
 		code.LOAD("columnList");
-		code.STATIC(JDBC.class, "mergeIfExists")
+		code.VIRTUAL("mergeIfExists")
 			.return_(boolean.class)
 			.parameter(Connection.class)
 			.parameter(String.class)
@@ -200,8 +186,10 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.STORE("datas",Clazz.of(PageList.class,Clazz.of(User.class)));
 
 		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("sqlHelper");
 		code.LOADConst("id,name,description,createAt,updateAt");
-		code.STATIC(Select.class, "columns")
+		code.VIRTUAL(SqlHelper.class, "select")
 			.return_(Select.class)
 			.parameter(String.class).INVOKE();
 		code.LOADConst("USER");
@@ -244,9 +232,8 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("datas");
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("mapper");
 		code.LOAD("resultSet");
-		code.VIRTUAL(UserExtendJdbcRowMapper.class, "map")
+		code.SPECIAL("toEntity")
 			.return_(UserExtend.class)
 			.parameter(ResultSet.class).INVOKE();
 		code.INTERFACE(PageList.class, "add")
@@ -262,8 +249,10 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.INTERFACE(ResultSet.class, "close").INVOKE();
 
 		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("sqlHelper");
 		code.LOADConst("count(1)");
-		code.STATIC(Select.class, "columns")
+		code.VIRTUAL(SqlHelper.class, "select")
 			.return_(Select.class)
 			.parameter(String.class).INVOKE();
 		code.LOADConst("USER");
@@ -336,8 +325,10 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.STORE("datas",Clazz.of(PageList.class,Clazz.of(User.class)));
 
 		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("sqlHelper");
 		code.LOADConst("id,name,description,createAt,updateAt");
-		code.STATIC(Select.class, "columns")
+		code.VIRTUAL(SqlHelper.class, "select")
 			.return_(Select.class)
 			.parameter(String.class).INVOKE();
 		code.LOADConst("USER");
@@ -388,9 +379,8 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("datas");
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("mapper");
 		code.LOAD("resultSet");
-		code.VIRTUAL(UserExtendJdbcRowMapper.class, "map")
+		code.SPECIAL("toEntity")
 			.return_(UserExtend.class)
 			.parameter(ResultSet.class).INVOKE();
 		code.INTERFACE(PageList.class, "add")
@@ -406,8 +396,10 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.INTERFACE(ResultSet.class, "close").INVOKE();
 
 		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("sqlHelper");
 		code.LOADConst("count(1)");
-		code.STATIC(Select.class, "columns")
+		code.VIRTUAL(SqlHelper.class, "select")
 			.return_(Select.class)
 			.parameter(String.class).INVOKE();
 		code.LOADConst("USER");
@@ -464,14 +456,80 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.END();
 	}
 
+	protected void _toEntity(ClassBody classBody) {
+		MethodCode code = classBody.private_().method("toEntity")
+			.return_(UserExtend.class )
+			.throws_(SQLException.class )
+			.parameter("resultSet",ResultSet.class).begin();
+
+		code.LINE();
+		code.NEW(UserExtend.class);
+		code.DUP();
+		code.SPECIAL(UserExtend.class, "<init>").INVOKE();
+		code.STORE("impl",UserExtend.class);
+
+		code.LINE();
+		code.LOAD("impl");
+		code.LOAD("resultSet");
+		code.LOADConst(1);
+		code.INTERFACE(ResultSet.class, "getLong")
+			.return_(long.class)
+			.parameter(int.class).INVOKE();
+		code.VIRTUAL(UserExtend.class, "setId")
+			.parameter(long.class).INVOKE();
+
+		code.LINE();
+		code.LOAD("impl");
+		code.LOAD("resultSet");
+		code.LOADConst(2);
+		code.INTERFACE(ResultSet.class, "getString")
+			.return_(String.class)
+			.parameter(int.class).INVOKE();
+		code.VIRTUAL(UserExtend.class, "setName")
+			.parameter(String.class).INVOKE();
+
+		code.LINE();
+		code.LOAD("impl");
+		code.LOAD("resultSet");
+		code.LOADConst(3);
+		code.INTERFACE(ResultSet.class, "getString")
+			.return_(String.class)
+			.parameter(int.class).INVOKE();
+		code.VIRTUAL(UserExtend.class, "setDescription")
+			.parameter(String.class).INVOKE();
+
+		code.LINE();
+		code.LOAD("impl");
+		code.LOAD("resultSet");
+		code.LOADConst(4);
+		code.INTERFACE(ResultSet.class, "getTimestamp")
+			.return_(Timestamp.class)
+			.parameter(int.class).INVOKE();
+		code.VIRTUAL(UserExtend.class, "setCreateAt")
+			.parameter(Timestamp.class).INVOKE();
+
+		code.LINE();
+		code.LOAD("impl");
+		code.LOAD("resultSet");
+		code.LOADConst(5);
+		code.INTERFACE(ResultSet.class, "getTimestamp")
+			.return_(Timestamp.class)
+			.parameter(int.class).INVOKE();
+		code.VIRTUAL(UserExtend.class, "setUpdateAt")
+			.parameter(Timestamp.class).INVOKE();
+
+		code.LINE();
+		code.LOAD("impl");
+		code.RETURNTop();
+
+		code.END();
+	}
+
 	protected void _findByIdJdbc(ClassBody classBody) {
 		MethodCode code = classBody.public_().method("findByIdJdbc")
 			.return_(User.class )
 			.throws_(SQLException.class )
 			.parameter("id",long.class).begin();
-		code.define("preparedStatement",PreparedStatement.class);
-		code.define("resultSet",ResultSet.class);
-		code.define("datas",Clazz.of(List.class,Clazz.of(User.class)));
 
 		code.LINE();
 		code.NEW(ArrayList.class);
@@ -515,9 +573,8 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("datas");
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("mapper");
 		code.LOAD("resultSet");
-		code.VIRTUAL(UserExtendJdbcRowMapper.class, "map")
+		code.SPECIAL("toEntity")
 			.return_(UserExtend.class)
 			.parameter(ResultSet.class).INVOKE();
 		code.INTERFACE(List.class, "add")
@@ -757,20 +814,6 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.LOAD("preparedStatement");
 		code.INTERFACE(PreparedStatement.class, "executeUpdate")
 			.return_(int.class).INVOKE();
-		code.RETURNTop();
-
-		code.END();
-	}
-
-	protected void _mergeIfExists(ClassBody classBody) {
-		MethodCode code = classBody.public_().method("mergeIfExists")
-			.return_(boolean.class )
-			.parameter("conn",Connection.class)
-			.parameter("tableName",String.class)
-			.parameter("columnsExpected",ColumnList.class).begin();
-
-		code.LINE();
-		code.LOADConst(0);
 		code.RETURNTop();
 
 		code.END();

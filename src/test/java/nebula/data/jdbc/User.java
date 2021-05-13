@@ -28,6 +28,10 @@ public class User implements WithIdKey{
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	public User() {
+		
+	}
 
 	public User(long id, String name, String description) {
 		super();

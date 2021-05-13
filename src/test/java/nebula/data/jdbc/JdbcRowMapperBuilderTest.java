@@ -23,7 +23,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import cn.sj1.tinyasm.util.TinyAsmTestUtils;
+import cn.sj1.tinyasm.tools.TinyAsmTestUtils;
 import nebula.jdbc.TestBase;
 
 public class JdbcRowMapperBuilderTest extends TestBase {

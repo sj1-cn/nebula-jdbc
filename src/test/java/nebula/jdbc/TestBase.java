@@ -16,7 +16,7 @@ import org.junit.rules.TestName;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import cn.sj1.tinyasm.util.TinyAsmTestUtils;
+import cn.sj1.tinyasm.tools.TinyAsmTestUtils;
 
 public class TestBase {
 	@Rule

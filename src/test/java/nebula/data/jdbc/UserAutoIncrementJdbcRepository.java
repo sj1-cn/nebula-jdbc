@@ -13,11 +13,9 @@ import nebula.jdbc.builders.schema.ColumnList;
 
 public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 	private Connection conn;
-//	private UserExtendJdbcRowMapper mapper;
 	private SqlHelper sqlHelper;
 
 	public UserAutoIncrementJdbcRepository() {
-//		mapper = new UserExtendJdbcRowMapper();
 		sqlHelper = new SqlHelper();
 	}
 
@@ -41,7 +39,6 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public PageList<User> listJdbc(int start, int max) throws SQLException {
 		PageList<User> datas = new PageListImpl<>(start, max);
@@ -53,13 +50,13 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		ResultSet resultSet = conn.prepareStatement(sql).executeQuery();
 
 		while (resultSet.next()) {
-			datas.add(new UserExtend(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"),resultSet.getTimestamp("createAt"),resultSet.getTimestamp("updateAt")));
+			datas.add(toEntity(resultSet));
 		}
 		resultSet.close();
 
 		String sqlCount = sqlHelper.select("count(1)").from("USER").toSQL();
 		ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
-		boolean result = resultSetCount.next();
+		resultSetCount.next();
 		int totalSize = resultSetCount.getInt(1);
 		resultSetCount.close();
 		datas.totalSize(totalSize);
@@ -67,7 +64,6 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		return datas;
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public PageList<User> listJdbc(Condition condition, OrderBy orderBy, int start, int max) throws SQLException {
 		PageList<User> datas = new PageListImpl<>(start, max);
@@ -79,18 +75,30 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		ResultSet resultSet = conn.prepareStatement(sql).executeQuery();
 
 		while (resultSet.next()) {
-			datas.add(new UserExtend(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"),resultSet.getTimestamp("createAt"),resultSet.getTimestamp("updateAt")));
+			datas.add(toEntity(resultSet));
 		}
 		resultSet.close();
 
 		String sqlCount = sqlHelper.select("count(1)").from("USER").where(condition).toSQL();
 		ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
-		boolean result = resultSetCount.next();
+		resultSetCount.next();
 		int totalSize = resultSetCount.getInt(1);
 		resultSetCount.close();
 		datas.totalSize(totalSize);
 
 		return datas;
+	}
+
+	private UserExtend toEntity(ResultSet resultSet) throws SQLException {
+		UserExtend impl = new UserExtend();
+
+		impl.setId(resultSet.getLong(1));
+		impl.setName(resultSet.getString(2));
+		impl.setDescription(resultSet.getString(3));
+
+		impl.setCreateAt(resultSet.getTimestamp(4));
+		impl.setUpdateAt(resultSet.getTimestamp(5));
+		return impl;
 	}
 
 	@Override
@@ -106,16 +114,15 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		ResultSet resultSet = preparedStatement.executeQuery();
 
 		while (resultSet.next()) {
-			datas.add(new UserExtend(resultSet.getLong("id"), resultSet.getString("name"), resultSet.getString("description"),resultSet.getTimestamp("createAt"),resultSet.getTimestamp("updateAt")));
+			datas.add(toEntity(resultSet));
 		}
-		
+
 		return datas.get(0);
 	}
 
 	@Override
 	public User insertJdbc(User data) throws SQLException {
 		ResultSet resultSet = null;
-
 		// @formatter:off
 		PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO USER(name,description,createAt,updateAt) VALUES(?,?,?,?)",PreparedStatement.RETURN_GENERATED_KEYS);
 		// @formatter:on
@@ -138,8 +145,7 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 	@Override
 	public User updateJdbc(User data) throws SQLException {
 		ClassExtend extend = (ClassExtend) findByIdJdbc(data.getId());
-		ClassExtend dataExtend = (ClassExtend)data;
-		if (extend.getUpdateAt() == dataExtend.getUpdateAt()) {
+		if (extend.getUpdateAt() == ((ClassExtend) data).getUpdateAt()) {
 			return null;
 		}
 
@@ -164,7 +170,6 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 		PreparedStatement preparedStatement = conn.prepareStatement("DELETE USER WHERE id=?");
 		// @formatter:on
 
-//		Object key = keys[0];
 		preparedStatement.setLong(1, id);
 
 		return preparedStatement.executeUpdate();

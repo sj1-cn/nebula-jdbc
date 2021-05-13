@@ -5,9 +5,9 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import cn.sj1.tinyasm.ClassBody;
-import cn.sj1.tinyasm.ClassBuilder;
-import cn.sj1.tinyasm.MethodCode;
+import cn.sj1.tinyasm.core.ClassBody;
+import cn.sj1.tinyasm.core.ClassBuilder;
+import cn.sj1.tinyasm.core.MethodCode;
 
 public class JdbcRepositoryBuilder extends RepositoryBuilder {
 

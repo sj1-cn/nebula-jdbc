@@ -9,41 +9,41 @@ import java.util.List;
 
 import nebula.data.query.Condition;
 import nebula.data.query.OrderBy;
-import nebula.jdbc.builders.queries.Select;
-import nebula.jdbc.builders.schema.ColumnDefinition;
 import nebula.jdbc.builders.schema.ColumnList;
-import nebula.jdbc.builders.schema.JDBC;
 
 public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepository<UserMoreComplex> {
 	private Connection conn;
-	private UserMoreComplexExtendJdbcRowMapper mapper = new UserMoreComplexExtendJdbcRowMapper();
+	private SqlHelper sqlHelper;
+
+	public UserMoreComplexAutoIncrementJdbcRepository() {
+		sqlHelper = new SqlHelper();
+	}
 
 	@Override
 	public void setConnection(Connection conn) {
 		this.conn = conn;
 	}
 
-	// @formatter:off
 	@Override
 	public void initJdbc() throws SQLException {
 		ColumnList columnList = new ColumnList();
-		columnList.push(ColumnDefinition.valueOf("id BIGINT(19) PRIMARY KEY AUTO_INCREMENT"));
-		columnList.push(ColumnDefinition.valueOf("string VARCHAR(256)"));
-		columnList.push(ColumnDefinition.valueOf("bigDecimal DECIMAL(15,6)"));
-		columnList.push(ColumnDefinition.valueOf("z BOOLEAN"));
-		columnList.push(ColumnDefinition.valueOf("c CHAR(1)"));
-		columnList.push(ColumnDefinition.valueOf("b TINYINT(3)"));
-		columnList.push(ColumnDefinition.valueOf("s SMALLINT(5)"));
-		columnList.push(ColumnDefinition.valueOf("i INTEGER(10)"));
-		columnList.push(ColumnDefinition.valueOf("l BIGINT(19)"));
-		columnList.push(ColumnDefinition.valueOf("f FLOAT(7)"));
-		columnList.push(ColumnDefinition.valueOf("d DOUBLE(17)"));
-		columnList.push(ColumnDefinition.valueOf("date DATE"));
-		columnList.push(ColumnDefinition.valueOf("time TIME"));
-		columnList.push(ColumnDefinition.valueOf("timestamp TIMESTAMP"));
-		columnList.push(ColumnDefinition.valueOf("createAt TIMESTAMP"));
-		columnList.push(ColumnDefinition.valueOf("updateAt TIMESTAMP"));
-		if (!JDBC.mergeIfExists(this.conn, "USERMORECOMPLEX", columnList)) {
+		columnList.addColumn("id BIGINT(19) PRIMARY KEY AUTO_INCREMENT");
+		columnList.addColumn("string VARCHAR(256)");
+		columnList.addColumn("bigDecimal DECIMAL(15,6)");
+		columnList.addColumn("z BOOLEAN");
+		columnList.addColumn("c CHAR(1)");
+		columnList.addColumn("b TINYINT(3)");
+		columnList.addColumn("s SMALLINT(5)");
+		columnList.addColumn("i INTEGER(10)");
+		columnList.addColumn("l BIGINT(19)");
+		columnList.addColumn("f FLOAT(7)");
+		columnList.addColumn("d DOUBLE(17)");
+		columnList.addColumn("date DATE");
+		columnList.addColumn("time TIME");
+		columnList.addColumn("timestamp TIMESTAMP");
+		columnList.addColumn("createAt TIMESTAMP");
+		columnList.addColumn("updateAt TIMESTAMP");
+		if (!mergeIfExists(conn, "USERMORECOMPLEX", columnList)) {
 			this.conn.prepareStatement("CREATE TABLE USERMORECOMPLEX(id BIGINT(19) PRIMARY KEY AUTO_INCREMENT,string VARCHAR(256),bigDecimal DECIMAL(15,6),z BOOLEAN,c CHAR(1),b TINYINT(3),s SMALLINT(5),i INTEGER(10),l BIGINT(19),f FLOAT(7),d DOUBLE(17),date DATE,time TIME,timestamp TIMESTAMP,createAt TIMESTAMP,updateAt TIMESTAMP)").execute();
 		}
 	}
@@ -53,17 +53,17 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 		PageList<UserMoreComplex> datas = new PageListImpl<>(start, max);
 
 		// @formatter:off
-		String sql = Select.columns("id,string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp,createAt,updateAt").from("USERMORECOMPLEX").offset(start).max(max).toSQL();
+		String sql = sqlHelper.select("id,string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp,createAt,updateAt").from("USERMORECOMPLEX").offset(start).max(max).toSQL();
 		// @formatter:on
 
 		ResultSet resultSet = conn.prepareStatement(sql).executeQuery();
 
 		while (resultSet.next()) {
-			datas.add(mapper.map(resultSet));
+			datas.add(toEntity(resultSet));
 		}
 		resultSet.close();
 
-		String sqlCount = Select.columns("count(1)").from("USERMORECOMPLEX").toSQL();
+		String sqlCount = sqlHelper.select("count(1)").from("USERMORECOMPLEX").toSQL();
 		ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
 		resultSetCount.next();
 		int totalSize = resultSetCount.getInt(1);
@@ -79,17 +79,17 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 		PageList<UserMoreComplex> datas = new PageListImpl<>(start, max);
 
 		// @formatter:off
-		String sql = Select.columns("id,string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp,createAt,updateAt").from("USERMORECOMPLEX").where(condition).orderby(orderBy).offset(start).max(max).toSQL();
+		String sql = sqlHelper.select("id,string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp,createAt,updateAt").from("USERMORECOMPLEX").where(condition).orderby(orderBy).offset(start).max(max).toSQL();
 		// @formatter:on
 
 		ResultSet resultSet = conn.prepareStatement(sql).executeQuery();
 
 		while (resultSet.next()) {
-			datas.add(mapper.map(resultSet));
+			datas.add(toEntity(resultSet));
 		}
 		resultSet.close();
 
-		String sqlCount = Select.columns("count(1)").from("USERMORECOMPLEX").where(condition).toSQL();
+		String sqlCount = sqlHelper.select("count(1)").from("USERMORECOMPLEX").where(condition).toSQL();
 		ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
 		resultSetCount.next();
 		int totalSize = resultSetCount.getInt(1);
@@ -99,30 +99,51 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 		return datas;
 	}
 
+
+	private UserMoreComplexExtend toEntity(ResultSet resultSet) throws SQLException {
+		UserMoreComplexExtend impl = new UserMoreComplexExtend();
+
+		impl.setId(resultSet.getLong(1));
+		impl.setString(resultSet.getString(2));
+		impl.setBigDecimal(resultSet.getBigDecimal(3)); 
+		impl.setZ(resultSet.getBoolean(4));
+		impl.setC(resultSet.getString(5).charAt(0));
+		impl.setB(Byte.valueOf(resultSet.getByte(6)));
+		impl.setS(Short.valueOf(resultSet.getShort(7)));
+		impl.setI(Integer.valueOf(resultSet.getInt(8)));
+		impl.setL(Long.valueOf(resultSet.getLong(9)));
+		impl.setF(Float.valueOf(resultSet.getFloat(10)));
+		impl.setD(Double.valueOf(resultSet.getDouble(11)));
+		impl.setDate(resultSet.getDate(12));
+		impl.setTime(resultSet.getTime(13)); 
+		impl.setTimestamp(resultSet.getTimestamp(14));
+		impl.setCreateAt(resultSet.getTimestamp(15));
+		impl.setUpdateAt(resultSet.getTimestamp(16));
+		
+		return impl;
+	}
+
 	@Override
-	public UserMoreComplex findByIdJdbc(long key) throws SQLException {
-		PreparedStatement preparedStatement;
-		ResultSet resultSet;
+	public UserMoreComplex findByIdJdbc(long id) throws SQLException {
 		List<UserMoreComplex> datas = new ArrayList<>();
 
-		preparedStatement = conn.prepareStatement("SELECT id, string, bigDecimal, z, c, b, s, i, l, f, d, date, time, timestamp, createAt, updateAt FROM USERMORECOMPLEX WHERE id = ?");
+		PreparedStatement preparedStatement = conn.prepareStatement("SELECT id, string, bigDecimal, z, c, b, s, i, l, f, d, date, time, timestamp, createAt, updateAt FROM USERMORECOMPLEX WHERE id = ?");
 
-		preparedStatement.setLong(1, key);
+		preparedStatement.setLong(1, id);
 
-		resultSet = preparedStatement.executeQuery();
+		ResultSet resultSet = preparedStatement.executeQuery();
 
 		while (resultSet.next()) {
-			datas.add(mapper.map(resultSet));
+			datas.add(toEntity(resultSet));
 		}
 		return datas.get(0);
 	}
 
 	@Override
 	public UserMoreComplex insertJdbc(UserMoreComplex data) throws SQLException {
-		PreparedStatement preparedStatement = null;
-		ResultSet rs = null;
+		ResultSet resultSet = null;
 		// @formatter:off
-		preparedStatement = this.conn.prepareStatement("INSERT INTO USERMORECOMPLEX(string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp,createAt,updateAt) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", 1);
+		PreparedStatement preparedStatement = this.conn.prepareStatement("INSERT INTO USERMORECOMPLEX(string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp,createAt,updateAt) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", 1);
 		// @formatter:on
 
 		preparedStatement.setString(1, data.getString());
@@ -142,9 +163,9 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 		bindInsertExtend(preparedStatement, 14);
 
 		if (preparedStatement.executeUpdate() > 0) {
-			rs = preparedStatement.getGeneratedKeys();
-			rs.next();
-			return (UserMoreComplex) findByIdJdbc(rs.getLong(1));
+			resultSet = preparedStatement.getGeneratedKeys();
+			resultSet.next();
+			return findByIdJdbc(resultSet.getLong(1));
 		}
 		return null;
 	}
@@ -157,7 +178,7 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 		}
 
 		// @formatter:off
-		PreparedStatement preparedStatement = this.conn.prepareStatement("UPDATE USERMORECOMPLEX SET string=?,bigDecimal=?,z=?,c=?,b=?,s=?,i=?,l=?,f=?,d=?,date=?,time=?,timestamp=?,updateAt=? WHERE id=?");
+		PreparedStatement preparedStatement =  conn.prepareStatement("UPDATE USERMORECOMPLEX SET string=?,bigDecimal=?,z=?,c=?,b=?,s=?,i=?,l=?,f=?,d=?,date=?,time=?,timestamp=?,updateAt=? WHERE id=?");
 		// @formatter:on
 
 		preparedStatement.setString(1, data.getString());
@@ -183,20 +204,14 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 	}
 
 	@Override
-	public int deleteByIdJdbc(long key) throws SQLException {
+	public int deleteByIdJdbc(long id) throws SQLException {
 		// @formatter:off
 		PreparedStatement preparedStatement = conn.prepareStatement("DELETE USERMORECOMPLEX WHERE id=?");
 		// @formatter:on
 
-		preparedStatement.setLong(1, ((Long)key).longValue());
+		preparedStatement.setLong(1, id);
 
 		return preparedStatement.executeUpdate();
-	}
-
-	@Override
-	public boolean mergeIfExists(Connection conn, String tableName, ColumnList columnsExpected) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 }

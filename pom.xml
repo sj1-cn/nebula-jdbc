@@ -14,7 +14,7 @@
 		<jacoco.version>0.8.6</jacoco.version>
 		<junit.version>4.13.1</junit.version>
 		<nebula.version>1.1.0</nebula.version>
-		<tinyasm.version>0.2.0</tinyasm.version>
+		<tinyasm.version>0.3.4</tinyasm.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<mockito.version>1.10.19</mockito.version>
 		<log4j.version>2.14.0</log4j.version>
@@ -25,20 +25,25 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.github.sj1-cn</groupId>
+			<groupId>nebula</groupId>
 			<artifactId>nebula-commons</artifactId>
 			<version>${nebula.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.github.sj1-cn</groupId>
+			<groupId>nebula</groupId>
 			<artifactId>nebula-lang</artifactId>
 			<version>${nebula.version}</version>
 		</dependency>
 		<dependency>
+		    <groupId>cn.sj1</groupId>
+		    <artifactId>tinyasm-core</artifactId>
+		    <version>0.3.4.1</version>
+		</dependency>
+<!-- 		<dependency>
 			<groupId>com.github.sj1-cn</groupId>
 			<artifactId>tinyasm-core</artifactId>
 			<version>${tinyasm.version}</version>
-		</dependency>
+		</dependency> -->
 		<!-- LOG -->
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
 		<dependency>
@@ -107,8 +112,8 @@
 					<skipMain>false</skipMain>
 					<skip>false</skip>
 					<encoding>${project.build.sourceEncoding}</encoding>
-					<source>1.9</source>
-					<target>1.9</target>
+					<source>8</source>
+					<target>8</target>
 					<compilerArgument>${compiler.compilerArgument}</compilerArgument>
 				</configuration>
 			</plugin>

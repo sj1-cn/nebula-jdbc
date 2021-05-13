@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import cn.sj1.tinyasm.MethodCode;
+import cn.sj1.tinyasm.core.MethodCode;
 
 //Primitives: boolean, byte, short, int, long, char, float, and double
 //

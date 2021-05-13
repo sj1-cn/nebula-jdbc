@@ -6,7 +6,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 
 public class UserMoreComplex {
-	private Long id;
+	private long id;
 	private String string;
 	private BigDecimal bigDecimal;
 	private Boolean z;
@@ -20,8 +20,10 @@ public class UserMoreComplex {
 	private Date date;
 	private Time time;
 	private Timestamp timestamp;
-
-	public Long getId() {
+	public UserMoreComplex(){
+		
+	}
+	public long getId() {
 		return id;
 	}
 
@@ -77,7 +79,7 @@ public class UserMoreComplex {
 		return timestamp;
 	}
 
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
