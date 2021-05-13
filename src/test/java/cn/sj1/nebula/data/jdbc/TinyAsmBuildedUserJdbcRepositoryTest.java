@@ -18,8 +18,8 @@ import cn.sj1.nebula.data.basic.PageList;
 import cn.sj1.nebula.data.jdbc.sample.User;
 import cn.sj1.nebula.data.jdbc.sample.UserExtend;
 import cn.sj1.nebula.data.query.Condition;
+import cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition;
 import nebula.jdbc.TestBase;
-import nebula.jdbc.sql.builders.schema.ColumnDefinition;
 
 public class TinyAsmBuildedUserJdbcRepositoryTest extends TestBase {
 

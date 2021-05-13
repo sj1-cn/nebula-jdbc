@@ -15,7 +15,7 @@ import cn.sj1.nebula.data.jdbc.sample.UserMoreComplexExtend;
 import cn.sj1.nebula.data.query.Condition;
 import cn.sj1.nebula.data.query.OrderBy;
 import cn.sj1.nebula.data.util.SqlHelper;
-import nebula.jdbc.sql.builders.schema.ColumnList;
+import cn.sj1.nebula.jdbc.sql.builders.schema.ColumnList;
 
 public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepository<UserMoreComplex> {
 	private Connection conn;

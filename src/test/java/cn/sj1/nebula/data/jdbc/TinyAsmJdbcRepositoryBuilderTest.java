@@ -1,20 +1,20 @@
 package cn.sj1.nebula.data.jdbc;
 
+import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.BIGINT;
+import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.BOOLEAN;
+import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.CHAR;
+import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.DATE;
+import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.DECIMAL;
+import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.DOUBLE;
+import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.FLOAT;
+import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.INTEGER;
+import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.SMALLINT;
+import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.TIME;
+import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.TIMESTAMP;
+import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.TINYINT;
+import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.VARCHAR;
 import static java.sql.JDBCType.INTEGER;
 import static java.sql.JDBCType.VARCHAR;
-import static nebula.jdbc.sql.builders.schema.ColumnDefinition.BIGINT;
-import static nebula.jdbc.sql.builders.schema.ColumnDefinition.BOOLEAN;
-import static nebula.jdbc.sql.builders.schema.ColumnDefinition.CHAR;
-import static nebula.jdbc.sql.builders.schema.ColumnDefinition.DATE;
-import static nebula.jdbc.sql.builders.schema.ColumnDefinition.DECIMAL;
-import static nebula.jdbc.sql.builders.schema.ColumnDefinition.DOUBLE;
-import static nebula.jdbc.sql.builders.schema.ColumnDefinition.FLOAT;
-import static nebula.jdbc.sql.builders.schema.ColumnDefinition.INTEGER;
-import static nebula.jdbc.sql.builders.schema.ColumnDefinition.SMALLINT;
-import static nebula.jdbc.sql.builders.schema.ColumnDefinition.TIME;
-import static nebula.jdbc.sql.builders.schema.ColumnDefinition.TIMESTAMP;
-import static nebula.jdbc.sql.builders.schema.ColumnDefinition.TINYINT;
-import static nebula.jdbc.sql.builders.schema.ColumnDefinition.VARCHAR;
 import static org.junit.Assert.assertEquals;
 
 import java.sql.Connection;
@@ -26,9 +26,9 @@ import org.junit.Test;
 
 import cn.sj1.nebula.data.jdbc.sample.User;
 import cn.sj1.nebula.data.jdbc.sample.UserMoreComplex;
+import cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition;
 import cn.sj1.tinyasm.tools.TinyAsmTestUtils;
 import nebula.jdbc.TestBase;
-import nebula.jdbc.sql.builders.schema.ColumnDefinition;
 
 public class TinyAsmJdbcRepositoryBuilderTest extends TestBase {
 

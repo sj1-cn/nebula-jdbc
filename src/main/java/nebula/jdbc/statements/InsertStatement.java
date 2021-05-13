@@ -12,7 +12,7 @@ import java.sql.Statement;
 import com.dbal.jdbc.QueryParameters;
 import com.dbal.jdbc.RowMapper;
 
-import nebula.jdbc.sql.builders.queries.Insert;
+import cn.sj1.nebula.jdbc.sql.builders.queries.Insert;
 
 public class InsertStatement<T> extends SQLStatement {
     private Insert insert;

@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import com.dbal.jdbc.QueryParameters;
 import com.dbal.jdbc.RowMapper;
 
-import nebula.jdbc.sql.builders.queries.Select;
+import cn.sj1.nebula.jdbc.sql.builders.queries.Select;
 
 public class SelectStatement<T> extends SQLStatement {
     private final Select select;
