@@ -7,7 +7,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import nebula.jdbc.sql.builders.queries.JoinExpression;
 import nebula.jdbc.sql.builders.queries.JoinExpression.Type;
 
 public class JoinExpressionTest {

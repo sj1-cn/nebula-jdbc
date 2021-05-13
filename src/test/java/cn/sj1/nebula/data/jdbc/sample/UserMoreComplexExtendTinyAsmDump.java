@@ -1,29 +1,17 @@
 package cn.sj1.nebula.data.jdbc.sample;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.Handle;
-import org.objectweb.asm.Opcodes;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_SUPER;
+
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+
+import cn.sj1.nebula.data.basic.EntitySystem;
 import cn.sj1.tinyasm.core.ClassBody;
 import cn.sj1.tinyasm.core.ClassBuilder;
-import cn.sj1.tinyasm.core.MethodCode;
-import org.objectweb.asm.Type;
-import static org.objectweb.asm.Opcodes.*;
-import cn.sj1.tinyasm.core.Annotation;
 import cn.sj1.tinyasm.core.Clazz;
-import java.lang.Float;
-import java.sql.Time;
-import cn.sj1.nebula.data.jdbc.sample.UserMoreComplex;
-import java.lang.Double;
-import java.sql.Timestamp;
-import java.lang.Integer;
-import java.sql.Date;
-import java.math.BigDecimal;
-import java.lang.Character;
-import java.lang.Long;
-import java.lang.Short;
-import cn.sj1.nebula.data.basic.EntitySystem;
-import java.lang.Boolean;
-import java.lang.String;
-import java.lang.Byte;
+import cn.sj1.tinyasm.core.MethodCode;
 @SuppressWarnings("unused")
 public class UserMoreComplexExtendTinyAsmDump {
 

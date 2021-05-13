@@ -7,8 +7,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import nebula.jdbc.sql.builders.queries.Join;
-
 public class JoinTest {
     private Join join = Join.empty();
 

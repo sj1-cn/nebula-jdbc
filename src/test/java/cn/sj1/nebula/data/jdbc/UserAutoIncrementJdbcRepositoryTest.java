@@ -11,8 +11,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import cn.sj1.nebula.data.jdbc.JdbcRepository;
-import cn.sj1.nebula.data.jdbc.TinyAsmPrimativeTypeConverters;
 import cn.sj1.nebula.data.jdbc.sample.User;
 import nebula.jdbc.TestBase;
 

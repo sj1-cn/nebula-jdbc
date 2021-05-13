@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import cn.sj1.nebula.data.query.OrderBy;
 import cn.sj1.nebula.data.query.OrderByOp;
-import nebula.jdbc.sql.builders.queries.Select;
 import nebula.jdbc.sql.builders.schema.ColumnDefinition;
 import nebula.jdbc.sql.builders.schema.ColumnList;
 

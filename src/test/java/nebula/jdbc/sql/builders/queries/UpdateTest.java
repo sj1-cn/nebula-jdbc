@@ -7,7 +7,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import nebula.jdbc.sql.builders.queries.Update;
 import nebula.jdbc.sql.builders.schema.ColumnDefinition;
 import nebula.jdbc.sql.builders.schema.ColumnList;
 

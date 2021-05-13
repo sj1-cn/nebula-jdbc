@@ -6,10 +6,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import cn.sj1.nebula.data.query.CommonSQLConditionVisitor;
-import cn.sj1.nebula.data.query.Condition;
-import cn.sj1.nebula.data.query.OrderBy;
-
 public class SqlTest {
 
 	@Test

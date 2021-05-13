@@ -20,10 +20,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import cn.sj1.nebula.data.jdbc.EntityImplBuilder;
-import cn.sj1.nebula.data.jdbc.EntityPojoDbMappingDefinitions;
-import cn.sj1.nebula.data.jdbc.EntityPojoFieldJdbcMapper;
-import cn.sj1.nebula.data.jdbc.FieldList;
 import cn.sj1.nebula.data.jdbc.sample.User;
 import cn.sj1.nebula.data.jdbc.sample.UserMoreComplex;
 import cn.sj1.nebula.data.jdbc.sample.UserMoreComplexExtend;

@@ -8,8 +8,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import nebula.jdbc.sql.builders.schema.PrimaryKey;
-
 public class PrimaryKeyTest {
 	@Test
 	public void it_converts_to_sql_a_primary_key() {

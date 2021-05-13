@@ -28,12 +28,6 @@ import org.junit.rules.TestName;
 
 import nebula.jdbc.TestBase;
 import nebula.jdbc.meta.JdbcDababaseMetadata;
-import nebula.jdbc.sql.builders.schema.ColumnDefinition;
-import nebula.jdbc.sql.builders.schema.ColumnList;
-import nebula.jdbc.sql.builders.schema.DBSchemaMerge;
-import nebula.jdbc.sql.builders.schema.DDLAlterTable;
-import nebula.jdbc.sql.builders.schema.DDLCommand;
-import nebula.jdbc.sql.builders.schema.JDBC;
 
 public class DBSchemaMergeTest extends TestBase {
 	@Rule

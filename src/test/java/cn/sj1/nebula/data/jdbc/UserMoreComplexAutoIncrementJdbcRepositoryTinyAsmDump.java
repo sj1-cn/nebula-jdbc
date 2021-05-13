@@ -1,46 +1,37 @@
 package cn.sj1.nebula.data.jdbc;
+import static org.objectweb.asm.Opcodes.ACC_BRIDGE;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_SUPER;
+import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
+
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.objectweb.asm.Label;
-import org.objectweb.asm.Handle;
-import org.objectweb.asm.Opcodes;
+
+import cn.sj1.nebula.data.basic.EntitySystem;
+import cn.sj1.nebula.data.basic.PageList;
+import cn.sj1.nebula.data.basic.PageListImpl;
+import cn.sj1.nebula.data.jdbc.sample.UserMoreComplex;
+import cn.sj1.nebula.data.jdbc.sample.UserMoreComplexExtend;
+import cn.sj1.nebula.data.query.Condition;
+import cn.sj1.nebula.data.query.OrderBy;
+import cn.sj1.nebula.data.util.SqlHelper;
 import cn.sj1.tinyasm.core.ClassBody;
 import cn.sj1.tinyasm.core.ClassBuilder;
-import cn.sj1.tinyasm.core.MethodCode;
-import org.objectweb.asm.Type;
-import static org.objectweb.asm.Opcodes.*;
-import cn.sj1.tinyasm.core.Annotation;
 import cn.sj1.tinyasm.core.Clazz;
-import java.lang.Float;
-import java.sql.Connection;
-import java.sql.Time;
-import cn.sj1.nebula.data.jdbc.JdbcRepository;
-import cn.sj1.nebula.data.util.SqlHelper;
-import java.lang.Double;
-import cn.sj1.nebula.data.basic.PageListImpl;
-import java.lang.Integer;
-import java.util.ArrayList;
-import cn.sj1.nebula.data.basic.PageList;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.lang.Character;
-import java.lang.Long;
-import java.sql.ResultSet;
-import java.lang.Short;
-import cn.sj1.nebula.data.basic.EntitySystem;
-import java.lang.Boolean;
-import java.lang.String;
-import java.lang.Byte;
-import nebula.jdbc.sql.builders.schema.ColumnList;
-import cn.sj1.nebula.data.jdbc.sample.UserMoreComplex;
-import cn.sj1.nebula.data.query.Condition;
-import java.sql.Timestamp;
-import java.sql.PreparedStatement;
-import cn.sj1.nebula.data.jdbc.sample.UserMoreComplexExtend;
-import java.sql.Date;
-import cn.sj1.nebula.data.query.OrderBy;
-import java.util.List;
-import java.sql.Statement;
-import java.lang.Object;
+import cn.sj1.tinyasm.core.MethodCode;
 import nebula.jdbc.sql.builders.queries.Select;
+import nebula.jdbc.sql.builders.schema.ColumnList;
 @SuppressWarnings("unused")
 public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 

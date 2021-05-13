@@ -9,8 +9,6 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import nebula.jdbc.sql.builders.queries.Columns;
-
 public class ColumnsTest {
     @Test
     public void it_converts_to_sql_a_single_column() {

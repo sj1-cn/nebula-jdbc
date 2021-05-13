@@ -7,8 +7,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import nebula.jdbc.sql.builders.queries.Where;
-
 public class WhereTest {
     private Where where = Where.empty();
 

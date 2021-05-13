@@ -8,8 +8,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import nebula.jdbc.sql.builders.queries.Rows;
-
 public class RowsTest {
     private Rows rows;
 

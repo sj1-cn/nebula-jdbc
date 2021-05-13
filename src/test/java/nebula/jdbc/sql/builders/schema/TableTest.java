@@ -8,9 +8,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import nebula.jdbc.sql.builders.schema.Column;
-import nebula.jdbc.sql.builders.schema.Table;
-
 public class TableTest {
     private Table table;
 

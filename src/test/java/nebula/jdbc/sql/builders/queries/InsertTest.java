@@ -7,8 +7,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import nebula.jdbc.sql.builders.queries.Insert;
-
 public class InsertTest {
     @Test
     public void it_converts_to_sql_an_insert_with_only_values() {

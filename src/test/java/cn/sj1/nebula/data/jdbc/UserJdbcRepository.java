@@ -10,7 +10,6 @@ import java.util.List;
 import cn.sj1.nebula.data.basic.EntitySystem;
 import cn.sj1.nebula.data.basic.PageList;
 import cn.sj1.nebula.data.basic.PageListImpl;
-import cn.sj1.nebula.data.jdbc.JdbcRepository;
 import cn.sj1.nebula.data.jdbc.sample.User;
 import cn.sj1.nebula.data.jdbc.sample.UserExtend;
 import cn.sj1.nebula.data.query.Condition;

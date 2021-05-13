@@ -15,12 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cn.sj1.nebula.data.basic.PageList;
-import cn.sj1.nebula.data.jdbc.EntityPojoDbMappingDefinitions;
-import cn.sj1.nebula.data.jdbc.JdbcRepository;
-import cn.sj1.nebula.data.jdbc.TinyAsmJdbcRepositoryBuilder;
-import cn.sj1.nebula.data.jdbc.EntityPojoFieldJdbcMapper;
-import cn.sj1.nebula.data.jdbc.FieldList;
-import cn.sj1.nebula.data.jdbc.TinyAsmPrimativeTypeConverters;
 import cn.sj1.nebula.data.jdbc.sample.User;
 import cn.sj1.nebula.data.jdbc.sample.UserExtend;
 import cn.sj1.nebula.data.query.Condition;

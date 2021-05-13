@@ -8,8 +8,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import nebula.jdbc.sql.builders.schema.ForeignKey;
-
 public class ForeignKeyTest {
 	@Test
 	public void it_converts_to_sql_a_foreign_key() {

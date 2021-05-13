@@ -7,7 +7,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import nebula.jdbc.sql.builders.queries.WhereExpression;
 import nebula.jdbc.sql.builders.queries.WhereExpression.Operator;
 
 public class WhereExpressionTest {
