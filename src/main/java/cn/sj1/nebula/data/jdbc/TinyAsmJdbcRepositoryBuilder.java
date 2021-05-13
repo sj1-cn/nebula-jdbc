@@ -131,7 +131,7 @@ public class TinyAsmJdbcRepositoryBuilder {
 		FieldList $mappers = $_entityDefinition.getFieldsAll();
 		boolean hasAutoIncrment = $mappers.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
 
-		List<String> keys = $mappers.filter(f -> f.primaryKey).map(f -> f.column.getName());
+		List<String> keys = $mappers.filter(f -> f.primaryKey).map(f -> f.column.name());
 		List<String> columnDefinitions = $mappers.map(f -> f.column.toSQL());
 
 		String $_sql;
@@ -183,7 +183,7 @@ public class TinyAsmJdbcRepositoryBuilder {
 	}
 
 	protected void _listJdbc(ClassBody classBody) {
-		String $_sqlColumns = String.join(",", $_entityDefinition.fieldsAll.map(f -> f.column.getName()));
+		String $_sqlColumns = String.join(",", $_entityDefinition.fieldsAll.map(f -> f.column.name()));
 
 		MethodCode code = classBody.public_().method("listJdbc").return_(Clazz.of(PageList.class, Clazz.of($_clazzEntity))).throws_(SQLException.class).parameter("start", Clazz.of(int.class)).parameter("max", Clazz.of(int.class)).begin();
 
@@ -287,7 +287,7 @@ public class TinyAsmJdbcRepositoryBuilder {
 	}
 
 	protected void _listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int_nebuladatajdbcPageList(ClassBody classBody) {
-		String $_sqlColumns = String.join(",", $_entityDefinition.fieldsAll.map(f -> f.column.getName()));
+		String $_sqlColumns = String.join(",", $_entityDefinition.fieldsAll.map(f -> f.column.name()));
 		MethodCode code = classBody.public_().method("listJdbc").return_(Clazz.of(PageList.class, Clazz.of($_clazzEntity))).throws_(SQLException.class).parameter("condition", Clazz.of(Condition.class))
 				.parameter("orderBy", Clazz.of(OrderBy.class)).parameter("start", Clazz.of(int.class)).parameter("max", Clazz.of(int.class)).begin();
 
@@ -498,7 +498,7 @@ public class TinyAsmJdbcRepositoryBuilder {
 		EntityPojoFieldJdbcMapper keyField = fields.filter(f -> f.isPrimaryKey()).get(0);
 
 		if (hasAutoIncrment) {
-			List<String> names = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.getName());
+			List<String> names = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.name());
 			List<String> values = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> "?");
 			String $_sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", $_entityDefinition.jdbcTablename, String.join(",", names), String.join(",", values));
 
@@ -574,7 +574,7 @@ public class TinyAsmJdbcRepositoryBuilder {
 
 		} else {
 
-			List<String> names = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.getName());
+			List<String> names = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.name());
 			List<String> values = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> "?");
 			String $_sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", $_entityDefinition.jdbcTablename, String.join(",", names), String.join(",", values));
 
@@ -737,7 +737,7 @@ public class TinyAsmJdbcRepositoryBuilder {
 	protected void _deleteByIdJdbc(ClassBody classBody) {
 		FieldList $_fieldsAll = $_entityDefinition.fieldsAll;
 		ListMap<String, EntityPojoFieldJdbcMapper> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
-		String $_sql = JDBC.sql("DELETE ${tablename} WHERE ${causes}", $_entityDefinition.jdbcTablename, String.join(" AND ", $_keys.map(f -> f.column.getName() + "=?")));
+		String $_sql = JDBC.sql("DELETE ${tablename} WHERE ${causes}", $_entityDefinition.jdbcTablename, String.join(" AND ", $_keys.map(f -> f.column.name() + "=?")));
 
 		MethodCode code = classBody.public_().method("deleteByIdJdbc").return_(int.class).throws_(SQLException.class).parameter("id", long.class).begin();
 

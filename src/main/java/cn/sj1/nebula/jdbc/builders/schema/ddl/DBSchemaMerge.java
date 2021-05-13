@@ -1,4 +1,4 @@
-package cn.sj1.nebula.jdbc.builders.schema;
+package cn.sj1.nebula.jdbc.builders.schema.ddl;
 
 import java.sql.Connection;
 import java.sql.ResultSetMetaData;
@@ -11,8 +11,9 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dbal.jdbc.builders.schema.Command;
-
+import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
+import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
+import cn.sj1.nebula.jdbc.builders.schema.JDBC;
 import nebula.jdbc.meta.JdbcDababaseMetadata;
 
 public class DBSchemaMerge {
@@ -27,7 +28,7 @@ public class DBSchemaMerge {
 				return false;
 			}
 
-			List<Command> commandBus = compare(columnsExpected, columnsActual);
+			List<AlterTableColumnCommand> commandBus = compare(columnsExpected, columnsActual);
 			logger.info("commandBus {}", commandBus);
 			Statement statement = conn.createStatement();
 			prepareMerge(statement, tableName, commandBus);
@@ -36,77 +37,69 @@ public class DBSchemaMerge {
 		}
 		{
 			ColumnList columnsActual = jdbcDababaseMetadata.getColumns(conn, tableName);
-			List<Command> commandBus = compare(columnsExpected, columnsActual);
+			List<AlterTableColumnCommand> commandBus = compare(columnsExpected, columnsActual);
 			assert commandBus.size() == 0;
 			return true;
 		}
 	}
 
-	void prepareMerge(Statement statement, String tableName, List<Command> commandBus) throws SQLException {
-		for (Command command : commandBus) {
+	void prepareMerge(Statement statement, String tableName, List<AlterTableColumnCommand> commandBus) throws SQLException {
+		for (AlterTableColumnCommand command : commandBus) {
 			prepareMerge(statement, tableName, command);
 		}
 	}
 
-	void prepareMerge(Statement statement, String tableName, Command command) throws SQLException {
+	void prepareMerge(Statement statement, String tableName, AlterTableColumnCommand command) throws SQLException {
 		if (command instanceof AlterTable.AlterColumnCommand) {
 			ColumnDefinition column = command.getColumn();
-			String sql = JDBC.sql(
-					"ALTER TABLE ${tablename} ALTER COLUMN ${columnname} ${columndefinition}", tableName,
-					column.columnName, makeColumnDefinition(column));
+			String sql = JDBC.sql("ALTER TABLE ${tablename} ALTER COLUMN ${columnname} ${columndefinition}", tableName, column.name(), makeColumnDefinition(column));
 			statement.addBatch(sql);
 		} else if (command instanceof AlterTable.AddColumnCommand) {
 			ColumnDefinition column = command.getColumn();
-			String sql = JDBC.sql("ALTER TABLE ${tablename} ADD COLUMN ${columnname} ${columndefinition}",
-					tableName, column.columnName, this.makeColumnDefinition(column));
+			String sql = JDBC.sql("ALTER TABLE ${tablename} ADD COLUMN ${columnname} ${columndefinition}", tableName, column.name(), this.makeColumnDefinition(column));
 			statement.addBatch(sql);
 		} else if (command instanceof AlterTable.DropColumnCommand) {
-			String sql = JDBC.sql("ALTER TABLE ${tablename} DROP COLUMN ${columnname}", tableName,
-					command.getColumn().columnName);
+			String sql = JDBC.sql("ALTER TABLE ${tablename} DROP COLUMN ${columnname}", tableName, command.getColumn().name());
 			statement.addBatch(sql);
 		} else if (command instanceof AlterTable.AlterColumnNullableCommand) {
-			String sql = JDBC.sql("ALTER TABLE ${tablename} ALTER COLUMN ${oldname} SET ${nullable}",
-					tableName, command.getColumn().columnName,
-					command.getColumn().nullable == ResultSetMetaData.columnNoNulls ? "NOT NULL" : "NULL");
+			String sql = JDBC.sql("ALTER TABLE ${tablename} ALTER COLUMN ${oldname} SET ${nullable}", tableName, command.getColumn().name(), command.getColumn().getNullable() == ResultSetMetaData.columnNoNulls ? "NOT NULL" : "NULL");
 			statement.addBatch(sql);
 		} else if (command instanceof AlterTable.AlterColumnRemarksCommand) {
-			String sql = JDBC.sql("ALTER TABLE ${tablename} ALTER COLUMN ${columnname} REMARKS ${remarks}",
-					tableName, command.getColumn().columnName, command.getColumn().remarks.replaceAll("'", "''"));
+			String sql = JDBC.sql("ALTER TABLE ${tablename} ALTER COLUMN ${columnname} REMARKS ${remarks}", tableName, command.getColumn().name(), command.getColumn().getRemarks().replaceAll("'", "''"));
 			statement.addBatch(sql);
 		}
 	}
 
 	String makeColumnDefinition(ColumnDefinition column) {
-		return JDBC.typeDefinition(column.dataType, column.columnSize, column.decimalDigits);
+		return JDBC.typeDefinition(column.getDataType(), column.getColumnSize(), column.getDecimalDigits());
 	}
 
-	List<Command> compare(ColumnList columnsExpected, ColumnList columnsActual) throws SQLException {
+	List<AlterTableColumnCommand> compare(ColumnList columnsExpected, ColumnList columnsActual) throws SQLException {
 
-		List<Command> commandBus = new ArrayList<>();
+		List<AlterTableColumnCommand> commandBus = new ArrayList<>();
 
 		for (ColumnDefinition exptected : columnsExpected) {
-			ColumnDefinition actual = columnsActual.get(exptected.getName());
+			ColumnDefinition actual = columnsActual.get(exptected.name());
 			if (actual == null) {
 				commandBus.add(new AlterTable.AddColumnCommand(exptected));
 				continue;
 			}
 
-			if (actual.dataType != exptected.dataType || !JDBC.ignoreSize(exptected.dataType)
-					&& (exptected.columnSize > actual.columnSize || exptected.decimalDigits > actual.decimalDigits)) {
+			if (actual.getDataType() != exptected.getDataType() || !JDBC.ignoreSize(exptected.getDataType()) && (exptected.getColumnSize() > actual.getColumnSize() || exptected.getDecimalDigits() > actual.getDecimalDigits())) {
 				commandBus.add(new AlterTable.AlterColumnCommand(exptected));
 			}
 
-			if (exptected.nullable != actual.nullable) {
+			if (exptected.getNullable() != actual.getNullable()) {
 				commandBus.add(new AlterTable.AlterColumnNullableCommand(exptected));
 			}
 
-			if (!Objects.equals(exptected.remarks, actual.remarks)) {
+			if (!Objects.equals(exptected.getRemarks(), actual.getRemarks())) {
 				commandBus.add(new AlterTable.AlterColumnRemarksCommand(exptected));
 			}
 		}
 
 		for (ColumnDefinition actual : columnsActual) {
-			ColumnDefinition exptected = columnsExpected.get(actual.getName());
+			ColumnDefinition exptected = columnsExpected.get(actual.name());
 			if (exptected == null) {
 				commandBus.add(new AlterTable.DropColumnCommand(actual));
 				continue;
@@ -116,6 +109,7 @@ public class DBSchemaMerge {
 		return commandBus;
 
 	}
+
 	public ColumnList getColumns(Connection conn, String tableName) throws SQLException {
 		return this.jdbcDababaseMetadata.getColumns(conn, tableName);
 	}

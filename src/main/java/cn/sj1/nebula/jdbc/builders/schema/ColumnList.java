@@ -39,7 +39,7 @@ public class ColumnList extends StringListMap<ColumnDefinition> {
 	public String[] names() {
 		String[] names = new String[this.size()];
 		for (int i = 0; i < this.size(); i++) {
-			names[i] = this.get(i).getName();
+			names[i] = this.get(i).name();
 		}
 		return names;
 	}
@@ -47,7 +47,7 @@ public class ColumnList extends StringListMap<ColumnDefinition> {
 	public static String[] namesOf(ColumnList columns) {
 		String[] names = new String[columns.size()];
 		for (int i = 0; i < columns.size(); i++) {
-			names[i] = columns.get(i).getName();
+			names[i] = columns.get(i).name();
 		}
 		return names;
 	}
@@ -55,7 +55,7 @@ public class ColumnList extends StringListMap<ColumnDefinition> {
 	public static <T extends Column> String[] namesOf(List<T> columns) {
 		String[] names = new String[columns.size()];
 		for (int i = 0; i < columns.size(); i++) {
-			names[i] = columns.get(i).getName();
+			names[i] = columns.get(i).name();
 		}
 		return names;
 	}

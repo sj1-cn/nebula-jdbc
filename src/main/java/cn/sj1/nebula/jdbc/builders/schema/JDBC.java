@@ -30,6 +30,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.sj1.nebula.jdbc.builders.schema.ddl.DBSchemaMerge;
+
 public class JDBC {
 	public static Timestamp timestamp() {
 		return new java.sql.Timestamp(System.currentTimeMillis());
@@ -148,7 +150,7 @@ public class JDBC {
 		}
 	}
 
-	static String typeDefinition(JDBCType dataType, int columnSize, int decimalDigits) {
+	static 	public  String typeDefinition(JDBCType dataType, int columnSize, int decimalDigits) {
 		String definition;
 		ColumnType columnType = JDBC.mapJDBCType2RealColumnTypeName.get(dataType);
 

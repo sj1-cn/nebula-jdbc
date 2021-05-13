@@ -1,10 +1,10 @@
-package com.dbal.jdbc.builders.schema;
+package cn.sj1.nebula.jdbc.builders.schema.ddl;
 
 import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
 
-public class Command {
+public class AlterTableColumnCommand {
 	
-	public Command(ColumnDefinition column) {
+	public AlterTableColumnCommand(ColumnDefinition column) {
 		this.column = column;
 	}
 

@@ -7,8 +7,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.dbal.jdbc.builders.queries.Select;
-
 import cn.sj1.nebula.data.query.OrderBy;
 import cn.sj1.nebula.data.query.OrderByOp;
 import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;

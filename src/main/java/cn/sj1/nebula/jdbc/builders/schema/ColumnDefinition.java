@@ -219,7 +219,7 @@ public class ColumnDefinition implements Column {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return this.columnName;
 	}
 
@@ -373,5 +373,57 @@ public class ColumnDefinition implements Column {
 			}
 		}
 		return column;
+	}
+
+	public String getColumnName() {
+		return columnName;
+	}
+
+	public JDBCType getDataType() {
+		return dataType;
+	}
+
+	public String getTypeName() {
+		return typeName;
+	}
+
+	public int getColumnSize() {
+		return columnSize;
+	}
+
+	public int getDecimalDigits() {
+		return decimalDigits;
+	}
+
+	public int getNullable() {
+		return nullable;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public int getCharOctetLength() {
+		return charOctetLength;
+	}
+
+	public int getOrdinalPosition() {
+		return ordinalPosition;
+	}
+
+	public short getSourceDataType() {
+		return sourceDataType;
+	}
+
+	public boolean isUnsigned() {
+		return unsigned;
+	}
+
+	public boolean isPrimarykey() {
+		return primarykey;
 	}
 }

@@ -1,4 +1,4 @@
-package cn.sj1.nebula.jdbc.builders.schema;
+package cn.sj1.nebula.jdbc.builders.schema.ddl;
 
 import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.BIGINT;
 import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.CHAR;
@@ -26,12 +26,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
-import com.dbal.jdbc.builders.schema.Command;
-
-import cn.sj1.nebula.jdbc.builders.schema.AlterTable;
 import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
 import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
-import cn.sj1.nebula.jdbc.builders.schema.DBSchemaMerge;
 import cn.sj1.nebula.jdbc.builders.schema.JDBC;
 import nebula.jdbc.TestBase;
 import nebula.jdbc.meta.JdbcDababaseMetadata;
@@ -58,8 +54,8 @@ public class DBSchemaMergeTest extends TestBase {
 			List<String> keys = new ArrayList<>();
 			for (ColumnDefinition columnDefinition : columnsPrepared) {
 				ls.add(columnDefinition.toSQL());
-				if (columnDefinition.primarykey) {
-					keys.add(columnDefinition.columnName);
+				if (columnDefinition.isPrimarykey()) {
+					keys.add(columnDefinition.getColumnName());
 				}
 			}
 			String sqlCreateTable = JDBC.sql(
@@ -85,7 +81,7 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = meta.getColumns(conn, tableName);
 
-		List<Command> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
 		assertEquals(0, commandBus.size());
 	}
@@ -102,11 +98,11 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = meta.getColumns(conn, tableName);
 
-		List<Command> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
 		assertEquals(1, commandBus.size());
 		assertTrue(commandBus.get(0) instanceof AlterTable.AddColumnCommand);
-		assertEquals("age", commandBus.get(0).getColumn().getName());
+		assertEquals("age", commandBus.get(0).getColumn().name());
 	}
 
 	@Test
@@ -470,12 +466,12 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = meta.getColumns(conn, tableName);
 
-		List<Command> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
 		assertEquals(1, commandBus.size());
 		assertTrue(commandBus.get(0) instanceof AlterTable.AlterColumnCommand);
-		assertEquals("height", commandBus.get(0).getColumn().getName());
-		assertEquals(JDBCType.BIGINT, commandBus.get(0).getColumn().dataType);
+		assertEquals("height", commandBus.get(0).getColumn().name());
+		assertEquals(JDBCType.BIGINT, commandBus.get(0).getColumn().getDataType());
 	}
 
 	@Test
@@ -489,12 +485,12 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = meta.getColumns(conn, tableName);
 
-		List<Command> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
 		assertEquals(1, commandBus.size());
 		assertTrue(commandBus.get(0) instanceof AlterTable.AlterColumnCommand);
-		assertEquals("name", commandBus.get(0).getColumn().getName());
-		assertEquals(1024, commandBus.get(0).getColumn().columnSize);
+		assertEquals("name", commandBus.get(0).getColumn().name());
+		assertEquals(1024, commandBus.get(0).getColumn().getColumnSize());
 	}
 
 	@Test
@@ -508,13 +504,13 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = meta.getColumns(conn, tableName);
 
-		List<Command> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
 		assertEquals(1, commandBus.size());
 		assertTrue(commandBus.get(0) instanceof AlterTable.AlterColumnCommand);
-		assertEquals("height", commandBus.get(0).getColumn().getName());
-		assertEquals(20, commandBus.get(0).getColumn().columnSize);
-		assertEquals(2, commandBus.get(0).getColumn().decimalDigits);
+		assertEquals("height", commandBus.get(0).getColumn().name());
+		assertEquals(20, commandBus.get(0).getColumn().getColumnSize());
+		assertEquals(2, commandBus.get(0).getColumn().getDecimalDigits());
 	}
 
 	@Test
@@ -528,13 +524,13 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = meta.getColumns(conn, tableName);
 
-		List<Command> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
 		assertEquals(1, commandBus.size());
 		assertTrue(commandBus.get(0) instanceof AlterTable.AlterColumnRemarksCommand);
 		assertEquals("AlterColumnRemarksCommand [name VARCHAR(256) REMARKS 'name''s Remark']",
 				commandBus.get(0).toString());
-		assertEquals("name's Remark", commandBus.get(0).getColumn().remarks);
+		assertEquals("name's Remark", commandBus.get(0).getColumn().getRemarks());
 	}
 
 	@Test
@@ -548,7 +544,7 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = meta.getColumns(conn, tableName);
 
-		List<Command> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
 		assertEquals(1, commandBus.size());
 		assertEquals("AlterColumnNullableCommand [name VARCHAR(256) NOT NULL]", commandBus.get(0).toString());
@@ -565,7 +561,7 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = meta.getColumns(conn, tableName);
 
-		List<Command> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
 		assertEquals(1, commandBus.size());
 		assertEquals("DropColumnCommand [name VARCHAR(256)]", commandBus.get(0).toString());

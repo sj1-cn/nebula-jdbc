@@ -6,5 +6,5 @@ package com.dbal.jdbc.builders.schema;
 import com.dbal.jdbc.builders.HasSQLRepresentation;
 
 public interface Column extends HasSQLRepresentation {
-	String getName();
+	String name();
 }

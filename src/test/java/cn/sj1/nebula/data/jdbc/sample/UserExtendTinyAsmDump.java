@@ -1,14 +1,18 @@
 package cn.sj1.nebula.data.jdbc.sample;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ACC_SUPER;
-
-import java.sql.Timestamp;
-
-import cn.sj1.nebula.data.basic.EntitySystem;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.Handle;
+import org.objectweb.asm.Opcodes;
 import cn.sj1.tinyasm.core.ClassBody;
 import cn.sj1.tinyasm.core.ClassBuilder;
-import cn.sj1.tinyasm.core.Clazz;
 import cn.sj1.tinyasm.core.MethodCode;
+import org.objectweb.asm.Type;
+import static org.objectweb.asm.Opcodes.*;
+import cn.sj1.tinyasm.core.Annotation;
+import cn.sj1.tinyasm.core.Clazz;
+import cn.sj1.nebula.data.jdbc.sample.User;
+import cn.sj1.nebula.data.basic.EntitySystem;
+import java.sql.Timestamp;
+import java.lang.String;
 @SuppressWarnings("unused")
 public class UserExtendTinyAsmDump {
 

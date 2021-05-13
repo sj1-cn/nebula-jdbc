@@ -8,8 +8,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
-
 public class ColumnDefinitionTest {
 
 	@Test

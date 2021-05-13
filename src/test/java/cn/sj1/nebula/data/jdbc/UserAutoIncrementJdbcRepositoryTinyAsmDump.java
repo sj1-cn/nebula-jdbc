@@ -1,35 +1,35 @@
 package cn.sj1.nebula.data.jdbc;
-import static org.objectweb.asm.Opcodes.ACC_BRIDGE;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ACC_SUPER;
-import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.objectweb.asm.Label;
-
-import com.dbal.jdbc.builders.queries.Select;
-
-import cn.sj1.nebula.data.basic.EntitySystem;
-import cn.sj1.nebula.data.basic.PageList;
-import cn.sj1.nebula.data.basic.PageListImpl;
-import cn.sj1.nebula.data.jdbc.sample.User;
-import cn.sj1.nebula.data.jdbc.sample.UserExtend;
-import cn.sj1.nebula.data.query.Condition;
-import cn.sj1.nebula.data.query.OrderBy;
-import cn.sj1.nebula.data.util.SqlHelper;
-import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
+import org.objectweb.asm.Handle;
+import org.objectweb.asm.Opcodes;
 import cn.sj1.tinyasm.core.ClassBody;
 import cn.sj1.tinyasm.core.ClassBuilder;
-import cn.sj1.tinyasm.core.Clazz;
 import cn.sj1.tinyasm.core.MethodCode;
+import org.objectweb.asm.Type;
+import static org.objectweb.asm.Opcodes.*;
+import cn.sj1.tinyasm.core.Annotation;
+import cn.sj1.tinyasm.core.Clazz;
+import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
+import java.sql.Connection;
+import cn.sj1.nebula.data.jdbc.JdbcRepository;
+import cn.sj1.nebula.data.util.SqlHelper;
+import cn.sj1.nebula.data.query.Condition;
+import cn.sj1.nebula.data.jdbc.sample.User;
+import java.sql.Timestamp;
+import cn.sj1.nebula.data.basic.PageListImpl;
+import java.sql.PreparedStatement;
+import cn.sj1.nebula.data.jdbc.sample.UserExtend;
+import java.util.ArrayList;
+import cn.sj1.nebula.data.basic.PageList;
+import java.sql.SQLException;
+import cn.sj1.nebula.data.query.OrderBy;
+import java.util.List;
+import java.sql.ResultSet;
+import cn.sj1.nebula.data.basic.EntitySystem;
+import java.sql.Statement;
+import java.lang.Object;
+import com.dbal.jdbc.builders.queries.Select;
+import java.lang.String;
 @SuppressWarnings("unused")
 public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 

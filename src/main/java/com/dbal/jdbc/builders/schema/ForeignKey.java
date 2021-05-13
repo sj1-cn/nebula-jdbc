@@ -29,7 +29,7 @@ public class ForeignKey implements HasSQLRepresentation {
         assertReferenceIsSet();
         return String.format(
             "FOREIGN KEY (%s) REFERENCES %s(%s)",
-            column.getName(),
+            column.name(),
             table,
             foreignKeyName
         );

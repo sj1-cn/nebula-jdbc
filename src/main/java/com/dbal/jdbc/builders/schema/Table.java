@@ -43,7 +43,10 @@ public class Table implements HasSQLRepresentation {
 	}
 
 	public ColumnDefinition increments(String name) {
-		ColumnDefinition id = INTEGER(name).autoIncrement().unsigned().required();
+		ColumnDefinition id = INTEGER(name)
+			.autoIncrement()
+			.unsigned()
+			.required();
 		primaryKey = new PrimaryKey(id);
 		columns.add(id);
 		return (ColumnDefinition) id;

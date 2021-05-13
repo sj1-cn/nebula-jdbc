@@ -8,9 +8,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.dbal.jdbc.builders.schema.Column;
-import com.dbal.jdbc.builders.schema.Table;
-
 public class TableTest {
     private Table table;
 
