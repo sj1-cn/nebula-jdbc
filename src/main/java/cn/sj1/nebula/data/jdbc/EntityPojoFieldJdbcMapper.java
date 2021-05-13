@@ -1,6 +1,6 @@
 package cn.sj1.nebula.data.jdbc;
 
-import cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition;
+import com.dbal.jdbc.builders.schema.ColumnDefinition;
 
 public class EntityPojoFieldJdbcMapper {
 	final boolean primaryKey;

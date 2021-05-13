@@ -1,17 +1,18 @@
 package cn.sj1.nebula.data.jdbc;
 
-import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.INTEGER;
-import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.VARCHAR;
 import static cn.sj1.tinyasm.tools.TinyAsmTestUtils.dumpTinyAsm;
+import static com.dbal.jdbc.builders.schema.ColumnDefinition.INTEGER;
+import static com.dbal.jdbc.builders.schema.ColumnDefinition.VARCHAR;
 import static java.sql.JDBCType.INTEGER;
 import static java.sql.JDBCType.VARCHAR;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.dbal.jdbc.builders.schema.ColumnDefinition;
+
 import cn.sj1.nebula.data.jdbc.sample.User;
 import cn.sj1.nebula.data.jdbc.sample.UserExtend;
-import cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition;
 import cn.sj1.tinyasm.tools.TinyAsmTestUtils;
 
 public class TinyAsmJdbcRepositoryBuilderTinyASMifierTest {

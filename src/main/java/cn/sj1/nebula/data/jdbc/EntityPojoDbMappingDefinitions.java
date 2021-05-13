@@ -1,6 +1,6 @@
 package cn.sj1.nebula.data.jdbc;
 
-import static cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition.TIMESTAMP;
+import static com.dbal.jdbc.builders.schema.ColumnDefinition.TIMESTAMP;
 
 public class EntityPojoDbMappingDefinitions {
 	final String name;

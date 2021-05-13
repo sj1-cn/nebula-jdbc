@@ -14,11 +14,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.dbal.jdbc.builders.schema.ColumnDefinition;
+
 import cn.sj1.nebula.data.basic.PageList;
 import cn.sj1.nebula.data.jdbc.sample.User;
 import cn.sj1.nebula.data.jdbc.sample.UserExtend;
 import cn.sj1.nebula.data.query.Condition;
-import cn.sj1.nebula.jdbc.sql.builders.schema.ColumnDefinition;
 import nebula.jdbc.TestBase;
 
 public class TinyAsmBuildedUserJdbcRepositoryTest extends TestBase {
