@@ -3,13 +3,15 @@
  */
 package com.dbal.jdbc.builders.schema;
 
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.INTEGER;
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.VARCHAR;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.INTEGER;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.VARCHAR;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.sj1.nebula.jdbc.sql.HasSQLRepresentation;
+import com.dbal.jdbc.builders.HasSQLRepresentation;
+
+import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
 
 public class Table implements HasSQLRepresentation {
 	private final String name;
@@ -67,10 +69,14 @@ public class Table implements HasSQLRepresentation {
 	public String toSQL() {
 		assertPrimaryKeyIsPresent();
 
-		return String
-			.format("CREATE TABLE %s %s (%s %s %s) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;", ifNotExistsSQL(),
-					name, columnDefinitions(), primaryKey.toSQL(), foreignKeysSQL())
-			.replaceAll("( )+", " ");
+        return String.format(
+            "CREATE TABLE %s %s (%s %s %s) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8;",
+            ifNotExistsSQL(),
+            name,
+            columnDefinitions(),
+            primaryKey.toSQL(),
+            foreignKeysSQL()
+        ).replaceAll("( )+", " ");
 	}
 
 	private String ifNotExistsSQL() {
@@ -85,13 +91,17 @@ public class Table implements HasSQLRepresentation {
 
 	private String foreignKeysSQL() {
 		StringBuilder sql = new StringBuilder();
-		foreignKeys.forEach(foreignKey -> sql.append(", ").append(foreignKey.toSQL()));
+        foreignKeys.forEach(
+            foreignKey -> sql.append(", ").append(foreignKey.toSQL())
+        );
 		return sql.toString();
 	}
 
 	private String columnDefinitions() {
 		StringBuilder definition = new StringBuilder();
-		columns.forEach(column -> definition.append(column.toSQL()).append(", "));
+        columns.forEach(
+            column -> definition.append(column.toSQL()).append(", ")
+        );
 		return definition.toString().trim();
 	}
 }

@@ -6,9 +6,8 @@ import java.sql.JDBCType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.dbal.jdbc.builders.schema.ColumnDefinition;
-import com.dbal.jdbc.builders.schema.ColumnList;
-
+import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
+import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
 import nebula.commons.list.ListMap;
 
 public class JdbcDababaseMetadata {

@@ -3,11 +3,11 @@
  */
 package com.dbal.jdbc.builders.schema;
 
+import com.dbal.jdbc.builders.HasSQLRepresentation;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import cn.sj1.nebula.jdbc.sql.HasSQLRepresentation;
 
 class PrimaryKey implements HasSQLRepresentation {
     private List<Column> columns = new ArrayList<>();

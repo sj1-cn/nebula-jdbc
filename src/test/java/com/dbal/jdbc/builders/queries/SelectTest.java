@@ -8,11 +8,11 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.dbal.jdbc.builders.queries.Select;
-import com.dbal.jdbc.builders.schema.ColumnDefinition;
-import com.dbal.jdbc.builders.schema.ColumnList;
 
 import cn.sj1.nebula.data.query.OrderBy;
 import cn.sj1.nebula.data.query.OrderByOp;
+import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
+import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
 
 public class SelectTest {
 	@Test

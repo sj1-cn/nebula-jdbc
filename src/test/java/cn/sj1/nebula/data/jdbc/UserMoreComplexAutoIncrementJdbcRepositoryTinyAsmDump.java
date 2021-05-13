@@ -19,7 +19,6 @@ import java.util.List;
 import org.objectweb.asm.Label;
 
 import com.dbal.jdbc.builders.queries.Select;
-import com.dbal.jdbc.builders.schema.ColumnList;
 
 import cn.sj1.nebula.data.basic.EntitySystem;
 import cn.sj1.nebula.data.basic.PageList;
@@ -29,6 +28,7 @@ import cn.sj1.nebula.data.jdbc.sample.UserMoreComplexExtend;
 import cn.sj1.nebula.data.query.Condition;
 import cn.sj1.nebula.data.query.OrderBy;
 import cn.sj1.nebula.data.util.SqlHelper;
+import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
 import cn.sj1.tinyasm.core.ClassBody;
 import cn.sj1.tinyasm.core.ClassBuilder;
 import cn.sj1.tinyasm.core.Clazz;

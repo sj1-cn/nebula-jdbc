@@ -3,7 +3,7 @@
  */
 package com.dbal.jdbc.builders.schema;
 
-import cn.sj1.nebula.jdbc.sql.HasSQLRepresentation;
+import com.dbal.jdbc.builders.HasSQLRepresentation;
 
 public class ForeignKey implements HasSQLRepresentation {
     private final Column column;

@@ -1,18 +1,18 @@
 package cn.sj1.nebula.data.jdbc;
 
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.BIGINT;
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.BOOLEAN;
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.CHAR;
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.DATE;
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.DECIMAL;
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.DOUBLE;
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.FLOAT;
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.INTEGER;
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.SMALLINT;
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.TIME;
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.TIMESTAMP;
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.TINYINT;
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.VARCHAR;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.BIGINT;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.BOOLEAN;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.CHAR;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.DATE;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.DECIMAL;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.DOUBLE;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.FLOAT;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.INTEGER;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.SMALLINT;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.TIME;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.TIMESTAMP;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.TINYINT;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.VARCHAR;
 import static java.sql.JDBCType.INTEGER;
 import static java.sql.JDBCType.VARCHAR;
 import static org.junit.Assert.assertEquals;
@@ -24,10 +24,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.dbal.jdbc.builders.schema.ColumnDefinition;
-
 import cn.sj1.nebula.data.jdbc.sample.User;
 import cn.sj1.nebula.data.jdbc.sample.UserMoreComplex;
+import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
 import cn.sj1.tinyasm.tools.TinyAsmTestUtils;
 import nebula.jdbc.TestBase;
 

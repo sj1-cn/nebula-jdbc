@@ -7,12 +7,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import com.dbal.jdbc.builders.HasSQLRepresentation;
 import com.dbal.jdbc.statements.InsertStatement;
 import com.dbal.jdbc.statements.SQLError;
 import com.dbal.jdbc.statements.SelectStatement;
 import com.dbal.jdbc.statements.UpdateStatement;
-
-import cn.sj1.nebula.jdbc.sql.HasSQLRepresentation;
 
 abstract public class Table<T> {
     private final Connection connection;

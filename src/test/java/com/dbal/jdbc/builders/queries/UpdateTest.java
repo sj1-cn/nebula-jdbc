@@ -8,8 +8,9 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.dbal.jdbc.builders.queries.Update;
-import com.dbal.jdbc.builders.schema.ColumnDefinition;
-import com.dbal.jdbc.builders.schema.ColumnList;
+
+import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
+import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
 
 public class UpdateTest {
 	private Update update = Update.table("users");

@@ -9,8 +9,8 @@ import java.sql.JDBCType;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.dbal.jdbc.builders.schema.ColumnDefinition;
-import com.dbal.jdbc.builders.schema.JDBC;
+import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
+import cn.sj1.nebula.jdbc.builders.schema.JDBC;
 
 public class JdbcRepositoryFactory {
 

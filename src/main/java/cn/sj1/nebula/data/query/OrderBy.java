@@ -3,7 +3,7 @@ package cn.sj1.nebula.data.query;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.sj1.nebula.jdbc.sql.HasSQLRepresentation;
+import com.dbal.jdbc.builders.HasSQLRepresentation;
 
 public class OrderBy implements HasSQLRepresentation {
 	List<OrderByItem> orderbys = new ArrayList<>();

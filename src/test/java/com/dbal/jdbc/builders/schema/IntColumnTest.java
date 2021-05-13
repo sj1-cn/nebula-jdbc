@@ -3,7 +3,7 @@
  */
 package com.dbal.jdbc.builders.schema;
 
-import static com.dbal.jdbc.builders.schema.ColumnDefinition.INTEGER;
+import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.INTEGER;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;

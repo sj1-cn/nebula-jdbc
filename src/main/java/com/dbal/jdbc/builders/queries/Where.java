@@ -3,12 +3,11 @@
  */
 package com.dbal.jdbc.builders.queries;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.dbal.jdbc.builders.HasSQLRepresentation;
 import com.dbal.jdbc.builders.queries.WhereExpression.Operator;
 
-import cn.sj1.nebula.jdbc.sql.HasSQLRepresentation;
+import java.util.ArrayList;
+import java.util.List;
 
 class Where implements HasSQLRepresentation {
 	private final List<WhereExpression> expressions;
@@ -49,7 +48,9 @@ class Where implements HasSQLRepresentation {
 	}
 
 	private String whereInToSQL(String column, int parametersCount) {
-		return String.format("%s IN %s", column, ParameterPlaceholders.generate(parametersCount));
+        return String.format(
+            "%s IN %s", column, ParameterPlaceholders.generate(parametersCount)
+        );
 	}
 
 	private void addWhere(String expression, Operator operator) {
@@ -67,7 +68,9 @@ class Where implements HasSQLRepresentation {
 
 	private String appendExpressions() {
 		StringBuilder where = new StringBuilder();
-		expressions.forEach(expression -> where.append(expression.toSQL()).append(" "));
+        expressions
+            .forEach(expression -> where.append(expression.toSQL()).append(" "))
+        ;
 		return where.toString().replaceAll(" $", "");
 	}
 

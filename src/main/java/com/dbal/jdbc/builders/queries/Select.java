@@ -7,13 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.dbal.jdbc.builders.HasSQLRepresentation;
 import com.dbal.jdbc.builders.schema.Column;
-import com.dbal.jdbc.builders.schema.ColumnList;
 
 import cn.sj1.nebula.data.query.CommonSQLConditionVisitor;
 import cn.sj1.nebula.data.query.Condition;
 import cn.sj1.nebula.data.query.OrderBy;
-import cn.sj1.nebula.jdbc.sql.HasSQLRepresentation;
+import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
 
 public class Select implements HasSQLRepresentation {
 	private Map<String, HasSQLRepresentation> parts;
@@ -90,8 +90,8 @@ public class Select implements HasSQLRepresentation {
 	}
 
 	/**
-	 * Add alias to original table name in order to remove ambiguity, possibly due
-	 * to a criteria object trying to add a join. For instance:
+     * Add alias to original table name in order to remove ambiguity, possibly due to
+     * a criteria object trying to add a join. For instance:
 	 *
 	 * `Select.from("users").addTableAlias("u").toSQL()`
 	 *
@@ -121,10 +121,13 @@ public class Select implements HasSQLRepresentation {
 	}
 
 	/**
-	 * Parameter `column` allows yu to specify a specific column to use for your
-	 * count. For instance
+     * Parameter `column` allows yu to specify a specific column to use for your count. For instance
 	 *
-	 * ``` u.id users.username users.* ```
+     * ```
+     * u.id
+     * users.username
+     * users.*
+     * ```
 	 */
 	public Select countDistinct(String column) {
 		((Rows) parts.get("rows")).clear();
@@ -204,9 +207,13 @@ public class Select implements HasSQLRepresentation {
 	@Override
 	public String toSQL() {
 		return String
-			.format("SELECT %s FROM %s %s %s %s %s", parts.get("columns").toSQL(), parts.get("from").toSQL(), parts.get("join").toSQL(),
-					parts.get("where").toSQL(), parts.get("orderby").toSQL(), parts.get("rows").toSQL())
-			.trim()
-			.replaceAll("( )+", " ");
+			.format("SELECT %s FROM %s %s %s %s %s",
+			parts.get("columns").toSQL(),
+			parts.get("from").toSQL(),
+			parts.get("join").toSQL(),
+			parts.get("where").toSQL(),
+			parts.get("orderby").toSQL(),
+			parts.get("rows").toSQL()
+		).trim().replaceAll("( )+", " ");
 	}
 }

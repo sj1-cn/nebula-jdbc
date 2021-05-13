@@ -3,11 +3,11 @@
  */
 package com.dbal.jdbc.builders.queries;
 
+import com.dbal.jdbc.builders.HasSQLRepresentation;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import cn.sj1.nebula.jdbc.sql.HasSQLRepresentation;
 
 public class Update implements HasSQLRepresentation {
 	private String table;
@@ -24,14 +24,6 @@ public class Update implements HasSQLRepresentation {
 		Collections.addAll(this.columns, columns);
 		return this;
 	}
-
-//	public <T extends Column> Update columns(List<T> columns) {
-//		return columns(ColumnList.namesOf(columns));
-//	}
-//
-//	public <T extends Column> Update where(List<T> columns) {
-//		return columns(ColumnList.namesOf(columns));
-//	}
 
 	public Update where(String expression) {
 		where.and(expression);
@@ -57,7 +49,12 @@ public class Update implements HasSQLRepresentation {
 	@Override
 	public String toSQL() {
 		assertNonEmptyColumns();
-		return String.format("UPDATE %s SET %s %s", table, columnsToSQL(), where.toSQL()).trim();
+        return String.format(
+            "UPDATE %s SET %s %s",
+            table,
+            columnsToSQL(),
+            where.toSQL()
+        ).trim();
 	}
 
 	private void assertNonEmptyColumns() {
@@ -67,6 +64,9 @@ public class Update implements HasSQLRepresentation {
 	}
 
 	private String columnsToSQL() {
-		return String.join(", ", columns.stream().map(column -> column + " = ?").toArray(String[]::new));
+        return String.join(
+            ", ",
+            columns.stream().map(column -> column + " = ?").toArray(String[]::new)
+        );
 	}
 }
