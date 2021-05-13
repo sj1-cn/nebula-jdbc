@@ -43,10 +43,10 @@ public class UserJdbcRepositoryTinyAsmTest extends TestBase {
 
 		byte[] codeRepository = UserJdbcRepositoryTinyAsmBuilder.dumpStatic(clazzRepository, User.class.getName(), UserExtend.class.getName(), entityDefinition);
 
-		TinyAsmClassLoader classLoader = new TinyAsmClassLoader();
+		TinyAsmClassLoaderForTest classLoader = new TinyAsmClassLoaderForTest();
 
 		Class<?> clazz = classLoader.doDefineClass(UserJdbcRepository.class.getName(), codeRepository);
-		TinyAsmClassLoader.doResolveClass(clazz);
+		TinyAsmClassLoaderForTest.doResolveClass(clazz);
 
 		// 利用反射创建对象
 		userRepository = (JdbcRepository<User>) clazz.getConstructor().newInstance();
