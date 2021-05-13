@@ -1,10 +1,8 @@
-package nebula.data.jdbc;
+package nebula.jdbc.builders.schema;
 
-import nebula.jdbc.builders.schema.ColumnDefinition;
-
-public class Command {
+public class DDLCommand {
 	
-	public Command(ColumnDefinition column) {
+	public DDLCommand(ColumnDefinition column) {
 		this.column = column;
 	}
 

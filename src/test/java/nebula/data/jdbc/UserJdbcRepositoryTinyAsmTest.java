@@ -34,9 +34,9 @@ public class UserJdbcRepositoryTinyAsmTest extends TestBase {
 		connection = super.openConnection();
 
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
-		clazzFields.push(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
-		clazzFields.push(new FieldMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
+		clazzFields.push(new PojoFieldJdbcMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
+		clazzFields.push(new PojoFieldJdbcMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
+		clazzFields.push(new PojoFieldJdbcMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
 		entityDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserJdbcRepository.class.getName();

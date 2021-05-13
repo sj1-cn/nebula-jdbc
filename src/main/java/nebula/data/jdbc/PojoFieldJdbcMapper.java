@@ -2,10 +2,10 @@ package nebula.data.jdbc;
 
 import nebula.jdbc.builders.schema.ColumnDefinition;
 
-public class FieldMapper {
+public class PojoFieldJdbcMapper {
 	final boolean primaryKey;
 	final String fieldName;
-	final String getName;
+	final String fieldGetName;
 	final Class<?> clazz;
 	final ColumnDefinition column;
 
@@ -17,8 +17,8 @@ public class FieldMapper {
 		return fieldName;
 	}
 
-	public String getGetname() {
-		return getName;
+	public String getFieldGetName() {
+		return fieldGetName;
 	}
 
 	public Class<?> getPojoClazz() {
@@ -29,18 +29,18 @@ public class FieldMapper {
 		return column;
 	}
 
-	public FieldMapper(boolean primaryKey, String javaname, String getname, Class<?> fieldClazz,
+	public PojoFieldJdbcMapper(boolean primaryKey, String javaname, String fieldGetName, Class<?> fieldClazz,
 			ColumnDefinition column) {
 		super();
 		this.primaryKey = primaryKey;
 		this.fieldName = javaname;
 		this.clazz = fieldClazz;
-		this.getName = getname;
+		this.fieldGetName = fieldGetName;
 		this.column = column;
 		if(primaryKey) this.column.primarykey();
 	}
 
-	public FieldMapper(String javaname, String getname, Class<?> fieldClazz, ColumnDefinition column) {
+	public PojoFieldJdbcMapper(String javaname, String getname, Class<?> fieldClazz, ColumnDefinition column) {
 		this(false, javaname, getname, fieldClazz, column);
 	}
 

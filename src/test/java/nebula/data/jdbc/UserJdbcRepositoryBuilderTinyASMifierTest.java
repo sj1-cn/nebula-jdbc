@@ -31,9 +31,9 @@ public class UserJdbcRepositoryBuilderTinyASMifierTest {
 		Class<?> expectedClazz = UserJdbcRepository.class;
 
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
-		clazzFields.push(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
-		clazzFields.push(new FieldMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
+		clazzFields.push(new PojoFieldJdbcMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
+		clazzFields.push(new PojoFieldJdbcMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
+		clazzFields.push(new PojoFieldJdbcMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
 		EntityPojoDbMappingDefinitions entityDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserJdbcRepository.class.getName();
@@ -52,9 +52,9 @@ public class UserJdbcRepositoryBuilderTinyASMifierTest {
 		Class<?> expectedClazz = UserAutoIncrementJdbcRepository.class;
 
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, INTEGER("id").primarykey().autoIncrement()));
-		clazzFields.push(new FieldMapper("name", "getName", String.class, VARCHAR("name")));
-		clazzFields.push(new FieldMapper("description", "getDescription", String.class, VARCHAR("description")));
+		clazzFields.push(new PojoFieldJdbcMapper(true, "id", "getId", long.class, INTEGER("id").primarykey().autoIncrement()));
+		clazzFields.push(new PojoFieldJdbcMapper("name", "getName", String.class, VARCHAR("name")));
+		clazzFields.push(new PojoFieldJdbcMapper("description", "getDescription", String.class, VARCHAR("description")));
 		EntityPojoDbMappingDefinitions entityDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserAutoIncrementJdbcRepository.class.getName();

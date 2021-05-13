@@ -50,7 +50,7 @@ public class EntityImplBuilder {
 		code.LINE();
 		code.LOAD("this");
 		
-		for (FieldMapper fieldMapper : clazz.entityFields) {
+		for (PojoFieldJdbcMapper fieldMapper : clazz.entityFields) {
 			code.LOAD(fieldMapper.fieldName);
 		}
 		Class<?>[] clazzes = new Class<?>[clazz.entityFields.size()];

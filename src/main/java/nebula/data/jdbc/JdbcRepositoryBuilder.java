@@ -144,7 +144,7 @@ public class JdbcRepositoryBuilder {
 		code.SPECIAL(ColumnList.class, "<init>").INVOKE();
 		code.STORE("columnList", ColumnList.class);
 
-		for (FieldMapper $field : $mappers) {
+		for (PojoFieldJdbcMapper $field : $mappers) {
 			code.LINE();
 			code.LOAD("columnList");
 			code.LOADConst($field.column.toString());
@@ -402,7 +402,7 @@ public class JdbcRepositoryBuilder {
 
 		FieldList $fields = $_entityDefinition.getFieldsAll();
 		for (int i = 0; i < $fields.size(); i++) {
-			FieldMapper fieldMapper = $fields.get(i);
+			PojoFieldJdbcMapper fieldMapper = $fields.get(i);
 			String name = fieldMapper.fieldName;
 			JdbcMapping jdbcMapping = JDBC.map(fieldMapper.clazz);
 			assert jdbcMapping != null : name + "'s type [" + fieldMapper.clazz.getName() + "] has not jdbc type";
@@ -490,7 +490,7 @@ public class JdbcRepositoryBuilder {
 	protected void _insertJdbc(ClassBody classBody) {
 		FieldList fields = $_entityDefinition.entityFields;
 		boolean hasAutoIncrment = fields.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
-		FieldMapper keyField = fields.filter(f -> f.isPrimaryKey()).get(0);
+		PojoFieldJdbcMapper keyField = fields.filter(f -> f.isPrimaryKey()).get(0);
 
 		if (hasAutoIncrment) {
 			List<String> names = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.getName());
@@ -512,7 +512,7 @@ public class JdbcRepositoryBuilder {
 			code.STORE("preparedStatement", PreparedStatement.class);
 
 			int $i = 1;
-			for (FieldMapper field : $_entityDefinition.entityFields) {
+			for (PojoFieldJdbcMapper field : $_entityDefinition.entityFields) {
 				if (!"YES".equals(field.column.getAutoIncrment())) {
 					JdbcMapping jdbc = JDBC.map(field.clazz);
 					int fieldIndex = $i;
@@ -520,7 +520,7 @@ public class JdbcRepositoryBuilder {
 					code.LOAD("preparedStatement");
 					code.LOADConst(fieldIndex);
 					code.LOAD("data");
-					code.VIRTUAL($_clazzEntity, field.getName).return_(field.clazz).INVOKE();
+					code.VIRTUAL($_clazzEntity, field.fieldGetName).return_(field.clazz).INVOKE();
 					$_arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(code);
 					code.INTERFACE(PreparedStatement.class, jdbc.setName).parameter(int.class).parameter(jdbc.jdbcClazz).INVOKE();
 
@@ -583,14 +583,14 @@ public class JdbcRepositoryBuilder {
 			code.STORE("preparedStatement", PreparedStatement.class);
 
 			int $i = 1;
-			for (FieldMapper field : $_entityDefinition.entityFields) {
+			for (PojoFieldJdbcMapper field : $_entityDefinition.entityFields) {
 				JdbcMapping jdbc = JDBC.map(field.clazz);
 				int fieldIndex = $i;
 				code.LINE();
 				code.LOAD("preparedStatement");
 				code.LOADConst(fieldIndex);
 				code.LOAD("data");
-				code.VIRTUAL($_clazzEntity, field.getName).return_(field.clazz).INVOKE();
+				code.VIRTUAL($_clazzEntity, field.fieldGetName).return_(field.clazz).INVOKE();
 				$_arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(code);
 				code.INTERFACE(PreparedStatement.class, jdbc.setName).parameter(int.class).parameter(jdbc.jdbcClazz).INVOKE();
 
@@ -629,9 +629,9 @@ public class JdbcRepositoryBuilder {
 
 	protected void _updateJdbc(ClassBody classBody) {
 		FieldList $_fieldsAll = $_entityDefinition.fieldsAll;
-		ListMap<String, FieldMapper> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
-		ListMap<String, FieldMapper> $_othersWithoutCreate = $_fieldsAll.filter(f -> !f.primaryKey && !"createAt".equals(f.fieldName));
-		ListMap<String, FieldMapper> $_othersWithoutExtend = $_entityDefinition.entityFields.filter(f -> !f.primaryKey);
+		ListMap<String, PojoFieldJdbcMapper> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
+		ListMap<String, PojoFieldJdbcMapper> $_othersWithoutCreate = $_fieldsAll.filter(f -> !f.primaryKey && !"createAt".equals(f.fieldName));
+		ListMap<String, PojoFieldJdbcMapper> $_othersWithoutExtend = $_entityDefinition.entityFields.filter(f -> !f.primaryKey);
 		String $_sql = JDBC.sql("UPDATE ${tablename} SET ${setvalues} WHERE ${causes}", $_entityDefinition.jdbcTablename, String.join(",", $_othersWithoutCreate.map(f -> f.fieldName + "=?")),
 				String.join(" AND ", $_keys.map(f -> f.fieldName + "=?")));
 
@@ -668,7 +668,7 @@ public class JdbcRepositoryBuilder {
 		code.STORE("preparedStatement", PreparedStatement.class);
 
 		int i = 1;
-		for (FieldMapper field : $_othersWithoutExtend) {
+		for (PojoFieldJdbcMapper field : $_othersWithoutExtend) {
 			JdbcMapping jdbc = JDBC.map(field.clazz);
 
 			int fieldIndex = i;
@@ -676,7 +676,7 @@ public class JdbcRepositoryBuilder {
 			code.LOAD("preparedStatement");
 			code.LOADConst(fieldIndex);
 			code.LOAD("data");
-			code.VIRTUAL($_clazzEntity, field.getName).return_(field.clazz).INVOKE();
+			code.VIRTUAL($_clazzEntity, field.fieldGetName).return_(field.clazz).INVOKE();
 			$_arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(code);
 			code.INTERFACE(PreparedStatement.class, jdbc.setName).parameter(int.class).parameter(jdbc.jdbcClazz).INVOKE();
 
@@ -691,7 +691,7 @@ public class JdbcRepositoryBuilder {
 		code.POP();
 
 		// preparedStatement.setLong(3, data.getId());
-		for (FieldMapper field : $_keys) {
+		for (PojoFieldJdbcMapper field : $_keys) {
 
 			JdbcMapping jdbc = JDBC.map(field.clazz);
 
@@ -700,7 +700,7 @@ public class JdbcRepositoryBuilder {
 			code.LOAD("preparedStatement");
 			code.LOADConst(fieldIndex);
 			code.LOAD("data");
-			code.VIRTUAL($_clazzEntity, field.getName).return_(field.clazz).INVOKE();
+			code.VIRTUAL($_clazzEntity, field.fieldGetName).return_(field.clazz).INVOKE();
 			$_arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(code);
 			code.INTERFACE(PreparedStatement.class, jdbc.setName).parameter(int.class).parameter(jdbc.jdbcClazz).INVOKE();
 
@@ -731,7 +731,7 @@ public class JdbcRepositoryBuilder {
 
 	protected void _deleteByIdJdbc(ClassBody classBody) {
 		FieldList $_fieldsAll = $_entityDefinition.fieldsAll;
-		ListMap<String, FieldMapper> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
+		ListMap<String, PojoFieldJdbcMapper> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
 		String $_sql = JDBC.sql("DELETE ${tablename} WHERE ${causes}", $_entityDefinition.jdbcTablename, String.join(" AND ", $_keys.map(f -> f.column.getName() + "=?")));
 
 		MethodCode code = classBody.public_().method("deleteByIdJdbc").return_(int.class).throws_(SQLException.class).parameter("id", long.class).begin();

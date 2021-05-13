@@ -49,9 +49,9 @@ public class EntityImplBuilderTest extends TestBase {
 
 		FieldList clazzFields = new FieldList();
 
-		clazzFields.push(new FieldMapper("id", "getId", long.class, INTEGER("ID")));
-		clazzFields.push(new FieldMapper("name", "getName", String.class, VARCHAR("NAME")));
-		clazzFields.push(new FieldMapper("description", "getDescription", String.class, VARCHAR("description")));
+		clazzFields.push(new PojoFieldJdbcMapper("id", "getId", long.class, INTEGER("ID")));
+		clazzFields.push(new PojoFieldJdbcMapper("name", "getName", String.class, VARCHAR("NAME")));
+		clazzFields.push(new PojoFieldJdbcMapper("description", "getDescription", String.class, VARCHAR("description")));
 
 		EntityPojoDbMappingDefinitions clazzDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName().toUpperCase(), clazzFields);
 
@@ -67,20 +67,20 @@ public class EntityImplBuilderTest extends TestBase {
 	@Test
 	public void testUserMoreComplexJdbcRowMapper() {
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new FieldMapper("id", "getId", long.class, BIGINT("id").primarykey().autoIncrement()));
-		clazzFields.push(new FieldMapper("string", "getString", String.class, VARCHAR("string")));
-		clazzFields.push(new FieldMapper("bigDecimal", "getBigDecimal", java.math.BigDecimal.class, NUMERIC("bigDecimal")));
-		clazzFields.push(new FieldMapper("z", "getZ", Boolean.class, BOOLEAN("z")));
-		clazzFields.push(new FieldMapper("c", "getC", Character.class, CHAR("c")));
-		clazzFields.push(new FieldMapper("b", "getB", Byte.class, BIT("b")));
-		clazzFields.push(new FieldMapper("s", "getS", Short.class, SMALLINT("s")));
-		clazzFields.push(new FieldMapper("i", "getI", Integer.class, INTEGER("i")));
-		clazzFields.push(new FieldMapper("l", "getL", Long.class, BIGINT("l")));
-		clazzFields.push(new FieldMapper("f", "getF", Float.class, FLOAT("f")));
-		clazzFields.push(new FieldMapper("d", "getD", Double.class, DOUBLE("d")));
-		clazzFields.push(new FieldMapper("date", "getDate", java.sql.Date.class, DATE("date")));
-		clazzFields.push(new FieldMapper("time", "getTime", java.sql.Time.class, TIME("time")));
-		clazzFields.push(new FieldMapper("timestamp", "getTimestamp", java.sql.Timestamp.class, TIMESTAMP("timestamp")));
+		clazzFields.push(new PojoFieldJdbcMapper("id", "getId", long.class, BIGINT("id").primarykey().autoIncrement()));
+		clazzFields.push(new PojoFieldJdbcMapper("string", "getString", String.class, VARCHAR("string")));
+		clazzFields.push(new PojoFieldJdbcMapper("bigDecimal", "getBigDecimal", java.math.BigDecimal.class, NUMERIC("bigDecimal")));
+		clazzFields.push(new PojoFieldJdbcMapper("z", "getZ", Boolean.class, BOOLEAN("z")));
+		clazzFields.push(new PojoFieldJdbcMapper("c", "getC", Character.class, CHAR("c")));
+		clazzFields.push(new PojoFieldJdbcMapper("b", "getB", Byte.class, BIT("b")));
+		clazzFields.push(new PojoFieldJdbcMapper("s", "getS", Short.class, SMALLINT("s")));
+		clazzFields.push(new PojoFieldJdbcMapper("i", "getI", Integer.class, INTEGER("i")));
+		clazzFields.push(new PojoFieldJdbcMapper("l", "getL", Long.class, BIGINT("l")));
+		clazzFields.push(new PojoFieldJdbcMapper("f", "getF", Float.class, FLOAT("f")));
+		clazzFields.push(new PojoFieldJdbcMapper("d", "getD", Double.class, DOUBLE("d")));
+		clazzFields.push(new PojoFieldJdbcMapper("date", "getDate", java.sql.Date.class, DATE("date")));
+		clazzFields.push(new PojoFieldJdbcMapper("time", "getTime", java.sql.Time.class, TIME("time")));
+		clazzFields.push(new PojoFieldJdbcMapper("timestamp", "getTimestamp", java.sql.Timestamp.class, TIMESTAMP("timestamp")));
 
 		String targetClazz = UserMoreComplex.class.getName();
 		String clazzExtend = targetClazz + "Extend";

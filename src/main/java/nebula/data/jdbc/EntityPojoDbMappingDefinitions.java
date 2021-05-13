@@ -48,7 +48,7 @@ public class EntityPojoDbMappingDefinitions {
 
 	static FieldList defaultSystemFields = new FieldList();
 	static {
-		defaultSystemFields.push(new FieldMapper("createAt", "getCreateAt", java.sql.Timestamp.class, TIMESTAMP("createAt")));
-		defaultSystemFields.push(new FieldMapper("updateAt", "getUpdateAt", java.sql.Timestamp.class, TIMESTAMP("updateAt")));
+		defaultSystemFields.push(new PojoFieldJdbcMapper("createAt", "getCreateAt", java.sql.Timestamp.class, TIMESTAMP("createAt")));
+		defaultSystemFields.push(new PojoFieldJdbcMapper("updateAt", "getUpdateAt", java.sql.Timestamp.class, TIMESTAMP("updateAt")));
 	}
 }

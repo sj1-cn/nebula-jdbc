@@ -1,9 +1,7 @@
 package nebula.jdbc.builders.schema;
 
-import nebula.data.jdbc.Command;
-
-public class AlterTable {
-	public static class AddColumnCommand extends Command {
+public class DDLAlterTable {
+	public static class AddColumnCommand extends DDLCommand {
 
 		public AddColumnCommand(ColumnDefinition column) {
 			super(column);
@@ -11,35 +9,35 @@ public class AlterTable {
 
 	}
 
-	public static class AlterColumnCommand extends Command {
+	public static class AlterColumnCommand extends DDLCommand {
 
 		public AlterColumnCommand(ColumnDefinition column) {
 			super(column);
 		}
 	}
 
-	public static class DropColumnCommand extends Command {
+	public static class DropColumnCommand extends DDLCommand {
 
 		public DropColumnCommand(ColumnDefinition column) {
 			super(column);
 		}
 	}
 
-	public static class AlterColumnNullableCommand extends Command {
+	public static class AlterColumnNullableCommand extends DDLCommand {
 
 		public AlterColumnNullableCommand(ColumnDefinition column) {
 			super(column);
 		}
 	}
 
-	public static class AlterColumnRemarksCommand extends Command {
+	public static class AlterColumnRemarksCommand extends DDLCommand {
 
 		public AlterColumnRemarksCommand(ColumnDefinition column) {
 			super(column);
 		}
 	}
 
-	public static class RenameColumnCommand extends Command {
+	public static class RenameColumnCommand extends DDLCommand {
 
 		ColumnDefinition oldColumn;
 

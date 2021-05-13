@@ -48,9 +48,9 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 
 		FieldList clazzFields = new FieldList();
 
-		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, INTEGER("id")));
-		clazzFields.push(new FieldMapper("name", "getName", String.class, VARCHAR("name")));
-		clazzFields.push(new FieldMapper("description", "getDescription", String.class, VARCHAR("description")));
+		clazzFields.push(new PojoFieldJdbcMapper(true, "id", "getId", long.class, INTEGER("id")));
+		clazzFields.push(new PojoFieldJdbcMapper("name", "getName", String.class, VARCHAR("name")));
+		clazzFields.push(new PojoFieldJdbcMapper("description", "getDescription", String.class, VARCHAR("description")));
 
 		clazzDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 	}
@@ -155,20 +155,20 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 	@Test
 	public void testUserMoreComplexAutoIncrementJdbcRepository() {
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, BIGINT("id").primarykey().autoIncrement()));
-		clazzFields.push(new FieldMapper("string", "getString", String.class, VARCHAR("string")));
-		clazzFields.push(new FieldMapper("bigDecimal", "getBigDecimal", java.math.BigDecimal.class, DECIMAL("bigDecimal")));
-		clazzFields.push(new FieldMapper("z", "getZ", Boolean.class, BOOLEAN("z")));
-		clazzFields.push(new FieldMapper("c", "getC", Character.class, CHAR("c")));
-		clazzFields.push(new FieldMapper("b", "getB", Byte.class, TINYINT("b")));
-		clazzFields.push(new FieldMapper("s", "getS", Short.class, SMALLINT("s")));
-		clazzFields.push(new FieldMapper("i", "getI", Integer.class, INTEGER("i")));
-		clazzFields.push(new FieldMapper("l", "getL", Long.class, BIGINT("l")));
-		clazzFields.push(new FieldMapper("f", "getF", Float.class, FLOAT("f")));
-		clazzFields.push(new FieldMapper("d", "getD", Double.class, DOUBLE("d")));
-		clazzFields.push(new FieldMapper("date", "getDate", java.sql.Date.class, DATE("date")));
-		clazzFields.push(new FieldMapper("time", "getTime", java.sql.Time.class, TIME("time")));
-		clazzFields.push(new FieldMapper("timestamp", "getTimestamp", java.sql.Timestamp.class, TIMESTAMP("timestamp")));
+		clazzFields.push(new PojoFieldJdbcMapper(true, "id", "getId", long.class, BIGINT("id").primarykey().autoIncrement()));
+		clazzFields.push(new PojoFieldJdbcMapper("string", "getString", String.class, VARCHAR("string")));
+		clazzFields.push(new PojoFieldJdbcMapper("bigDecimal", "getBigDecimal", java.math.BigDecimal.class, DECIMAL("bigDecimal")));
+		clazzFields.push(new PojoFieldJdbcMapper("z", "getZ", Boolean.class, BOOLEAN("z")));
+		clazzFields.push(new PojoFieldJdbcMapper("c", "getC", Character.class, CHAR("c")));
+		clazzFields.push(new PojoFieldJdbcMapper("b", "getB", Byte.class, TINYINT("b")));
+		clazzFields.push(new PojoFieldJdbcMapper("s", "getS", Short.class, SMALLINT("s")));
+		clazzFields.push(new PojoFieldJdbcMapper("i", "getI", Integer.class, INTEGER("i")));
+		clazzFields.push(new PojoFieldJdbcMapper("l", "getL", Long.class, BIGINT("l")));
+		clazzFields.push(new PojoFieldJdbcMapper("f", "getF", Float.class, FLOAT("f")));
+		clazzFields.push(new PojoFieldJdbcMapper("d", "getD", Double.class, DOUBLE("d")));
+		clazzFields.push(new PojoFieldJdbcMapper("date", "getDate", java.sql.Date.class, DATE("date")));
+		clazzFields.push(new PojoFieldJdbcMapper("time", "getTime", java.sql.Time.class, TIME("time")));
+		clazzFields.push(new PojoFieldJdbcMapper("timestamp", "getTimestamp", java.sql.Timestamp.class, TIMESTAMP("timestamp")));
 		clazzDefinition = new EntityPojoDbMappingDefinitions(UserMoreComplex.class.getSimpleName(), UserMoreComplex.class.getName(), UserMoreComplex.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserMoreComplexAutoIncrementJdbcRepository.class.getName();
@@ -185,9 +185,9 @@ public class JdbcRepositoryBuilderTest extends TestBase {
 	@Test
 	public void testUserAutoIncrementJdbcRepository() {
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER).autoIncrement()));
-		clazzFields.push(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
-		clazzFields.push(new FieldMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
+		clazzFields.push(new PojoFieldJdbcMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER).autoIncrement()));
+		clazzFields.push(new PojoFieldJdbcMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
+		clazzFields.push(new PojoFieldJdbcMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
 		clazzDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), UserMoreComplex.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserAutoIncrementJdbcRepository.class.getName();
