@@ -17,10 +17,7 @@ import static nebula.jdbc.builders.schema.ColumnDefinition.TINYINT;
 import static nebula.jdbc.builders.schema.ColumnDefinition.VARCHAR;
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.After;
@@ -28,6 +25,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cn.sj1.tinyasm.tools.TinyAsmTestUtils;
+import nebula.data.jdbc.sample.User;
+import nebula.data.jdbc.sample.UserExtend;
+import nebula.data.jdbc.sample.UserMoreComplex;
+import nebula.data.jdbc.sample.UserMoreComplexExtend;
 import nebula.jdbc.TestBase;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 
@@ -72,7 +73,7 @@ public class UserJdbcRepositoryBuilderTest extends TestBase {
 		String clazzRepository = UserJdbcRepository.class.getName();
 		String clazzTarget = User.class.getName();
 
-		byte[] codeRepository = UserJdbcRepositoryTinyAsmBuilder.dumpStatic(clazzRepository, User.class.getName(), UserExtend.class.getName(), clazzDefinition);
+		byte[] codeRepository = UserJdbcRepositoryTinyAsmBuilder.dumpStatic(clazzRepository, clazzTarget, UserExtend.class.getName(), clazzDefinition);
 
 		String codeActual = toString(clazzRepository, codeRepository);
 		String codeExpected = TinyAsmTestUtils.toString(clazzRepository);
@@ -93,13 +94,9 @@ public class UserJdbcRepositoryBuilderTest extends TestBase {
 
 		String clazzRepository = UserJdbcRepository.class.getName();
 		String clazzTarget = User.class.getName();
-		String clazzRowMapper = UserExtendJdbcRowMapper.class.getName();
 		String clazzExtend = clazzTarget + "Extend";
 
-		byte[] codeRowMapper = jdbcRowMapperBuilder.make(clazzRowMapper, clazzExtend, clazzDefinition.fieldsAll);
-		@SuppressWarnings("unused")
-		Class<JdbcRowMapper<?>> clazzJdbcRowMapper = (Class<JdbcRowMapper<?>>) classLoader.defineClassByName(clazzRowMapper, codeRowMapper);
-		byte[] codeRepository = UserJdbcRepositoryTinyAsmBuilder.dumpStatic(clazzRepository, User.class.getName(), UserExtend.class.getName(), clazzDefinition);
+		byte[] codeRepository = UserJdbcRepositoryTinyAsmBuilder.dumpStatic(clazzRepository, clazzTarget, clazzExtend, clazzDefinition);
 		Class<JdbcRepository<User>> clazzJdbcRepository = (Class<JdbcRepository<User>>) classLoader.defineClassByName(clazzRepository, codeRepository);
 
 		JdbcRepository<User> userRepository = clazzJdbcRepository.getConstructor().newInstance();
@@ -165,7 +162,7 @@ public class UserJdbcRepositoryBuilderTest extends TestBase {
 		String clazzRepository = UserMoreComplexAutoIncrementJdbcRepository.class.getName();
 		String clazzTarget = UserMoreComplex.class.getName();
 
-		byte[] codeRepository = UserJdbcRepositoryTinyAsmBuilder.dumpStatic(clazzRepository, UserMoreComplex.class.getName(), UserMoreComplexExtend.class.getName(), clazzDefinition);
+		byte[] codeRepository = UserJdbcRepositoryTinyAsmBuilder.dumpStatic(clazzRepository, clazzTarget, UserMoreComplexExtend.class.getName(), clazzDefinition);
 
 		String codeActual = toString(clazzRepository, codeRepository);
 		String codeExpected = TinyAsmTestUtils.toString(clazzRepository);
@@ -184,7 +181,7 @@ public class UserJdbcRepositoryBuilderTest extends TestBase {
 		String clazzRepository = UserAutoIncrementJdbcRepository.class.getName();
 		String clazzTarget = User.class.getName();
 
-		byte[] codeRepository = UserJdbcRepositoryTinyAsmBuilder.dumpStatic(clazzRepository, User.class.getName(), UserExtend.class.getName(), clazzDefinition);
+		byte[] codeRepository = UserJdbcRepositoryTinyAsmBuilder.dumpStatic(clazzRepository, clazzTarget, UserExtend.class.getName(), clazzDefinition);
 
 		String codeActual = toString(clazzRepository, codeRepository);
 		String codeExpected = TinyAsmTestUtils.toString(clazzRepository);

@@ -1,7 +1,9 @@
-package nebula.data.jdbc;
+package nebula.data.jdbc.sample;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import nebula.data.jdbc.JdbcRowMapper;
 
 public class UserJdbcRowMapper implements JdbcRowMapper<User> {
 

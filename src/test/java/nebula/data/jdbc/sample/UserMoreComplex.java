@@ -1,4 +1,4 @@
-package nebula.data.jdbc;
+package nebula.data.jdbc.sample;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -135,7 +135,7 @@ public class UserMoreComplex {
 		this.timestamp = timestamp;
 	}
 
-	public UserMoreComplex(Long id, String string, BigDecimal bigDecimal, Boolean z, Character c, Byte b, Short s,
+	public UserMoreComplex(long id, String string, BigDecimal bigDecimal, Boolean z, Character c, Byte b, Short s,
 			Integer i, Long l, Float f, Double d, Date date, Time time, Timestamp timestamp) {
 		this.id = id;
 		this.string = string;

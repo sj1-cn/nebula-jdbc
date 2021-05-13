@@ -1,9 +1,11 @@
-package nebula.data.jdbc;
+package nebula.data.jdbc.sample;
 
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+
+import nebula.data.jdbc.EntitySystem;
 
 public class UserMoreComplexExtend extends UserMoreComplex implements EntitySystem {
 
@@ -13,7 +15,7 @@ public class UserMoreComplexExtend extends UserMoreComplex implements EntitySyst
 		
 	}
 
-	public UserMoreComplexExtend(Long id, String string, BigDecimal bigDecimal, Boolean z, Character c, Byte b, Short s, Integer i, Long l,
+	public UserMoreComplexExtend(long id, String string, BigDecimal bigDecimal, Boolean z, Character c, Byte b, Short s, Integer i, Long l,
 			Float f, Double d, Date date, Time time, Timestamp timestamp, Timestamp createAt, Timestamp updateAt) {
 		super(id, string, bigDecimal, z, c, b, s, i, l, f, d, date, time, timestamp);
 		this.createAt = createAt;

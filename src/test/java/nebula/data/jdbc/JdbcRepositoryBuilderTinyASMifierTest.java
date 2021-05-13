@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import cn.sj1.tinyasm.tools.TinyAsmTestUtils;
+import nebula.data.jdbc.sample.UserExtend;
 
 public class JdbcRepositoryBuilderTinyASMifierTest {
 
@@ -62,24 +63,5 @@ public class JdbcRepositoryBuilderTinyASMifierTest {
 //
 //	}
 
-	@Test
-	public void UsingUserExtendJdbcRowMapper_dumpTinyAsm() throws Exception {
-		Class<?> expectedClazz = UsingUserExtendJdbcRowMapper.class;
-		String codeExpected = TinyAsmTestUtils.toString(expectedClazz);
-
-		String codeActual = TinyAsmTestUtils.toString(expectedClazz.getName(), dumpTinyAsm(expectedClazz));
-
-		assertEquals("Code", codeExpected, codeActual);
-
-	}
-	@Test
-	public void test_UsingUserExtendJdbcRowMapperMagicBuilder_build() throws Exception {
-		Class<?> expectedClazz = UsingUserExtendJdbcRowMapper.class;
-		String codeExpected = TinyAsmTestUtils.toString(expectedClazz);
-
-		String codeActual = TinyAsmTestUtils.toString(expectedClazz.getName(), UsingUserExtendJdbcRowMapperMagicBuilder.dump());
-
-		assertEquals("Code", codeExpected, codeActual);
-	}
 
 }

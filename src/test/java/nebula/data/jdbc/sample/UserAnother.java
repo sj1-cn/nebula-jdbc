@@ -1,6 +1,8 @@
-package nebula.data.jdbc;
+package nebula.data.jdbc.sample;
 
-public class User implements WithIdKey{
+import nebula.data.jdbc.WithIdKey;
+
+public class UserAnother implements WithIdKey {
 	private long id;
 	private String name;
 	private String description;
@@ -28,12 +30,8 @@ public class User implements WithIdKey{
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	public User() {
-		
-	}
 
-	public User(long id, String name, String description) {
+	public UserAnother(long id, String name, String description) {
 		super();
 		this.id = id;
 		this.name = name;

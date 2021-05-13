@@ -1,6 +1,8 @@
-package nebula.data.jdbc;
+package nebula.data.jdbc.sample;
 
 import java.sql.Timestamp;
+
+import nebula.data.jdbc.EntitySystem;
 
 public class UserExtend extends User implements EntitySystem {
 	private Timestamp createAt;

@@ -21,6 +21,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cn.sj1.tinyasm.tools.TinyAsmTestUtils;
+import nebula.data.jdbc.sample.User;
+import nebula.data.jdbc.sample.UserMoreComplex;
+import nebula.data.jdbc.sample.UserMoreComplexExtend;
 import nebula.jdbc.TestBase;
 
 public class EntityImplBuilderTest extends TestBase {
@@ -64,7 +67,7 @@ public class EntityImplBuilderTest extends TestBase {
 	@Test
 	public void testUserMoreComplexJdbcRowMapper() {
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new FieldMapper("id", "getId", Long.class, BIGINT("id").primarykey().autoIncrement()));
+		clazzFields.push(new FieldMapper("id", "getId", long.class, BIGINT("id").primarykey().autoIncrement()));
 		clazzFields.push(new FieldMapper("string", "getString", String.class, VARCHAR("string")));
 		clazzFields.push(new FieldMapper("bigDecimal", "getBigDecimal", java.math.BigDecimal.class, NUMERIC("bigDecimal")));
 		clazzFields.push(new FieldMapper("z", "getZ", Boolean.class, BOOLEAN("z")));

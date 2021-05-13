@@ -9,6 +9,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import cn.sj1.tinyasm.tools.TinyAsmTestUtils;
+import nebula.data.jdbc.sample.User;
+import nebula.data.jdbc.sample.UserExtend;
 import nebula.jdbc.builders.schema.ColumnDefinition;
 
 public class UserJdbcRepositoryBuilderTinyASMifierTest {

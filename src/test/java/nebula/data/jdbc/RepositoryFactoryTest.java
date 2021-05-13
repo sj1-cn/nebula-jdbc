@@ -13,6 +13,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import nebula.data.jdbc.sample.User;
+import nebula.data.jdbc.sample.UserComplex;
+import nebula.data.jdbc.sample.UserMoreComplex;
 import nebula.jdbc.TestBase;
 
 public class RepositoryFactoryTest extends TestBase {
@@ -27,12 +30,6 @@ public class RepositoryFactoryTest extends TestBase {
 	@After
 	public void after() {
 		super.closeConnection();
-	}
-
-	@Test
-	public void test_getMapper() {
-		EntityDefinition clazzDefinition = repositoryFactory.build(User.class);
-		repositoryFactory.makeJdbcRowMapper(clazzDefinition);
 	}
 
 	@Test

@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import nebula.data.jdbc.sample.User;
 import nebula.jdbc.TestBase;
 
 public class UserAutoIncrementJdbcRepositoryTest extends TestBase {
@@ -65,7 +66,7 @@ public class UserAutoIncrementJdbcRepositoryTest extends TestBase {
 		userRepository.setConnection(connection);
 
 		userRepository.init();
-		userRepository.init();
+//		userRepository.init();
 
 		List<User> users1 = userRepository.list(0, 10);
 

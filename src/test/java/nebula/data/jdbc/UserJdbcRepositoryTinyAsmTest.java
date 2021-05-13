@@ -14,6 +14,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import nebula.data.jdbc.sample.User;
+import nebula.data.jdbc.sample.UserExtend;
 import nebula.data.query.Condition;
 import nebula.jdbc.TestBase;
 import nebula.jdbc.builders.schema.ColumnDefinition;
@@ -32,7 +34,7 @@ public class UserJdbcRepositoryTinyAsmTest extends TestBase {
 		connection = super.openConnection();
 
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER).autoIncrement()));
+		clazzFields.push(new FieldMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
 		clazzFields.push(new FieldMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
 		clazzFields.push(new FieldMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
 		entityDefinition = new EntityDefinition(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
@@ -88,7 +90,6 @@ public class UserJdbcRepositoryTinyAsmTest extends TestBase {
 	public void testUserPagination() throws IOException, InstantiationException, IllegalAccessException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
 
 		userRepository.init();
-		userRepository.init();
 
 		PageList<User> users = userRepository.list(0, 10);
 
@@ -122,7 +123,6 @@ public class UserJdbcRepositoryTinyAsmTest extends TestBase {
 	@Test
 	public void testUserWhere() throws IOException, InstantiationException, IllegalAccessException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
 
-		userRepository.init();
 		userRepository.init();
 
 		PageList<User> users = userRepository.list(0, 10);
@@ -162,7 +162,6 @@ public class UserJdbcRepositoryTinyAsmTest extends TestBase {
 	@Test
 	public void testUser() throws IOException, InstantiationException, IllegalAccessException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
 
-		userRepository.init();
 		userRepository.init();
 
 		PageList<User> users = userRepository.list(0, 10);
@@ -211,7 +210,7 @@ public class UserJdbcRepositoryTinyAsmTest extends TestBase {
 	@Test
 	public void testUserExist() throws SQLException {
 
-		connection.createStatement().execute("CREATE TABLE USER (id INTEGER PRIMARY KEY, description VARCHAR)");
+//		connection.createStatement().execute("CREATE TABLE USER (id INTEGER PRIMARY KEY, description VARCHAR)");
 
 		userRepository.init();
 

@@ -9,47 +9,36 @@ import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
 import cn.sj1.tinyasm.core.Annotation;
 import cn.sj1.tinyasm.core.Clazz;
-import java.lang.Float;
-import nebula.data.jdbc.sample.UserMoreComplexExtend;
-import java.sql.Connection;
-import java.sql.Time;
-import java.lang.Double;
-import nebula.jdbc.builders.queries.Select;
-import java.lang.Integer;
-import java.util.ArrayList;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.lang.Character;
-import java.lang.Long;
-import java.sql.ResultSet;
-import java.lang.Short;
-import java.lang.Boolean;
-import nebula.data.query.Condition;
-import java.lang.String;
-import java.lang.Byte;
-import nebula.data.jdbc.PageList;
-import nebula.data.jdbc.sample.UserMoreComplex;
+import nebula.data.jdbc.sample.UserExtend;
 import nebula.data.jdbc.JdbcRepository;
+import java.sql.Connection;
 import nebula.data.query.OrderBy;
 import java.sql.Timestamp;
+import nebula.data.jdbc.sample.User;
 import java.sql.PreparedStatement;
-import java.sql.Date;
+import nebula.jdbc.builders.queries.Select;
+import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.lang.Object;
+import nebula.data.query.Condition;
 import nebula.data.jdbc.SqlHelper;
 import nebula.jdbc.builders.schema.ColumnList;
+import java.lang.String;
 import nebula.data.jdbc.PageListImpl;
+import nebula.data.jdbc.PageList;
 import nebula.data.jdbc.EntitySystem;
 @SuppressWarnings("unused")
-public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
+public class UserJdbcRepositoryTinyAsmDump {
 
 	public static byte[] dump () throws Exception {
-		return new UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump().dump("nebula.data.jdbc.UserMoreComplexAutoIncrementJdbcRepository");
+		return new UserJdbcRepositoryTinyAsmDump().dump("nebula.data.jdbc.UserJdbcRepository");
 	}
 
 	public byte[] dump(String className) throws Exception {
-		ClassBody classBody = ClassBuilder.class_(className, Clazz.of(Object.class),Clazz.of(JdbcRepository.class,Clazz.of(UserMoreComplex.class)))
+		ClassBody classBody = ClassBuilder.class_(className, Clazz.of(Object.class),Clazz.of(JdbcRepository.class,Clazz.of(User.class)))
 			.access(ACC_PUBLIC | ACC_SUPER).body();
 
 		classBody.private_().field("conn", Clazz.of(Connection.class));
@@ -118,85 +107,19 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("columnList");
-		code.LOADConst("id BIGINT(19) PRIMARY KEY AUTO_INCREMENT");
+		code.LOADConst("id INTEGER(10) PRIMARY KEY");
 		code.VIRTUAL(ColumnList.class, "addColumn")
 			.parameter(String.class).INVOKE();
 
 		code.LINE();
 		code.LOAD("columnList");
-		code.LOADConst("string VARCHAR(256)");
+		code.LOADConst("name VARCHAR(256)");
 		code.VIRTUAL(ColumnList.class, "addColumn")
 			.parameter(String.class).INVOKE();
 
 		code.LINE();
 		code.LOAD("columnList");
-		code.LOADConst("bigDecimal DECIMAL(15,6)");
-		code.VIRTUAL(ColumnList.class, "addColumn")
-			.parameter(String.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("columnList");
-		code.LOADConst("z BOOLEAN");
-		code.VIRTUAL(ColumnList.class, "addColumn")
-			.parameter(String.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("columnList");
-		code.LOADConst("c CHAR(1)");
-		code.VIRTUAL(ColumnList.class, "addColumn")
-			.parameter(String.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("columnList");
-		code.LOADConst("b TINYINT(3)");
-		code.VIRTUAL(ColumnList.class, "addColumn")
-			.parameter(String.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("columnList");
-		code.LOADConst("s SMALLINT(5)");
-		code.VIRTUAL(ColumnList.class, "addColumn")
-			.parameter(String.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("columnList");
-		code.LOADConst("i INTEGER(10)");
-		code.VIRTUAL(ColumnList.class, "addColumn")
-			.parameter(String.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("columnList");
-		code.LOADConst("l BIGINT(19)");
-		code.VIRTUAL(ColumnList.class, "addColumn")
-			.parameter(String.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("columnList");
-		code.LOADConst("f FLOAT(7)");
-		code.VIRTUAL(ColumnList.class, "addColumn")
-			.parameter(String.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("columnList");
-		code.LOADConst("d DOUBLE(17)");
-		code.VIRTUAL(ColumnList.class, "addColumn")
-			.parameter(String.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("columnList");
-		code.LOADConst("date DATE");
-		code.VIRTUAL(ColumnList.class, "addColumn")
-			.parameter(String.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("columnList");
-		code.LOADConst("time TIME");
-		code.VIRTUAL(ColumnList.class, "addColumn")
-			.parameter(String.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("columnList");
-		code.LOADConst("timestamp TIMESTAMP");
+		code.LOADConst("description VARCHAR(256)");
 		code.VIRTUAL(ColumnList.class, "addColumn")
 			.parameter(String.class).INVOKE();
 
@@ -216,20 +139,20 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("this");
 		code.LOAD("this");
 		code.GETFIELD_OF_THIS("conn");
-		code.LOADConst("USERMORECOMPLEX");
+		code.LOADConst("USER");
 		code.LOAD("columnList");
 		code.VIRTUAL("mergeIfExists")
 			.return_(boolean.class)
 			.parameter(Connection.class)
 			.parameter(String.class)
 			.parameter(ColumnList.class).INVOKE();
-		Label label18OfIFNE = new Label();
-		code.IFNE(label18OfIFNE);
+		Label label7OfIFNE = new Label();
+		code.IFNE(label7OfIFNE);
 
 		code.LINE();
 		code.LOAD("this");
 		code.GETFIELD_OF_THIS("conn");
-		code.LOADConst("CREATE TABLE USERMORECOMPLEX(id BIGINT(19) PRIMARY KEY AUTO_INCREMENT,string VARCHAR(256),bigDecimal DECIMAL(15,6),z BOOLEAN,c CHAR(1),b TINYINT(3),s SMALLINT(5),i INTEGER(10),l BIGINT(19),f FLOAT(7),d DOUBLE(17),date DATE,time TIME,timestamp TIMESTAMP,createAt TIMESTAMP,updateAt TIMESTAMP)");
+		code.LOADConst("CREATE TABLE USER(id INTEGER(10),name VARCHAR(256),description VARCHAR(256),createAt TIMESTAMP,updateAt TIMESTAMP,PRIMARY KEY(id))");
 		code.INTERFACE(Connection.class, "prepareStatement")
 			.return_(PreparedStatement.class)
 			.parameter(String.class).INVOKE();
@@ -237,7 +160,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 			.return_(boolean.class).INVOKE();
 		code.POP();
 
-		code.visitLabel(label18OfIFNE);
+		code.visitLabel(label7OfIFNE);
 
 		code.LINE();
 		code.RETURN();
@@ -247,7 +170,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 
 	protected void _listJdbc(ClassBody classBody) {
 		MethodCode code = classBody.public_().method("listJdbc")
-			.return_(Clazz.of(PageList.class,Clazz.of(UserMoreComplex.class)) )
+			.return_(Clazz.of(PageList.class,Clazz.of(User.class)) )
 			.throws_(SQLException.class )
 			.parameter("start",Clazz.of(int.class))
 			.parameter("max",Clazz.of(int.class)).begin();
@@ -260,16 +183,16 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.SPECIAL(PageListImpl.class, "<init>")
 			.parameter(int.class)
 			.parameter(int.class).INVOKE();
-		code.STORE("datas",Clazz.of(PageList.class,Clazz.of(UserMoreComplex.class)));
+		code.STORE("datas",Clazz.of(PageList.class,Clazz.of(User.class)));
 
 		code.LINE();
 		code.LOAD("this");
 		code.GETFIELD_OF_THIS("sqlHelper");
-		code.LOADConst("id,string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp,createAt,updateAt");
+		code.LOADConst("id,name,description,createAt,updateAt");
 		code.VIRTUAL(SqlHelper.class, "select")
 			.return_(Select.class)
 			.parameter(String.class).INVOKE();
-		code.LOADConst("USERMORECOMPLEX");
+		code.LOADConst("USER");
 		code.VIRTUAL(Select.class, "from")
 			.return_(Select.class)
 			.parameter(String.class).INVOKE();
@@ -311,7 +234,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("this");
 		code.LOAD("resultSet");
 		code.SPECIAL("toEntity")
-			.return_(UserMoreComplexExtend.class)
+			.return_(UserExtend.class)
 			.parameter(ResultSet.class).INVOKE();
 		code.INTERFACE(PageList.class, "add")
 			.return_(boolean.class)
@@ -332,7 +255,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.VIRTUAL(SqlHelper.class, "select")
 			.return_(Select.class)
 			.parameter(String.class).INVOKE();
-		code.LOADConst("USERMORECOMPLEX");
+		code.LOADConst("USER");
 		code.VIRTUAL(Select.class, "from")
 			.return_(Select.class)
 			.parameter(String.class).INVOKE();
@@ -384,7 +307,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 
 	protected void _listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int_nebuladatajdbcPageList(ClassBody classBody) {
 		MethodCode code = classBody.public_().method("listJdbc")
-			.return_(Clazz.of(PageList.class,Clazz.of(UserMoreComplex.class)) )
+			.return_(Clazz.of(PageList.class,Clazz.of(User.class)) )
 			.throws_(SQLException.class )
 			.parameter("condition",Clazz.of(Condition.class))
 			.parameter("orderBy",Clazz.of(OrderBy.class))
@@ -399,16 +322,16 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.SPECIAL(PageListImpl.class, "<init>")
 			.parameter(int.class)
 			.parameter(int.class).INVOKE();
-		code.STORE("datas",Clazz.of(PageList.class,Clazz.of(UserMoreComplex.class)));
+		code.STORE("datas",Clazz.of(PageList.class,Clazz.of(User.class)));
 
 		code.LINE();
 		code.LOAD("this");
 		code.GETFIELD_OF_THIS("sqlHelper");
-		code.LOADConst("id,string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp,createAt,updateAt");
+		code.LOADConst("id,name,description,createAt,updateAt");
 		code.VIRTUAL(SqlHelper.class, "select")
 			.return_(Select.class)
 			.parameter(String.class).INVOKE();
-		code.LOADConst("USERMORECOMPLEX");
+		code.LOADConst("USER");
 		code.VIRTUAL(Select.class, "from")
 			.return_(Select.class)
 			.parameter(String.class).INVOKE();
@@ -458,7 +381,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("this");
 		code.LOAD("resultSet");
 		code.SPECIAL("toEntity")
-			.return_(UserMoreComplexExtend.class)
+			.return_(UserExtend.class)
 			.parameter(ResultSet.class).INVOKE();
 		code.INTERFACE(PageList.class, "add")
 			.return_(boolean.class)
@@ -479,7 +402,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.VIRTUAL(SqlHelper.class, "select")
 			.return_(Select.class)
 			.parameter(String.class).INVOKE();
-		code.LOADConst("USERMORECOMPLEX");
+		code.LOADConst("USER");
 		code.VIRTUAL(Select.class, "from")
 			.return_(Select.class)
 			.parameter(String.class).INVOKE();
@@ -535,15 +458,15 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 
 	protected void _toEntity(ClassBody classBody) {
 		MethodCode code = classBody.private_().method("toEntity")
-			.return_(UserMoreComplexExtend.class )
+			.return_(UserExtend.class )
 			.throws_(SQLException.class )
 			.parameter("resultSet",ResultSet.class).begin();
 
 		code.LINE();
-		code.NEW(UserMoreComplexExtend.class);
+		code.NEW(UserExtend.class);
 		code.DUP();
-		code.SPECIAL(UserMoreComplexExtend.class, "<init>").INVOKE();
-		code.STORE("impl",UserMoreComplexExtend.class);
+		code.SPECIAL(UserExtend.class, "<init>").INVOKE();
+		code.STORE("impl",UserExtend.class);
 
 		code.LINE();
 		code.LOAD("impl");
@@ -552,7 +475,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.INTERFACE(ResultSet.class, "getLong")
 			.return_(long.class)
 			.parameter(int.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setId")
+		code.VIRTUAL(UserExtend.class, "setId")
 			.parameter(long.class).INVOKE();
 
 		code.LINE();
@@ -562,175 +485,37 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.INTERFACE(ResultSet.class, "getString")
 			.return_(String.class)
 			.parameter(int.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setString")
+		code.VIRTUAL(UserExtend.class, "setName")
 			.parameter(String.class).INVOKE();
 
 		code.LINE();
 		code.LOAD("impl");
 		code.LOAD("resultSet");
 		code.LOADConst(3);
-		code.INTERFACE(ResultSet.class, "getBigDecimal")
-			.return_(BigDecimal.class)
+		code.INTERFACE(ResultSet.class, "getString")
+			.return_(String.class)
 			.parameter(int.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setBigDecimal")
-			.parameter(BigDecimal.class).INVOKE();
+		code.VIRTUAL(UserExtend.class, "setDescription")
+			.parameter(String.class).INVOKE();
 
 		code.LINE();
 		code.LOAD("impl");
 		code.LOAD("resultSet");
 		code.LOADConst(4);
-		code.INTERFACE(ResultSet.class, "getBoolean")
-			.return_(boolean.class)
+		code.INTERFACE(ResultSet.class, "getTimestamp")
+			.return_(Timestamp.class)
 			.parameter(int.class).INVOKE();
-		code.STATIC(Boolean.class, "valueOf")
-			.return_(Boolean.class)
-			.parameter(boolean.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setZ")
-			.parameter(Boolean.class).INVOKE();
+		code.VIRTUAL(UserExtend.class, "setCreateAt")
+			.parameter(Timestamp.class).INVOKE();
 
 		code.LINE();
 		code.LOAD("impl");
 		code.LOAD("resultSet");
 		code.LOADConst(5);
-		code.INTERFACE(ResultSet.class, "getString")
-			.return_(String.class)
-			.parameter(int.class).INVOKE();
-		code.LOADConst(0);
-		code.VIRTUAL(String.class, "charAt")
-			.return_(char.class)
-			.parameter(int.class).INVOKE();
-		code.STATIC(Character.class, "valueOf")
-			.return_(Character.class)
-			.parameter(char.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setC")
-			.parameter(Character.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("impl");
-		code.LOAD("resultSet");
-		code.LOADConst(6);
-		code.INTERFACE(ResultSet.class, "getByte")
-			.return_(byte.class)
-			.parameter(int.class).INVOKE();
-		code.STATIC(Byte.class, "valueOf")
-			.return_(Byte.class)
-			.parameter(byte.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setB")
-			.parameter(Byte.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("impl");
-		code.LOAD("resultSet");
-		code.LOADConst(7);
-		code.INTERFACE(ResultSet.class, "getShort")
-			.return_(short.class)
-			.parameter(int.class).INVOKE();
-		code.STATIC(Short.class, "valueOf")
-			.return_(Short.class)
-			.parameter(short.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setS")
-			.parameter(Short.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("impl");
-		code.LOAD("resultSet");
-		code.LOADConst(8);
-		code.INTERFACE(ResultSet.class, "getInt")
-			.return_(int.class)
-			.parameter(int.class).INVOKE();
-		code.STATIC(Integer.class, "valueOf")
-			.return_(Integer.class)
-			.parameter(int.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setI")
-			.parameter(Integer.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("impl");
-		code.LOAD("resultSet");
-		code.LOADConst(9);
-		code.INTERFACE(ResultSet.class, "getLong")
-			.return_(long.class)
-			.parameter(int.class).INVOKE();
-		code.STATIC(Long.class, "valueOf")
-			.return_(Long.class)
-			.parameter(long.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setL")
-			.parameter(Long.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("impl");
-		code.LOAD("resultSet");
-		code.LOADConst(10);
-		code.INTERFACE(ResultSet.class, "getFloat")
-			.return_(float.class)
-			.parameter(int.class).INVOKE();
-		code.STATIC(Float.class, "valueOf")
-			.return_(Float.class)
-			.parameter(float.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setF")
-			.parameter(Float.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("impl");
-		code.LOAD("resultSet");
-		code.LOADConst(11);
-		code.INTERFACE(ResultSet.class, "getDouble")
-			.return_(double.class)
-			.parameter(int.class).INVOKE();
-		code.STATIC(Double.class, "valueOf")
-			.return_(Double.class)
-			.parameter(double.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setD")
-			.parameter(Double.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("impl");
-		code.LOAD("resultSet");
-		code.LOADConst(12);
-		code.INTERFACE(ResultSet.class, "getDate")
-			.return_(Date.class)
-			.parameter(int.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setDate")
-			.parameter(Date.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("impl");
-		code.LOAD("resultSet");
-		code.LOADConst(13);
-		code.INTERFACE(ResultSet.class, "getTime")
-			.return_(Time.class)
-			.parameter(int.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setTime")
-			.parameter(Time.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("impl");
-		code.LOAD("resultSet");
-		code.LOADConst(14);
 		code.INTERFACE(ResultSet.class, "getTimestamp")
 			.return_(Timestamp.class)
 			.parameter(int.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setTimestamp")
-			.parameter(Timestamp.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("impl");
-		code.LOAD("resultSet");
-		code.LOADConst(15);
-		code.INTERFACE(ResultSet.class, "getTimestamp")
-			.return_(Timestamp.class)
-			.parameter(int.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setCreateAt")
-			.parameter(Timestamp.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("impl");
-		code.LOAD("resultSet");
-		code.LOADConst(16);
-		code.INTERFACE(ResultSet.class, "getTimestamp")
-			.return_(Timestamp.class)
-			.parameter(int.class).INVOKE();
-		code.VIRTUAL(UserMoreComplexExtend.class, "setUpdateAt")
+		code.VIRTUAL(UserExtend.class, "setUpdateAt")
 			.parameter(Timestamp.class).INVOKE();
 
 		code.LINE();
@@ -742,7 +527,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 
 	protected void _findByIdJdbc(ClassBody classBody) {
 		MethodCode code = classBody.public_().method("findByIdJdbc")
-			.return_(UserMoreComplex.class )
+			.return_(User.class )
 			.throws_(SQLException.class )
 			.parameter("id",long.class).begin();
 
@@ -750,12 +535,12 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.NEW(ArrayList.class);
 		code.DUP();
 		code.SPECIAL(ArrayList.class, "<init>").INVOKE();
-		code.STORE("datas",Clazz.of(List.class,Clazz.of(UserMoreComplex.class)));
+		code.STORE("datas",Clazz.of(List.class,Clazz.of(User.class)));
 
 		code.LINE();
 		code.LOAD("this");
 		code.GETFIELD_OF_THIS("conn");
-		code.LOADConst("SELECT id, string, bigDecimal, z, c, b, s, i, l, f, d, date, time, timestamp, createAt, updateAt FROM USERMORECOMPLEX WHERE id = ?");
+		code.LOADConst("SELECT id, name, description, createAt, updateAt FROM USER WHERE id = ?");
 		code.INTERFACE(Connection.class, "prepareStatement")
 			.return_(PreparedStatement.class)
 			.parameter(String.class).INVOKE();
@@ -790,7 +575,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("this");
 		code.LOAD("resultSet");
 		code.SPECIAL("toEntity")
-			.return_(UserMoreComplexExtend.class)
+			.return_(UserExtend.class)
 			.parameter(ResultSet.class).INVOKE();
 		code.INTERFACE(List.class, "add")
 			.return_(boolean.class)
@@ -806,7 +591,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.INTERFACE(List.class, "get")
 			.return_(Object.class)
 			.parameter(int.class).INVOKE();
-		code.CHECKCAST(UserMoreComplex.class);
+		code.CHECKCAST(User.class);
 		code.RETURNTop();
 
 		code.END();
@@ -814,115 +599,24 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 
 	protected void _insertJdbc(ClassBody classBody) {
 		MethodCode code = classBody.public_().method("insertJdbc")
-			.return_(UserMoreComplex.class )
+			.return_(User.class )
 			.throws_(SQLException.class )
-			.parameter("data",UserMoreComplex.class).begin();
-
-		code.LINE();
-		code.LOADConstNULL();
-		code.STORE("resultSet",ResultSet.class);
+			.parameter("data",User.class).begin();
 
 		code.LINE();
 		code.LOAD("this");
 		code.GETFIELD_OF_THIS("conn");
-		code.LOADConst("INSERT INTO USERMORECOMPLEX(string,bigDecimal,z,c,b,s,i,l,f,d,date,time,timestamp,createAt,updateAt) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-		code.LOADConst(1);
+		code.LOADConst("INSERT INTO USER(id,name,description,createAt,updateAt) VALUES(?,?,?,?,?)");
 		code.INTERFACE(Connection.class, "prepareStatement")
 			.return_(PreparedStatement.class)
-			.parameter(String.class)
-			.parameter(int.class).INVOKE();
+			.parameter(String.class).INVOKE();
 		code.STORE("preparedStatement",PreparedStatement.class);
 
 		code.LINE();
 		code.LOAD("preparedStatement");
 		code.LOADConst(1);
 		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getString")
-			.return_(String.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setString")
-			.parameter(int.class)
-			.parameter(String.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(2);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getBigDecimal")
-			.return_(BigDecimal.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setBigDecimal")
-			.parameter(int.class)
-			.parameter(BigDecimal.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(3);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getZ")
-			.return_(Boolean.class).INVOKE();
-		code.VIRTUAL(Boolean.class, "booleanValue")
-			.return_(boolean.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setBoolean")
-			.parameter(int.class)
-			.parameter(boolean.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(4);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getC")
-			.return_(Character.class).INVOKE();
-		code.VIRTUAL(Character.class, "charValue")
-			.return_(char.class).INVOKE();
-		code.STATIC(String.class, "valueOf")
-			.return_(String.class)
-			.parameter(char.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setString")
-			.parameter(int.class)
-			.parameter(String.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(5);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getB")
-			.return_(Byte.class).INVOKE();
-		code.VIRTUAL(Byte.class, "byteValue")
-			.return_(byte.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setByte")
-			.parameter(int.class)
-			.parameter(byte.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(6);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getS")
-			.return_(Short.class).INVOKE();
-		code.VIRTUAL(Short.class, "shortValue")
-			.return_(short.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setShort")
-			.parameter(int.class)
-			.parameter(short.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(7);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getI")
-			.return_(Integer.class).INVOKE();
-		code.VIRTUAL(Integer.class, "intValue")
-			.return_(int.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setInt")
-			.parameter(int.class)
-			.parameter(int.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(8);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getL")
-			.return_(Long.class).INVOKE();
-		code.VIRTUAL(Long.class, "longValue")
+		code.VIRTUAL(User.class, "getId")
 			.return_(long.class).INVOKE();
 		code.INTERFACE(PreparedStatement.class, "setLong")
 			.parameter(int.class)
@@ -930,62 +624,28 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("preparedStatement");
-		code.LOADConst(9);
+		code.LOADConst(2);
 		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getF")
-			.return_(Float.class).INVOKE();
-		code.VIRTUAL(Float.class, "floatValue")
-			.return_(float.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setFloat")
+		code.VIRTUAL(User.class, "getName")
+			.return_(String.class).INVOKE();
+		code.INTERFACE(PreparedStatement.class, "setString")
 			.parameter(int.class)
-			.parameter(float.class).INVOKE();
+			.parameter(String.class).INVOKE();
 
 		code.LINE();
 		code.LOAD("preparedStatement");
-		code.LOADConst(10);
+		code.LOADConst(3);
 		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getD")
-			.return_(Double.class).INVOKE();
-		code.VIRTUAL(Double.class, "doubleValue")
-			.return_(double.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setDouble")
+		code.VIRTUAL(User.class, "getDescription")
+			.return_(String.class).INVOKE();
+		code.INTERFACE(PreparedStatement.class, "setString")
 			.parameter(int.class)
-			.parameter(double.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(11);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getDate")
-			.return_(Date.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setDate")
-			.parameter(int.class)
-			.parameter(Date.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(12);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getTime")
-			.return_(Time.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setTime")
-			.parameter(int.class)
-			.parameter(Time.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(13);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getTimestamp")
-			.return_(Timestamp.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setTimestamp")
-			.parameter(int.class)
-			.parameter(Timestamp.class).INVOKE();
+			.parameter(String.class).INVOKE();
 
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("preparedStatement");
-		code.LOADConst(14);
+		code.LOADConst(4);
 		code.VIRTUAL("bindInsertExtend")
 			.return_(int.class)
 			.parameter(PreparedStatement.class)
@@ -996,34 +656,20 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("preparedStatement");
 		code.INTERFACE(PreparedStatement.class, "executeUpdate")
 			.return_(int.class).INVOKE();
-		Label label17OfIFLE = new Label();
-		code.IFLE(label17OfIFLE);
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.INTERFACE(PreparedStatement.class, "getGeneratedKeys")
-			.return_(ResultSet.class).INVOKE();
-		code.STORE("resultSet");
-
-		code.LINE();
-		code.LOAD("resultSet");
-		code.INTERFACE(ResultSet.class, "next")
-			.return_(boolean.class).INVOKE();
-		code.POP();
+		Label label6OfIFLE = new Label();
+		code.IFLE(label6OfIFLE);
 
 		code.LINE();
 		code.LOAD("this");
-		code.LOAD("resultSet");
-		code.LOADConst(1);
-		code.INTERFACE(ResultSet.class, "getLong")
-			.return_(long.class)
-			.parameter(int.class).INVOKE();
+		code.LOAD("data");
+		code.VIRTUAL(User.class, "getId")
+			.return_(long.class).INVOKE();
 		code.VIRTUAL("findByIdJdbc")
-			.return_(UserMoreComplex.class)
+			.return_(User.class)
 			.parameter(long.class).INVOKE();
 		code.RETURNTop();
 
-		code.visitLabel(label17OfIFLE);
+		code.visitLabel(label6OfIFLE);
 
 		code.LINE();
 		code.LOADConstNULL();
@@ -1034,17 +680,17 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 
 	protected void _updateJdbc(ClassBody classBody) {
 		MethodCode code = classBody.public_().method("updateJdbc")
-			.return_(UserMoreComplex.class )
+			.return_(User.class )
 			.throws_(SQLException.class )
-			.parameter("data",UserMoreComplex.class).begin();
+			.parameter("data",User.class).begin();
 
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getId")
+		code.VIRTUAL(User.class, "getId")
 			.return_(long.class).INVOKE();
 		code.VIRTUAL("findByIdJdbc")
-			.return_(UserMoreComplex.class)
+			.return_(User.class)
 			.parameter(long.class).INVOKE();
 		code.CHECKCAST(EntitySystem.class);
 		code.STORE("extend",EntitySystem.class);
@@ -1069,7 +715,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("this");
 		code.GETFIELD_OF_THIS("conn");
-		code.LOADConst("UPDATE USERMORECOMPLEX SET string=?,bigDecimal=?,z=?,c=?,b=?,s=?,i=?,l=?,f=?,d=?,date=?,time=?,timestamp=?,updateAt=? WHERE id=?");
+		code.LOADConst("UPDATE USER SET name=?,description=?,updateAt=? WHERE id=?");
 		code.INTERFACE(Connection.class, "prepareStatement")
 			.return_(PreparedStatement.class)
 			.parameter(String.class).INVOKE();
@@ -1079,7 +725,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("preparedStatement");
 		code.LOADConst(1);
 		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getString")
+		code.VIRTUAL(User.class, "getName")
 			.return_(String.class).INVOKE();
 		code.INTERFACE(PreparedStatement.class, "setString")
 			.parameter(int.class)
@@ -1089,145 +735,16 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("preparedStatement");
 		code.LOADConst(2);
 		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getBigDecimal")
-			.return_(BigDecimal.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setBigDecimal")
-			.parameter(int.class)
-			.parameter(BigDecimal.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(3);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getZ")
-			.return_(Boolean.class).INVOKE();
-		code.VIRTUAL(Boolean.class, "booleanValue")
-			.return_(boolean.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setBoolean")
-			.parameter(int.class)
-			.parameter(boolean.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(4);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getC")
-			.return_(Character.class).INVOKE();
-		code.VIRTUAL(Character.class, "charValue")
-			.return_(char.class).INVOKE();
-		code.STATIC(String.class, "valueOf")
-			.return_(String.class)
-			.parameter(char.class).INVOKE();
+		code.VIRTUAL(User.class, "getDescription")
+			.return_(String.class).INVOKE();
 		code.INTERFACE(PreparedStatement.class, "setString")
 			.parameter(int.class)
 			.parameter(String.class).INVOKE();
 
 		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(5);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getB")
-			.return_(Byte.class).INVOKE();
-		code.VIRTUAL(Byte.class, "byteValue")
-			.return_(byte.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setByte")
-			.parameter(int.class)
-			.parameter(byte.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(6);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getS")
-			.return_(Short.class).INVOKE();
-		code.VIRTUAL(Short.class, "shortValue")
-			.return_(short.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setShort")
-			.parameter(int.class)
-			.parameter(short.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(7);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getI")
-			.return_(Integer.class).INVOKE();
-		code.VIRTUAL(Integer.class, "intValue")
-			.return_(int.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setInt")
-			.parameter(int.class)
-			.parameter(int.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(8);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getL")
-			.return_(Long.class).INVOKE();
-		code.VIRTUAL(Long.class, "longValue")
-			.return_(long.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setLong")
-			.parameter(int.class)
-			.parameter(long.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(9);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getF")
-			.return_(Float.class).INVOKE();
-		code.VIRTUAL(Float.class, "floatValue")
-			.return_(float.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setFloat")
-			.parameter(int.class)
-			.parameter(float.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(10);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getD")
-			.return_(Double.class).INVOKE();
-		code.VIRTUAL(Double.class, "doubleValue")
-			.return_(double.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setDouble")
-			.parameter(int.class)
-			.parameter(double.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(11);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getDate")
-			.return_(Date.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setDate")
-			.parameter(int.class)
-			.parameter(Date.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(12);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getTime")
-			.return_(Time.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setTime")
-			.parameter(int.class)
-			.parameter(Time.class).INVOKE();
-
-		code.LINE();
-		code.LOAD("preparedStatement");
-		code.LOADConst(13);
-		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getTimestamp")
-			.return_(Timestamp.class).INVOKE();
-		code.INTERFACE(PreparedStatement.class, "setTimestamp")
-			.parameter(int.class)
-			.parameter(Timestamp.class).INVOKE();
-
-		code.LINE();
 		code.LOAD("this");
 		code.LOAD("preparedStatement");
-		code.LOADConst(14);
+		code.LOADConst(3);
 		code.VIRTUAL("bindUpdateExtend")
 			.return_(int.class)
 			.parameter(PreparedStatement.class)
@@ -1236,9 +753,9 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("preparedStatement");
-		code.LOADConst(15);
+		code.LOADConst(4);
 		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getId")
+		code.VIRTUAL(User.class, "getId")
 			.return_(long.class).INVOKE();
 		code.INTERFACE(PreparedStatement.class, "setLong")
 			.parameter(int.class)
@@ -1248,20 +765,20 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("preparedStatement");
 		code.INTERFACE(PreparedStatement.class, "executeUpdate")
 			.return_(int.class).INVOKE();
-		Label label20OfIFLE = new Label();
-		code.IFLE(label20OfIFLE);
+		Label label9OfIFLE = new Label();
+		code.IFLE(label9OfIFLE);
 
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("data");
-		code.VIRTUAL(UserMoreComplex.class, "getId")
+		code.VIRTUAL(User.class, "getId")
 			.return_(long.class).INVOKE();
 		code.VIRTUAL("findByIdJdbc")
-			.return_(UserMoreComplex.class)
+			.return_(User.class)
 			.parameter(long.class).INVOKE();
 		code.RETURNTop();
 
-		code.visitLabel(label20OfIFLE);
+		code.visitLabel(label9OfIFLE);
 
 		code.LINE();
 		code.LOADConstNULL();
@@ -1279,7 +796,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("this");
 		code.GETFIELD_OF_THIS("conn");
-		code.LOADConst("DELETE USERMORECOMPLEX WHERE id=?");
+		code.LOADConst("DELETE USER WHERE id=?");
 		code.INTERFACE(Connection.class, "prepareStatement")
 			.return_(PreparedStatement.class)
 			.parameter(String.class).INVOKE();
@@ -1311,10 +828,10 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("data");
-		code.CHECKCAST(UserMoreComplex.class);
+		code.CHECKCAST(User.class);
 		code.VIRTUAL("updateJdbc")
-			.return_(UserMoreComplex.class)
-			.parameter(UserMoreComplex.class).INVOKE();
+			.return_(User.class)
+			.parameter(User.class).INVOKE();
 		code.RETURNTop();
 
 		code.END();
@@ -1329,10 +846,10 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("data");
-		code.CHECKCAST(UserMoreComplex.class);
+		code.CHECKCAST(User.class);
 		code.VIRTUAL("insertJdbc")
-			.return_(UserMoreComplex.class)
-			.parameter(UserMoreComplex.class).INVOKE();
+			.return_(User.class)
+			.parameter(User.class).INVOKE();
 		code.RETURNTop();
 
 		code.END();
@@ -1348,7 +865,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.LOAD("this");
 		code.LOAD("id");
 		code.VIRTUAL("findByIdJdbc")
-			.return_(UserMoreComplex.class)
+			.return_(User.class)
 			.parameter(long.class).INVOKE();
 		code.RETURNTop();
 

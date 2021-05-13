@@ -1,558 +1,797 @@
 package nebula.data.jdbc;
 
+import static org.objectweb.asm.Opcodes.ACC_BRIDGE;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_SUPER;
+import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.objectweb.asm.Label;
 
 import cn.sj1.tinyasm.core.ClassBody;
 import cn.sj1.tinyasm.core.ClassBuilder;
+import cn.sj1.tinyasm.core.Clazz;
 import cn.sj1.tinyasm.core.MethodCode;
+import nebula.commons.list.ListMap;
+import nebula.data.query.Condition;
+import nebula.data.query.OrderBy;
+import nebula.jdbc.builders.queries.Select;
+import nebula.jdbc.builders.schema.Column;
+import nebula.jdbc.builders.schema.ColumnList;
+import nebula.jdbc.builders.schema.JDBC;
+import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
 
-public class JdbcRepositoryBuilder extends RepositoryBuilder {
+@SuppressWarnings("unused")
+public class JdbcRepositoryBuilder {
 
-	public byte[] dump(String clazzRepository, String clazzTarget, String clazzExtend, String clazzRowMapper, EntityDefinition clazzDefinition) {
-		classBody = ClassBuilder.class_(clazzRepository).implements_(JdbcRepository.class, clazzTarget).body();
+	public static byte[] dumpStatic(String clazzRepository, String classEntity, String classEntityImpl, EntityDefinition entityDefinition) throws Exception {
+		JdbcRepositoryBuilder userJdbcRepositoryTinyAsmBuilder = new JdbcRepositoryBuilder(new Arguments());
+		return userJdbcRepositoryTinyAsmBuilder.dump(clazzRepository, classEntity, classEntityImpl, entityDefinition);
+	}
 
-		classBody.private_().field("conn", Connection.class);
-		classBody.private_().field("mapper", clazzRowMapper);
-		classBody.private_().field("sqlHelper", SqlHelper.class);
-		__init_(clazzExtend, clazzRowMapper);
-		_setConnection();
-		_initJdbc(clazzDefinition.tablename, clazzDefinition.fieldsAll);
-		_listJdbc(clazzTarget, clazzExtend, clazzDefinition);
-		_listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int(clazzTarget, clazzExtend, clazzDefinition);
-		_findByIdJdbc(clazzTarget, clazzExtend, clazzDefinition);
-		_insertJdbc(clazzTarget, clazzExtend, clazzDefinition);
-		_updateJdbc(clazzTarget, clazzExtend, clazzDefinition);
-		_deleteJdbc(clazzDefinition);
-		_bridge_findByIdJdbc(clazzTarget);
-		_bridge_updateJdbc(clazzTarget);
-		_bridge_insertJdbc(clazzTarget);
+	public JdbcRepositoryBuilder(Arguments $_arguments) {
+		this.$_arguments = $_arguments;
+	}
+
+	public byte[] dump(String clazzRepository, String classEntity, String classEntityImpl, EntityDefinition entityDefinition) {
+		try {
+			this.dumpInit(clazzRepository, classEntity, classEntityImpl, entityDefinition);
+			return this.doDump(clazzRepository);
+		} catch (Exception e) {
+			throw new  UnsupportedOperationException(e);
+		}
+	}
+
+	String $_clazzRepository;
+	String $_clazzEntity;
+	String $_clazzEntityImpl;
+	EntityDefinition $_entityDefinition;
+	Arguments $_arguments;
+	private boolean $_hasAutoIncrment = true;
+	private String $_tableName;
+
+	public void dumpInit(String clazzRepository, String classEntity, String classEntityImpl, EntityDefinition entityDefinition) {
+		this.$_clazzRepository = clazzRepository;
+		this.$_clazzEntity = classEntity;
+		this.$_clazzEntityImpl = classEntityImpl;
+		this.$_entityDefinition = entityDefinition;
+		this.$_tableName = entityDefinition.tablename;
+	}
+
+	public byte[] doDump(String className) throws Exception {
+		ClassBody classBody = ClassBuilder.class_(className, Clazz.of(Object.class), Clazz.of(JdbcRepository.class, Clazz.of($_clazzEntity))).access(ACC_PUBLIC | ACC_SUPER).body();
+
+		classBody.private_().field("conn", Clazz.of(Connection.class));
+		classBody.private_().field("sqlHelper", Clazz.of(SqlHelper.class));
+		__init_(classBody);
+		_setConnection(classBody);
+		_initJdbc(classBody);
+		_listJdbc(classBody);
+		_listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int_nebuladatajdbcPageList(classBody);
+		_toEntity(classBody);
+		_findByIdJdbc(classBody);
+		_insertJdbc(classBody);
+		_updateJdbc(classBody);
+		_deleteByIdJdbc(classBody);
+		_bridge_updateJdbc(classBody);
+		_bridge_insertJdbc(classBody);
+		_bridge_findByIdJdbc(classBody);
 
 		return classBody.end().toByteArray();
 	}
 
-	// @formatter:off
-	private void __init_(String clazzExtend,String clazzRowMapper) {
+	protected void __init_(ClassBody classBody) {
 		MethodCode code = classBody.public_().method("<init>").begin();
-			code.LINE();
-			code.LOAD("this");
-			code.SPECIAL(Object.class, "<init>").INVOKE();
 
-			code.LINE();
-			code.LOAD("this");
-			code.NEW(clazzRowMapper);
-			code.DUP();
-			code.SPECIAL(clazzRowMapper, "<init>").INVOKE();
-			code.PUTFIELD_OF_THIS("mapper");
+		code.LINE();
+		code.LOAD("this");
+		code.SPECIAL(Object.class, "<init>").INVOKE();
 
-			code.LINE();
-			code.LOAD("this");
-			code.NEW(SqlHelper.class);
-			code.DUP();
-			code.SPECIAL(SqlHelper.class, "<init>").INVOKE();
-			code.PUTFIELD_OF_THIS("sqlHelper");
+		code.LINE();
+		code.LOAD("this");
+		code.NEW(SqlHelper.class);
+		code.DUP();
+		code.SPECIAL(SqlHelper.class, "<init>").INVOKE();
+		code.PUTFIELD_OF_THIS("sqlHelper");
 
 		code.LINE();
 		code.RETURN();
 
-			code.END();
+		code.END();
 	}
 
-	private void _setConnection() {
-		MethodCode code = classBody.public_().method("setConnection")
-				.parameter("conn", Connection.class).begin();
+	protected void _setConnection(ClassBody classBody) {
+		MethodCode code = classBody.public_().method("setConnection").parameter("conn", Connection.class).begin();
+
+		code.LINE();
+		code.LOAD("this");
+		code.LOAD("conn");
+		code.PUTFIELD_OF_THIS("conn");
+
+		code.LINE();
+		code.RETURN();
+
+		code.END();
+	}
+
+	protected void _initJdbc(ClassBody classBody) {
+		FieldList $mappers = $_entityDefinition.getFieldsAll();
+		boolean hasAutoIncrment = $mappers.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
+
+		List<String> keys = $mappers.filter(f -> f.primaryKey).map(f -> f.column.getName());
+		List<String> columnDefinitions = $mappers.map(f -> f.column.toSQL());
+
+		String $_sql;
+		if (hasAutoIncrment) {
+			$_sql = JDBC.sql("CREATE TABLE ${tablename}(${columndefinitions}))", $_entityDefinition.getTablename(), String.join(",", columnDefinitions));
+		} else {
+			$_sql = JDBC.sql("CREATE TABLE ${tablename}(${columndefinitions},PRIMARY KEY(${keys}))", $_entityDefinition.getTablename(), String.join(",", columnDefinitions), String.join(",", keys));
+		}
+
+		MethodCode code = classBody.public_().method("initJdbc").throws_(SQLException.class).begin();
+
+		code.LINE();
+		code.NEW(ColumnList.class);
+		code.DUP();
+		code.SPECIAL(ColumnList.class, "<init>").INVOKE();
+		code.STORE("columnList", ColumnList.class);
+
+		for (FieldMapper $field : $mappers) {
+			code.LINE();
+			code.LOAD("columnList");
+			code.LOADConst($field.column.toString());
+			code.VIRTUAL(ColumnList.class, "addColumn").parameter(String.class).INVOKE();
+		}
+
+		code.LINE();
+		code.LOAD("this");
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("conn");
+		code.LOADConst($_tableName);
+		code.LOAD("columnList");
+		code.VIRTUAL("mergeIfExists").return_(boolean.class).parameter(Connection.class).parameter(String.class).parameter(ColumnList.class).INVOKE();
+		Label label7OfIFNE = new Label();
+		code.IFNE(label7OfIFNE);
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("conn");
+		code.LOADConst($_sql);
+		code.INTERFACE(Connection.class, "prepareStatement").return_(PreparedStatement.class).parameter(String.class).INVOKE();
+		code.INTERFACE(PreparedStatement.class, "execute").return_(boolean.class).INVOKE();
+		code.POP();
+
+		code.visitLabel(label7OfIFNE);
+
+		code.LINE();
+		code.RETURN();
+
+		code.END();
+	}
+
+	protected void _listJdbc(ClassBody classBody) {
+		String $_sqlColumns = String.join(",", $_entityDefinition.fieldsAll.map(f -> f.column.getName()));
+
+		MethodCode code = classBody.public_().method("listJdbc").return_(Clazz.of(PageList.class, Clazz.of($_clazzEntity))).throws_(SQLException.class).parameter("start", Clazz.of(int.class)).parameter("max", Clazz.of(int.class)).begin();
+
+		code.LINE();
+		code.NEW(PageListImpl.class);
+		code.DUP();
+		code.LOAD("start");
+		code.LOAD("max");
+		code.SPECIAL(PageListImpl.class, "<init>").parameter(int.class).parameter(int.class).INVOKE();
+		code.STORE("datas", Clazz.of(PageList.class, Clazz.of($_clazzEntity)));
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("sqlHelper");
+		code.LOADConst($_sqlColumns);
+		code.VIRTUAL(SqlHelper.class, "select").return_(Select.class).parameter(String.class).INVOKE();
+		code.LOADConst($_tableName);
+		code.VIRTUAL(Select.class, "from").return_(Select.class).parameter(String.class).INVOKE();
+		code.LOAD("start");
+		code.VIRTUAL(Select.class, "offset").return_(Select.class).parameter(int.class).INVOKE();
+		code.LOAD("max");
+		code.VIRTUAL(Select.class, "max").return_(Select.class).parameter(int.class).INVOKE();
+		code.VIRTUAL(Select.class, "toSQL").return_(String.class).INVOKE();
+		code.STORE("sql", String.class);
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("conn");
+		code.LOAD("sql");
+		code.INTERFACE(Connection.class, "prepareStatement").return_(PreparedStatement.class).parameter(String.class).INVOKE();
+		code.INTERFACE(PreparedStatement.class, "executeQuery").return_(ResultSet.class).INVOKE();
+		code.STORE("resultSet", ResultSet.class);
+		Label label6OfGOTO = new Label();
+
+		code.visitLabel(label6OfGOTO);
+
+		code.LINE();
+		code.LOAD("resultSet");
+		code.INTERFACE(ResultSet.class, "next").return_(boolean.class).INVOKE();
+		Label label4OfIFEQ = new Label();
+		code.IFEQ(label4OfIFEQ);
+
+		code.LINE();
+		code.LOAD("datas");
+		code.LOAD("this");
+		code.LOAD("resultSet");
+		code.SPECIAL("toEntity").return_($_clazzEntityImpl).parameter(ResultSet.class).INVOKE();
+		code.INTERFACE(PageList.class, "add").return_(boolean.class).parameter(Object.class).INVOKE();
+		code.POP();
+		code.GOTO(label6OfGOTO);
+
+		code.visitLabel(label4OfIFEQ);
+
+		code.LINE();
+		code.LOAD("resultSet");
+		code.INTERFACE(ResultSet.class, "close").INVOKE();
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("sqlHelper");
+		code.LOADConst("count(1)");
+		code.VIRTUAL(SqlHelper.class, "select").return_(Select.class).parameter(String.class).INVOKE();
+		code.LOADConst($_tableName);
+		code.VIRTUAL(Select.class, "from").return_(Select.class).parameter(String.class).INVOKE();
+		code.VIRTUAL(Select.class, "toSQL").return_(String.class).INVOKE();
+		code.STORE("sqlCount", String.class);
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("conn");
+		code.INTERFACE(Connection.class, "createStatement").return_(Statement.class).INVOKE();
+		code.LOAD("sqlCount");
+		code.INTERFACE(Statement.class, "executeQuery").return_(ResultSet.class).parameter(String.class).INVOKE();
+		code.STORE("resultSetCount", ResultSet.class);
+
+		code.LINE();
+		code.LOAD("resultSetCount");
+		code.INTERFACE(ResultSet.class, "next").return_(boolean.class).INVOKE();
+		code.POP();
+
+		code.LINE();
+		code.LOAD("resultSetCount");
+		code.LOADConst(1);
+		code.INTERFACE(ResultSet.class, "getInt").return_(int.class).parameter(int.class).INVOKE();
+		code.STORE("totalSize", int.class);
+
+		code.LINE();
+		code.LOAD("resultSetCount");
+		code.INTERFACE(ResultSet.class, "close").INVOKE();
+
+		code.LINE();
+		code.LOAD("datas");
+		code.LOAD("totalSize");
+		code.INTERFACE(PageList.class, "totalSize").parameter(int.class).INVOKE();
+
+		code.LINE();
+		code.LOAD("datas");
+		code.RETURNTop();
+
+		code.END();
+	}
+
+	protected void _listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int_nebuladatajdbcPageList(ClassBody classBody) {
+		String $_sqlColumns = String.join(",", $_entityDefinition.fieldsAll.map(f -> f.column.getName()));
+		MethodCode code = classBody.public_().method("listJdbc").return_(Clazz.of(PageList.class, Clazz.of($_clazzEntity))).throws_(SQLException.class).parameter("condition", Clazz.of(Condition.class))
+				.parameter("orderBy", Clazz.of(OrderBy.class)).parameter("start", Clazz.of(int.class)).parameter("max", Clazz.of(int.class)).begin();
+
+		code.LINE();
+		code.NEW(PageListImpl.class);
+		code.DUP();
+		code.LOAD("start");
+		code.LOAD("max");
+		code.SPECIAL(PageListImpl.class, "<init>").parameter(int.class).parameter(int.class).INVOKE();
+		code.STORE("datas", Clazz.of(PageList.class, Clazz.of($_clazzEntity)));
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("sqlHelper");
+		code.LOADConst($_sqlColumns);
+		code.VIRTUAL(SqlHelper.class, "select").return_(Select.class).parameter(String.class).INVOKE();
+		code.LOADConst($_tableName);
+		code.VIRTUAL(Select.class, "from").return_(Select.class).parameter(String.class).INVOKE();
+		code.LOAD("condition");
+		code.VIRTUAL(Select.class, "where").return_(Select.class).parameter(Condition.class).INVOKE();
+		code.LOAD("orderBy");
+		code.VIRTUAL(Select.class, "orderby").return_(Select.class).parameter(OrderBy.class).INVOKE();
+		code.LOAD("start");
+		code.VIRTUAL(Select.class, "offset").return_(Select.class).parameter(int.class).INVOKE();
+		code.LOAD("max");
+		code.VIRTUAL(Select.class, "max").return_(Select.class).parameter(int.class).INVOKE();
+		code.VIRTUAL(Select.class, "toSQL").return_(String.class).INVOKE();
+		code.STORE("sql", String.class);
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("conn");
+		code.LOAD("sql");
+		code.INTERFACE(Connection.class, "prepareStatement").return_(PreparedStatement.class).parameter(String.class).INVOKE();
+		code.INTERFACE(PreparedStatement.class, "executeQuery").return_(ResultSet.class).INVOKE();
+		code.STORE("resultSet", ResultSet.class);
+		Label label6OfGOTO = new Label();
+
+		code.visitLabel(label6OfGOTO);
+
+		code.LINE();
+		code.LOAD("resultSet");
+		code.INTERFACE(ResultSet.class, "next").return_(boolean.class).INVOKE();
+		Label label4OfIFEQ = new Label();
+		code.IFEQ(label4OfIFEQ);
+
+		code.LINE();
+		code.LOAD("datas");
+		code.LOAD("this");
+		code.LOAD("resultSet");
+		code.SPECIAL("toEntity").return_($_clazzEntityImpl).parameter(ResultSet.class).INVOKE();
+		code.INTERFACE(PageList.class, "add").return_(boolean.class).parameter(Object.class).INVOKE();
+		code.POP();
+		code.GOTO(label6OfGOTO);
+
+		code.visitLabel(label4OfIFEQ);
+
+		code.LINE();
+		code.LOAD("resultSet");
+		code.INTERFACE(ResultSet.class, "close").INVOKE();
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("sqlHelper");
+		code.LOADConst("count(1)");
+		code.VIRTUAL(SqlHelper.class, "select").return_(Select.class).parameter(String.class).INVOKE();
+		code.LOADConst($_tableName);
+		code.VIRTUAL(Select.class, "from").return_(Select.class).parameter(String.class).INVOKE();
+		code.LOAD("condition");
+		code.VIRTUAL(Select.class, "where").return_(Select.class).parameter(Condition.class).INVOKE();
+		code.VIRTUAL(Select.class, "toSQL").return_(String.class).INVOKE();
+		code.STORE("sqlCount", String.class);
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("conn");
+		code.INTERFACE(Connection.class, "createStatement").return_(Statement.class).INVOKE();
+		code.LOAD("sqlCount");
+		code.INTERFACE(Statement.class, "executeQuery").return_(ResultSet.class).parameter(String.class).INVOKE();
+		code.STORE("resultSetCount", ResultSet.class);
+
+		code.LINE();
+		code.LOAD("resultSetCount");
+		code.INTERFACE(ResultSet.class, "next").return_(boolean.class).INVOKE();
+		code.POP();
+
+		code.LINE();
+		code.LOAD("resultSetCount");
+		code.LOADConst(1);
+		code.INTERFACE(ResultSet.class, "getInt").return_(int.class).parameter(int.class).INVOKE();
+		code.STORE("totalSize", int.class);
+
+		code.LINE();
+		code.LOAD("resultSetCount");
+		code.INTERFACE(ResultSet.class, "close").INVOKE();
+
+		code.LINE();
+		code.LOAD("datas");
+		code.LOAD("totalSize");
+		code.INTERFACE(PageList.class, "totalSize").parameter(int.class).INVOKE();
+
+		code.LINE();
+		code.LOAD("datas");
+		code.RETURNTop();
+
+		code.END();
+	}
+
+	protected void _toEntity(ClassBody classBody) {
+		MethodCode code = classBody.private_().method("toEntity").return_($_clazzEntityImpl).throws_(SQLException.class).parameter("resultSet", ResultSet.class).begin();
+
+		code.LINE();
+		code.NEW($_clazzEntityImpl);
+		code.DUP();
+		code.SPECIAL($_clazzEntityImpl, "<init>").INVOKE();
+		code.STORE("impl", $_clazzEntityImpl);
+
+		FieldList $fields = $_entityDefinition.getFieldsAll();
+		for (int i = 0; i < $fields.size(); i++) {
+			FieldMapper fieldMapper = $fields.get(i);
+			String name = fieldMapper.fieldName;
+			JdbcMapping jdbcMapping = JDBC.map(fieldMapper.clazz);
+			assert jdbcMapping != null : name + "'s type [" + fieldMapper.clazz.getName() + "] has not jdbc type";
+			Class<?> jdbcClazz = jdbcMapping.jdbcClazz;
+			Class<?> pojoClazz = fieldMapper.clazz;
+
+			code.LINE();
+			code.LOAD("impl");
+			code.LOAD("resultSet");
+			code.LOADConst(i + 1);
+			code.INTERFACE(ResultSet.class, jdbcMapping.getname).return_((Class<?>) jdbcClazz).parameter(int.class).INVOKE();
+			$_arguments.fromJdbcClazz(pojoClazz, jdbcClazz).accept(code);
+			code.VIRTUAL($_clazzEntityImpl, "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1)).parameter(fieldMapper.getPojoClazz()).INVOKE();
+		}
+
+		code.LINE();
+		code.LOAD("impl");
+		code.RETURNTop();
+
+		code.END();
+	}
+
+	protected void _findByIdJdbc(ClassBody classBody) {
+		List<Column> $selAllColoumns = $_entityDefinition.fieldsAll.map(f -> f.column);
+		List<Column> $_sqlKeys = $_entityDefinition.fieldsAll.filter(f -> f.primaryKey).map(f -> f.column);
+
+		String $_sql = Select.columns(ColumnList.namesOf($selAllColoumns)).from($_entityDefinition.tablename).where(ColumnList.namesOf($_sqlKeys)).toSQL();
+
+		MethodCode code = classBody.public_().method("findByIdJdbc").return_($_clazzEntity).throws_(SQLException.class).parameter("id", long.class).begin();
+
+		code.LINE();
+		code.NEW(ArrayList.class);
+		code.DUP();
+		code.SPECIAL(ArrayList.class, "<init>").INVOKE();
+		code.STORE("datas", Clazz.of(List.class, Clazz.of($_clazzEntity)));
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("conn");
+		code.LOADConst($_sql);
+		code.INTERFACE(Connection.class, "prepareStatement").return_(PreparedStatement.class).parameter(String.class).INVOKE();
+		code.STORE("preparedStatement", PreparedStatement.class);
+
+		code.LINE();
+		code.LOAD("preparedStatement");
+		code.LOADConst(1);
+		code.LOAD("id");
+		code.INTERFACE(PreparedStatement.class, "setLong").parameter(int.class).parameter(long.class).INVOKE();
+
+		code.LINE();
+		code.LOAD("preparedStatement");
+		code.INTERFACE(PreparedStatement.class, "executeQuery").return_(ResultSet.class).INVOKE();
+		code.STORE("resultSet", ResultSet.class);
+		Label label7OfGOTO = new Label();
+
+		code.visitLabel(label7OfGOTO);
+
+		code.LINE();
+		code.LOAD("resultSet");
+		code.INTERFACE(ResultSet.class, "next").return_(boolean.class).INVOKE();
+		Label label5OfIFEQ = new Label();
+		code.IFEQ(label5OfIFEQ);
+
+		code.LINE();
+		code.LOAD("datas");
+		code.LOAD("this");
+		code.LOAD("resultSet");
+		code.SPECIAL("toEntity").return_($_clazzEntityImpl).parameter(ResultSet.class).INVOKE();
+		code.INTERFACE(List.class, "add").return_(boolean.class).parameter(Object.class).INVOKE();
+		code.POP();
+		code.GOTO(label7OfGOTO);
+
+		code.visitLabel(label5OfIFEQ);
+
+		code.LINE();
+		code.LOAD("datas");
+		code.LOADConst(0);
+		code.INTERFACE(List.class, "get").return_(Object.class).parameter(int.class).INVOKE();
+		code.CHECKCAST($_clazzEntity);
+		code.RETURNTop();
+
+		code.END();
+	}
+
+	protected void _insertJdbc(ClassBody classBody) {
+		FieldList fields = $_entityDefinition.fields;
+		boolean hasAutoIncrment = fields.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
+		FieldMapper keyField = fields.filter(f -> f.isPrimaryKey()).get(0);
+
+		if (hasAutoIncrment) {
+			List<String> names = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.getName());
+			List<String> values = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> "?");
+			String $_sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", $_entityDefinition.tablename, String.join(",", names), String.join(",", values));
+
+			MethodCode code = classBody.public_().method("insertJdbc").return_($_clazzEntity).throws_(SQLException.class).parameter("data", $_clazzEntity).begin();
+
+			code.LINE();
+			code.LOADConstNULL();
+			code.STORE("resultSet", ResultSet.class);
+
 			code.LINE();
 			code.LOAD("this");
-			code.LOAD("conn");
-			code.PUTFIELD_OF_THIS("conn");
-			
+			code.GETFIELD_OF_THIS("conn");
+			code.LOADConst($_sql);
+			code.LOADConst(1);
+			code.INTERFACE(Connection.class, "prepareStatement").return_(PreparedStatement.class).parameter(String.class).parameter(int.class).INVOKE();
+			code.STORE("preparedStatement", PreparedStatement.class);
+
+			int $i = 1;
+			for (FieldMapper field : $_entityDefinition.fields) {
+				if (!"YES".equals(field.column.getAutoIncrment())) {
+					JdbcMapping jdbc = JDBC.map(field.clazz);
+					int fieldIndex = $i;
+					code.LINE();
+					code.LOAD("preparedStatement");
+					code.LOADConst(fieldIndex);
+					code.LOAD("data");
+					code.VIRTUAL($_clazzEntity, field.getName).return_(field.clazz).INVOKE();
+					$_arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(code);
+					code.INTERFACE(PreparedStatement.class, jdbc.setName).parameter(int.class).parameter(jdbc.jdbcClazz).INVOKE();
+
+					$i++;
+				}
+			}
+
 			code.LINE();
-			code.RETURN();
+			code.LOAD("this");
+			code.LOAD("preparedStatement");
+			code.LOADConst($i);
+			code.VIRTUAL("bindInsertExtend").return_(int.class).parameter(PreparedStatement.class).parameter(int.class).INVOKE();
+			code.POP();
+
+			code.LINE();
+			code.LOAD("preparedStatement");
+			code.INTERFACE(PreparedStatement.class, "executeUpdate").return_(int.class).INVOKE();
+			Label label6OfIFLE = new Label();
+			code.IFLE(label6OfIFLE);
+
+			code.LINE();
+			code.LOAD("preparedStatement");
+			code.INTERFACE(PreparedStatement.class, "getGeneratedKeys").return_(ResultSet.class).INVOKE();
+			code.STORE("resultSet");
+
+			code.LINE();
+			code.LOAD("resultSet");
+			code.INTERFACE(ResultSet.class, "next").return_(boolean.class).INVOKE();
+			code.POP();
+
+			code.LINE();
+			code.LOAD("this");
+			code.LOAD("resultSet");
+			code.LOADConst(1);
+			code.INTERFACE(ResultSet.class, "getLong").return_(long.class).parameter(int.class).INVOKE();
+			code.VIRTUAL("findByIdJdbc").return_($_clazzEntity).parameter(long.class).INVOKE();
+			code.RETURNTop();
+
+			code.visitLabel(label6OfIFLE);
+
+			code.LINE();
+			code.LOADConstNULL();
+			code.RETURNTop();
+
 			code.END();
+
+		} else {
+
+			List<String> names = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.getName());
+			List<String> values = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> "?");
+			String $_sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", $_entityDefinition.tablename, String.join(",", names), String.join(",", values));
+
+			MethodCode code = classBody.public_().method("insertJdbc").return_($_clazzEntity).throws_(SQLException.class).parameter("data", $_clazzEntity).begin();
+
+			code.LINE();
+			code.LOAD("this");
+			code.GETFIELD_OF_THIS("conn");
+			code.LOADConst($_sql);
+			code.INTERFACE(Connection.class, "prepareStatement").return_(PreparedStatement.class).parameter(String.class).INVOKE();
+			code.STORE("preparedStatement", PreparedStatement.class);
+
+			int $i = 1;
+			for (FieldMapper field : $_entityDefinition.fields) {
+				JdbcMapping jdbc = JDBC.map(field.clazz);
+				int fieldIndex = $i;
+				code.LINE();
+				code.LOAD("preparedStatement");
+				code.LOADConst(fieldIndex);
+				code.LOAD("data");
+				code.VIRTUAL($_clazzEntity, field.getName).return_(field.clazz).INVOKE();
+				$_arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(code);
+				code.INTERFACE(PreparedStatement.class, jdbc.setName).parameter(int.class).parameter(jdbc.jdbcClazz).INVOKE();
+
+				$i++;
+			}
+
+			code.LINE();
+			code.LOAD("this");
+			code.LOAD("preparedStatement");
+			code.LOADConst($i);
+			code.VIRTUAL("bindInsertExtend").return_(int.class).parameter(PreparedStatement.class).parameter(int.class).INVOKE();
+			code.POP();
+
+			code.LINE();
+			code.LOAD("preparedStatement");
+			code.INTERFACE(PreparedStatement.class, "executeUpdate").return_(int.class).INVOKE();
+			Label label6OfIFLE = new Label();
+			code.IFLE(label6OfIFLE);
+
+			code.LINE();
+			code.LOAD("this");
+			code.LOAD("data");
+			code.VIRTUAL($_clazzEntity, "getId").return_(long.class).INVOKE();
+			code.VIRTUAL("findByIdJdbc").return_($_clazzEntity).parameter(long.class).INVOKE();
+			code.RETURNTop();
+
+			code.visitLabel(label6OfIFLE);
+
+			code.LINE();
+			code.LOADConstNULL();
+			code.RETURNTop();
+
+			code.END();
+		}
 	}
 
-	private void _initJdbc(String tablename, FieldList mappers) {
-//		classBody.publicMethod("initJdbc").tHrow(SQLException.class).friendly(code -> {
-//			code.define("columnList", ColumnList.class);
-//			// ColumnList columnList = new ColumnList();
-//			code.line().initTo(ColumnList.class,"columnList");
-//
-//			for (FieldMapper field : mappers) {
-//				// columnList.push(ColumnDefinition.valueOf("id INTEGER(10) PRIMARY KEY"));
-//				code.line().Var("columnList").Virtual("push").parameter(Object.class).invokeVoid(p -> {
-//					p.clazz(ColumnDefinition.class).call("valueOf").Return(ColumnDefinition.class).Invoke(Const(field.column.toString()));
-//				});
-//			}		
-//			
-//			// JDBC.mergeIfExists(conn, "user", columnList)
-//			code.line().clazz(JDBC.class).call("mergeIfExists").Return(boolean.class).invoke(Var("conn"), Const(tablename), Var("columnList"));
-//
-//			code.ifFalse(b -> {// if (!) {
-//				
-//				boolean hasAutoIncrment = mappers.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
-//
-//				List<String> keys = mappers.filter(f -> f.primaryKey).map(f -> f.column.getName());
-//				List<String> columnDefinitions = mappers.map(f -> f.column.toSQL());
-//				
-//
-//				String sql;
-//				if (hasAutoIncrment) {
-//					sql = JDBC.sql("CREATE TABLE ${tablename}(${columndefinitions}))", tablename, String.join(",", columnDefinitions));
-//				} else {
-//					sql = JDBC.sql("CREATE TABLE ${tablename}(${columndefinitions},PRIMARY KEY(${keys}))", tablename,
-//							String.join(",", columnDefinitions), String.join(",", keys));
-//				}
-//
-//				// PreparedStatement preparedStatement = conn.prepareStatement(sql);
-//				code.line().Var("conn").Interface("prepareStatement").Return(PreparedStatement.class).Invoke(Const(sql))
-//					.Interface("execute").Return(boolean.class).Invoke()
-//					.pop();
-//			});
-//			code.line().returnVoid();
-//		});
+	protected void _updateJdbc(ClassBody classBody) {
+		FieldList $_fieldsAll = $_entityDefinition.fieldsAll;
+		ListMap<String, FieldMapper> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
+		ListMap<String, FieldMapper> $_othersWithoutCreate = $_fieldsAll.filter(f -> !f.primaryKey && !"createAt".equals(f.fieldName));
+		ListMap<String, FieldMapper> $_othersWithoutExtend = $_entityDefinition.fields.filter(f -> !f.primaryKey);
+		String $_sql = JDBC.sql("UPDATE ${tablename} SET ${setvalues} WHERE ${causes}", $_entityDefinition.tablename, String.join(",", $_othersWithoutCreate.map(f -> f.fieldName + "=?")),
+				String.join(" AND ", $_keys.map(f -> f.fieldName + "=?")));
+
+		MethodCode code = classBody.public_().method("updateJdbc").return_($_clazzEntity).throws_(SQLException.class).parameter("data", $_clazzEntity).begin();
+
+		code.LINE();
+		code.LOAD("this");
+		code.LOAD("data");
+		code.VIRTUAL($_clazzEntity, "getId").return_(long.class).INVOKE();
+		code.VIRTUAL("findByIdJdbc").return_($_clazzEntity).parameter(long.class).INVOKE();
+		code.CHECKCAST(EntitySystem.class);
+		code.STORE("extend", EntitySystem.class);
+
+		code.LINE();
+		code.LOAD("extend");
+		code.INTERFACE(EntitySystem.class, "getUpdateAt").return_(Timestamp.class).INVOKE();
+		code.LOAD("data");
+		code.CHECKCAST(EntitySystem.class);
+		code.INTERFACE(EntitySystem.class, "getUpdateAt").return_(Timestamp.class).INVOKE();
+		Label label2OfIF_ACMPNE = new Label();
+		code.IF_ACMPNE(label2OfIF_ACMPNE);
+
+		code.LINE();
+		code.LOADConstNULL();
+		code.RETURNTop();
+
+		code.visitLabel(label2OfIF_ACMPNE);
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("conn");
+		code.LOADConst($_sql);
+		code.INTERFACE(Connection.class, "prepareStatement").return_(PreparedStatement.class).parameter(String.class).INVOKE();
+		code.STORE("preparedStatement", PreparedStatement.class);
+
+		int i = 1;
+		for (FieldMapper field : $_othersWithoutExtend) {
+			JdbcMapping jdbc = JDBC.map(field.clazz);
+
+			int fieldIndex = i;
+			code.LINE();
+			code.LOAD("preparedStatement");
+			code.LOADConst(fieldIndex);
+			code.LOAD("data");
+			code.VIRTUAL($_clazzEntity, field.getName).return_(field.clazz).INVOKE();
+			$_arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(code);
+			code.INTERFACE(PreparedStatement.class, jdbc.setName).parameter(int.class).parameter(jdbc.jdbcClazz).INVOKE();
+
+			i++;
+		}
+
+		code.LINE();
+		code.LOAD("this");
+		code.LOAD("preparedStatement");
+		code.LOADConst(i++);
+		code.VIRTUAL("bindUpdateExtend").return_(int.class).parameter(PreparedStatement.class).parameter(int.class).INVOKE();
+		code.POP();
+
+		// preparedStatement.setLong(3, data.getId());
+		for (FieldMapper field : $_keys) {
+
+			JdbcMapping jdbc = JDBC.map(field.clazz);
+
+			int fieldIndex = i;
+			code.LINE();
+			code.LOAD("preparedStatement");
+			code.LOADConst(fieldIndex);
+			code.LOAD("data");
+			code.VIRTUAL($_clazzEntity, field.getName).return_(field.clazz).INVOKE();
+			$_arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(code);
+			code.INTERFACE(PreparedStatement.class, jdbc.setName).parameter(int.class).parameter(jdbc.jdbcClazz).INVOKE();
+
+			i++;
+		}
+
+		code.LINE();
+		code.LOAD("preparedStatement");
+		code.INTERFACE(PreparedStatement.class, "executeUpdate").return_(int.class).INVOKE();
+		Label label9OfIFLE = new Label();
+		code.IFLE(label9OfIFLE);
+
+		code.LINE();
+		code.LOAD("this");
+		code.LOAD("data");
+		code.VIRTUAL($_clazzEntity, "getId").return_(long.class).INVOKE();
+		code.VIRTUAL("findByIdJdbc").return_($_clazzEntity).parameter(long.class).INVOKE();
+		code.RETURNTop();
+
+		code.visitLabel(label9OfIFLE);
+
+		code.LINE();
+		code.LOADConstNULL();
+		code.RETURNTop();
+
+		code.END();
 	}
 
-	private void _listJdbc(String clazzTarget, String clazzExtend, EntityDefinition clazzDefinition) {
-		classBody.method(ACC_PUBLIC, "listJdbc")
-			.parameter("start", int.class)
-			.parameter("max", int.class)
-			.return_(PageList.class, clazzTarget)
-			.throws_(SQLException.class)
-//			.friendly(code -> {
-//				String[] genericParameterClazz = { clazzTarget };
-//				code.define("datas", Clazz.of(PageList.class.getName(), genericParameterClazz));
-//
-//				code.line().init(PageListImpl.class,"start", "max").setTo("datas");
-//
-//				String sqlColumns = String.join(",", clazzDefinition.fieldsAll.map(f -> f.column.getName()));
-//				// String sql = Select.columns("id,name,description").from("user").offset(start).limit(max).toSQL();
-//				code.line().clazz(Select.class).call("columns").parameter(String.class).Return(Select.class).Invoke(Const(sqlColumns))
-//					.Virtual("from").Return(Select.class).Invoke(Const(clazzDefinition.tablename))
-//					.Virtual("offset").Return(Select.class).invoke("start")
-//					.Virtual("max").Return(Select.class).invoke("max")
-//					.Virtual("toSQL").Return(String.class).Invoke()
-//					.setTo("sql");
-//
-//				code.line().Var("conn").Interface("prepareStatement").Return(PreparedStatement.class).invoke("sql")
-//					.Interface("executeQuery").Return(ResultSet.class).Invoke()
-//					.setTo("resultSet");
-//
-//				code.line().wHile(cause -> code.Var("resultSet").Interface("next").Return(boolean.class).Invoke(), block -> {
-//					code.line().Var("datas").Interface("add").parameter(Object.class).Return(boolean.class)
-//						.Invoke(p -> p.Var("mapper").Virtual("map").reTurn(clazzExtend).invoke("resultSet"))
-//						.pop();
-//				});
-//				code.line().Var("resultSet").Interface("close").InvokeVoid();
-//
-//				//String sqlCount = Select.columns("count(1)").from("user").toSQL();
-//				code.line().clazz(Select.class).call("columns").parameter(String.class).Return(Select.class).Invoke(Const("count(1)"))
-//					.Virtual("from").Return(Select.class).Invoke(Const(clazzDefinition.tablename))
-//					.Virtual("toSQL").Return(String.class).Invoke()
-//					.setTo("sqlCount");
-//				
-//
-//				// ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
-//				code.line().Var("conn").Interface("createStatement").Return(Statement.class).Invoke()
-//					.Interface("executeQuery").Return(ResultSet.class).invoke("sqlCount")
-//					.setTo("resultSetCount");
-//				
-//				// resultSetCount.next();
-//				code.line().Var("resultSetCount").Interface("next").Return(boolean.class).Invoke().pop();
-//
-//				// int totalSize = resultSetCount.getInt(1);
-//				code.line().Var("resultSetCount").Interface("getInt").Return(int.class).Invoke(Const(1)).setTo("totalSize");
-//				
-//				// resultSetCount.close();
-//				code.line().Var("resultSetCount").Interface("close").InvokeVoid();
-//
-//				//datas.totalSize(totalSize);
-//				code.line().Var("datas").Interface("totalSize").InvokeVoid("totalSize");
-//
-//				code.line().returnVar("datas");
-//
-//			})
-			;
-	}
-	
+	protected void _deleteByIdJdbc(ClassBody classBody) {
+		FieldList $_fieldsAll = $_entityDefinition.fieldsAll;
+		ListMap<String, FieldMapper> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
+		String $_sql = JDBC.sql("DELETE ${tablename} WHERE ${causes}", $_entityDefinition.tablename, String.join(" AND ", $_keys.map(f -> f.column.getName() + "=?")));
 
-	private void _listJdbc_nebuladataqueryCondition_nebuladataqueryOrderBy_int_int(String clazzTarget, String clazzExtend, EntityDefinition clazzDefinition) {
-//		classBody.method(ACC_PUBLIC, "listJdbc")
-//			.parameter("condition", Condition.class)
-//			.parameter("orderBy", OrderBy.class)
-//			.parameter("start", int.class)
-//			.parameter("max", int.class)
-//			.reTurn(PageList.class, clazzTarget)
-//			.tHrow(SQLException.class)
-//			.friendly(code -> {
-//				String[] genericParameterClazz = { clazzTarget };
-//				code.define("datas", Clazz.of(PageList.class.getName(), genericParameterClazz));
-//
-//				code.line().init(PageListImpl.class,"start", "max").setTo("datas");
-//
-//				String sqlColumns = String.join(",", clazzDefinition.fieldsAll.map(f -> f.column.getName()));
-//				// String sql = Select.columns("id,name,description").from("user").offset(start).limit(max).toSQL();
-//				code.line().clazz(Select.class).call("columns").parameter(String.class).Return(Select.class).Invoke(Const(sqlColumns))
-//					.Virtual("from").Return(Select.class).Invoke(Const(clazzDefinition.tablename))
-//					.Virtual("where").Return(Select.class).invoke("condition")
-//					.Virtual("orderby").Return(Select.class).invoke("orderBy")
-//					.Virtual("offset").Return(Select.class).invoke("start")
-//					.Virtual("max").Return(Select.class).invoke("max")
-//					.Virtual("toSQL").Return(String.class).Invoke()
-//					.setTo("sql");
-//
-//				code.line().Var("conn").Interface("prepareStatement").Return(PreparedStatement.class).invoke("sql")
-//					.Interface("executeQuery").Return(ResultSet.class).Invoke()
-//					.setTo("resultSet");
-//
-//				code.line().wHile(cause -> code.Var("resultSet").Interface("next").Return(boolean.class).Invoke(), block -> {
-//					code.line().Var("datas").Interface("add").parameter(Object.class).Return(boolean.class)
-//						.Invoke(p -> p.Var("mapper").Virtual("map").reTurn(clazzExtend).invoke("resultSet"))
-//						.pop();
-//				});
-//				code.line().Var("resultSet").Interface("close").InvokeVoid();
-//
-//				//String sqlCount = Select.columns("count(1)").from("user").toSQL();
-//				code.line().clazz(Select.class).call("columns").parameter(String.class).Return(Select.class).Invoke(Const("count(1)"))
-//					.Virtual("from").Return(Select.class).Invoke(Const(clazzDefinition.tablename))
-//					.Virtual("where").Return(Select.class).invoke("condition")
-//					.Virtual("toSQL").Return(String.class).Invoke()
-//					.setTo("sqlCount");
-//				
-//
-//				// ResultSet resultSetCount = conn.createStatement().executeQuery(sqlCount);
-//				code.line().Var("conn").Interface("createStatement").Return(Statement.class).Invoke()
-//					.Interface("executeQuery").Return(ResultSet.class).invoke("sqlCount")
-//					.setTo("resultSetCount");
-//				
-//				// resultSetCount.next();
-//				code.line().Var("resultSetCount").Interface("next").Return(boolean.class).Invoke().pop();
-//
-//				// int totalSize = resultSetCount.getInt(1);
-//				code.line().Var("resultSetCount").Interface("getInt").Return(int.class).Invoke(Const(1)).setTo("totalSize");
-//				
-//				// resultSetCount.close();
-//				code.line().Var("resultSetCount").Interface("close").InvokeVoid();
-//
-//				//datas.totalSize(totalSize);
-//				code.line().Var("datas").Interface("totalSize").InvokeVoid("totalSize");
-//
-//				code.line().returnVar("datas");
-//
-//			});
+		MethodCode code = classBody.public_().method("deleteByIdJdbc").return_(int.class).throws_(SQLException.class).parameter("id", long.class).begin();
+
+		code.LINE();
+		code.LOAD("this");
+		code.GETFIELD_OF_THIS("conn");
+		code.LOADConst($_sql);
+		code.INTERFACE(Connection.class, "prepareStatement").return_(PreparedStatement.class).parameter(String.class).INVOKE();
+		code.STORE("preparedStatement", PreparedStatement.class);
+
+		code.LINE();
+		code.LOAD("preparedStatement");
+		code.LOADConst(1);
+		code.LOAD("id");
+		code.INTERFACE(PreparedStatement.class, "setLong").parameter(int.class).parameter(long.class).INVOKE();
+
+		code.LINE();
+		code.LOAD("preparedStatement");
+		code.INTERFACE(PreparedStatement.class, "executeUpdate").return_(int.class).INVOKE();
+		code.RETURNTop();
+
+		code.END();
 	}
 
-	private void _findByIdJdbc(String clazzTarget, String clazzExtend, EntityDefinition clazzDefinition) {
-//		classBody.publicMethod("findByIdJdbc")
-//			.ACC_PUBLIC()
-//			.ACC_VARARGS()
-//			.parameter("keys", Object.class, true)
-//			.reTurn(clazzTarget)
-//			.tHrow(SQLException.class)
-//			.friendly(code -> {
-//				code.define("preparedStatement", PreparedStatement.class);
-//				code.define("resultSet", ResultSet.class);
-//				code.define("datas", Clazz.of(List.class, clazzTarget));
-//
-//				code.line().setNew("datas", ArrayList.class);
-//
-//				List<Column> all = clazzDefinition.fieldsAll.map(f -> f.column);
-//				List<Column> keys = clazzDefinition.fieldsAll.filter(f -> f.primaryKey).map(f -> f.column);
-//
-//				String sql = Select.columns(ColumnList.namesOf(all)).from(clazzDefinition.tablename).where(ColumnList.namesOf(keys)).toSQL();
-//
-//				code.line().Var("conn").Interface("prepareStatement").Return(PreparedStatement.class).Invoke(Const(sql))
-//					.setTo("preparedStatement");
-//
-//				int i = 1;
-//				int j = 0;
-//				for (FieldMapper fieldMapper : clazzDefinition.fieldsAll) {
-//					if (fieldMapper.primaryKey) {
-//						JdbcMapping jdbc = JDBC.map(fieldMapper.clazz);
-//
-//						code.line().Var("keys").loadElement(j++).setTo("key");
-//						code.line().Var("preparedStatement").Interface(jdbc.setName).invokeVoid(Const(i++),p->{
-//							code.Var("key");
-//							BoxUnbox.unboxToWhenNeed(fieldMapper.clazz).accept(p);							
-//							arguments.toJdbcClazz(fieldMapper.clazz, jdbc.jdbcClazz).accept(code);
-//						});
-//					}
-//				}
-//
-//				code.line().Var("preparedStatement").Interface("executeQuery").Return(ResultSet.class).Invoke().setTo("resultSet");
-//
-//				code.line().wHile(f -> code.Var("resultSet").Interface("next").Return(boolean.class).Invoke(), b -> {
-//					code.line().Var("datas").Interface("add").parameter(Object.class).Return(boolean.class).Invoke(
-//							p0 -> code.Var("mapper").Virtual("map").reTurn(clazzExtend).invoke("resultSet"))
-//						.pop();
-//				}); 
-//
-//				code.line().Var("datas").Interface("get").Return(Object.class).Invoke(Const(0))
-//					.checkcast(clazzTarget).returnValue();
-//			});
+	protected void _bridge_updateJdbc(ClassBody classBody) {
+		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "updateJdbc").return_(Object.class).throws_(SQLException.class).parameter(ACC_SYNTHETIC, "data", Object.class).begin();
+
+		code.LINE();
+		code.LOAD("this");
+		code.LOAD("data");
+		code.CHECKCAST($_clazzEntity);
+		code.VIRTUAL("updateJdbc").return_($_clazzEntity).parameter($_clazzEntity).INVOKE();
+		code.RETURNTop();
+
+		code.END();
 	}
 
-	private void _insertJdbc(String clazzTarget, String clazzExtend,EntityDefinition clazzDefinition) {
-//		classBody.method(ACC_PUBLIC, "insertJdbc")
-//			.parameter("data", clazzTarget)
-//			.reTurn(clazzTarget)
-//			.tHrow(SQLException.class)
-//			.friendly(code -> {
-//				FieldList fields = clazzDefinition.fields;
-//
-//				boolean hasAutoIncrment = fields.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
-//				FieldMapper keyField = fields.filter(f -> f.isPrimaryKey()).get(0);
-//
-//				if (hasAutoIncrment) {
-//					List<String> names = clazzDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.getName());
-//					List<String> values =  clazzDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> "?");
-//					{
-//						code.define("preparedStatement", PreparedStatement.class);
-//						code.line().setNull("preparedStatement");
-//
-//						code.define("rs", ResultSet.class);
-//						code.line().setNull("rs");
-//					}
-//					String sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", clazzDefinition.tablename, String.join(",", names),
-//							String.join(",", values));
-//
-//					code.line().Var("conn").Interface("prepareStatement").Return(PreparedStatement.class).invoke(Const(sql),Const(PreparedStatement.RETURN_GENERATED_KEYS))
-//						.setTo("preparedStatement");
-//
-//					int i = 1;
-//					for (FieldMapper fieldMapper : clazzDefinition.fields) {
-//						if (!"YES".equals(fieldMapper.column.getAutoIncrment())) {							
-//							Class<?> jdbcClazz = fieldMapper.clazz;
-//							JdbcMapping jdbcMapping = JDBC.map(jdbcClazz);
-//						
-//							code.line().Var("preparedStatement").Interface(jdbcMapping.setName).invokeVoid(Const(i++), p -> {
-//								p.Var("data").Virtual(fieldMapper.getName).Return(fieldMapper.clazz).Invoke();
-//								arguments.toJdbcClazz(jdbcClazz, jdbcMapping.jdbcClazz).accept(p);
-//							});							
-//						}
-//					}
-//					//bindInsertExtend(preparedStatement, 4);
-//					code.line().loadThis().Virtual("bindInsertExtend").Return(int.class).invoke(Var("preparedStatement"),Const(i)).pop();
-//
-//					code.line().Var("preparedStatement").Interface("executeUpdate").Return(int.class).Invoke();
-//
-//					code.ifGreatThan(m -> {
-//						// rs = preparedStatement.getGeneratedKeys();
-//						m.line().Var("preparedStatement").Interface("getGeneratedKeys").Return(ResultSet.class).Invoke().setTo("rs");
-//						// preparedStatement
-//						m.line().Var("rs").Interface("next").Return(boolean.class).Invoke().pop();
-//
-//						// findById(new Object[] { rs.getLong(1) });
-//						m.line().Var("this").Virtual("findByIdJdbc").parameter(Object.class, true).reTurn(clazzTarget).Invoke(p -> {
-//								m.newarray(Object.class, 1);
-//
-//								m.dup().setElement(0, e -> {
-//									JdbcMapping jdbcMapping = JDBC.map(keyField.clazz);
-//
-//									// rs.getLong(1)
-//									m.Var("rs").Interface(jdbcMapping.getname).parameter(int.class).Return(jdbcMapping.jdbcClazz).Invoke(Const(1));
-//
-//									arguments.fromJdbcClazz(keyField.clazz, jdbcMapping.jdbcClazz).accept(m);
-//									
-//									code.topInstance().boxWhenNeed();
-//								});
-//							}).returnValue();
-//					});
-//
-//					code.line().returnNull();
-//
-//				} else {
-//					List<String> names = clazzDefinition.fieldsAll.map(f -> f.column.getName());
-//					List<String> values = clazzDefinition.fieldsAll.map(f -> "?");
-//
-//					code.define("preparedStatement", PreparedStatement.class);
-//
-//					String sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", clazzDefinition.tablename, String.join(",", names),
-//							String.join(",", values));
-//
-//					code.line().Var("conn").Interface("prepareStatement").Return(PreparedStatement.class).Invoke(Const(sql))
-//						.setTo("preparedStatement");
-//
-//					int i = 1;
-//					for (FieldMapper field : clazzDefinition.fields) {
-//							JdbcMapping jdbcMapping = JDBC.map(field.clazz);
-//						
-//							code.line().Var("preparedStatement").Interface(jdbcMapping.setName).invokeVoid(Const(i++), p -> {
-//								p.Var("data").Virtual(field.getName).Return(field.clazz).Invoke();
-//								arguments.toJdbcClazz(field.clazz, jdbcMapping.jdbcClazz).accept(p);
-//							});
-//					}
-//					//bindInsertExtend(preparedStatement, 4);
-//					code.line().loadThis().Virtual("bindInsertExtend").Return(int.class).invoke(Var("preparedStatement"),Const(i)).pop();
-//					
-//					code.line().Var("preparedStatement").Interface("executeUpdate").Return(int.class).Invoke();
-//
-//					code.ifGreatThan(m -> {
-//						invokeFindByid(m, clazzDefinition, clazzTarget, "data").returnValue();
-//					});
-//					code.line().returnNull();
-//				}
-//			});
-	}
-//
-//	private Instance invokeFindByid(MethodCodeFriendly m, ClazzDefinition clazzDefinition,String clazzTarget, String varThing) {
-//		return m.line().Var("this").Virtual("findByIdJdbc").parameter(Object.class, true).reTurn(clazzTarget).Invoke(p -> {
-//				p.newarray(Object.class, clazzDefinition.fields.filter(f -> f.primaryKey).size());
-//				int j = 0;
-//
-//				for (FieldMapper field : clazzDefinition.fields) {
-//					if (field.primaryKey) {
-//						p.dup().setElement(j++,	p0 -> m.Var(varThing).Virtual(field.getName).Return(field.clazz).Invoke().boxWhenNeed());
-//					}
-//				}
-//			});
-//	}
+	protected void _bridge_insertJdbc(ClassBody classBody) {
+		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "insertJdbc").return_(Object.class).throws_(SQLException.class).parameter(ACC_SYNTHETIC, "data", Object.class).begin();
 
-	private void _updateJdbc(String clazzTarget, String clazzExtend,EntityDefinition clazzDefinition) {
-//		classBody.method(ACC_PUBLIC, "updateJdbc")
-//			.parameter("data", clazzTarget)
-//			.reTurn(clazzTarget)
-//			.tHrow(SQLException.class)
-//			.friendly(code -> {
-//				//ClassExtend userLast = (ClassExtend) findByIdJdbc(data.getId());
-//				invokeFindByid(code, clazzDefinition, clazzTarget,"data").checkcast(ClassExtend.class).setTo("extend");
-//				//if (userLast.getUpdateAt() == ((ClassExtend) data).getUpdateAt()) {
-//				code.line().ifObjectNotEqual(
-//						p->code.Var("extend").Interface("getUpdateAt").Return(Timestamp.class).Invoke(),
-//						p-> p.Var("data").checkcast(ClassExtend.class).Interface("getUpdateAt").Return(Timestamp.class).Invoke(), b->{
-//					//return null;
-//					b.line().returnNull();
-//				});			
-//				
-//				FieldList fieldsAll = clazzDefinition.fieldsAll;
-//				ListMap<String, FieldMapper> keys = fieldsAll.filter(f -> f.primaryKey);
-//				ListMap<String, FieldMapper> othersWithoutCreate = fieldsAll.filter(f -> !f.primaryKey && !"createAt".equals(f.fieldName));
-//				ListMap<String, FieldMapper> othersWithoutExtend = clazzDefinition.fields.filter(f -> !f.primaryKey);
-//				
-//				code.define("preparedStatement", PreparedStatement.class);
-//
-//				String sql = JDBC.sql("UPDATE ${tablename} SET ${setvalues} WHERE ${causes}", clazzDefinition.tablename,
-//						String.join(",", othersWithoutCreate.map(f -> f.fieldName + "=?")), String.join(" AND ", keys.map(f -> f.fieldName + "=?")));
-//
-//				// PreparedStatement preparedStatement = conn.prepareStatement("UPDATE user SET
-//				// name=?,description=? WHERE id=?");
-//				code.line().Var("conn").Interface("prepareStatement").Return(PreparedStatement.class).Invoke(Const(sql))
-//					.setTo("preparedStatement");
-//
-//				// preparedStatement.setString(1, data.getName());
-//				int i = 1;
-//				for (FieldMapper field : othersWithoutExtend) {
-//					JdbcMapping jdbc = JDBC.map(field.clazz);
-//				
-//					code.line().Var("preparedStatement").Interface(jdbc.setName).invokeVoid(Const(i++), p -> {
-//						p.Var("data").Virtual(field.getName).Return(field.clazz).Invoke();
-//						arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(p);
-//					});
-//					
-//				}
-//
-//				//bindUpdateExtend(preparedStatement, 3);
-//				code.line().loadThis().Virtual("bindUpdateExtend").Return(int.class).invoke(Var("preparedStatement"),Const(i++)).pop();
-//				
-//				// preparedStatement.setLong(3, data.getId());
-//				for (FieldMapper field : keys) {
-//					
-//					JdbcMapping jdbc = JDBC.map(field.clazz);
-//				
-//					code.line().Var("preparedStatement").Interface(jdbc.setName).invokeVoid(Const(i++), p -> {
-//						p.Var("data").Virtual(field.getName).Return(field.clazz).Invoke();
-//						arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(p);
-//					});					
-//				}
-//				
-//
-//				// preparedStatement.executeUpdate()
-//				code.line().Var("preparedStatement").Interface("executeUpdate").Return(int.class).Invoke();
-//
-//				code.ifGreatThan(m -> {// if (preparedStatement.executeUpdate() > 0) {
-//					// return findById(data.getId());
-//					invokeFindByid(code, clazzDefinition, clazzTarget,"data").returnValue();
-//				});
-//				// return null;
-//				code.line().returnNull();
-//
-//			});
+		code.LINE();
+		code.LOAD("this");
+		code.LOAD("data");
+		code.CHECKCAST($_clazzEntity);
+		code.VIRTUAL("insertJdbc").return_($_clazzEntity).parameter($_clazzEntity).INVOKE();
+		code.RETURNTop();
+
+		code.END();
 	}
 
-	private void _deleteJdbc(EntityDefinition clazzDefinition) {
-//		classBody.method(ACC_PUBLIC, "deleteJdbc").ACC_PUBLIC().ACC_VARARGS()
-//			.parameter("keys", Object.class, true)
-//			.reTurn(int.class)
-//			.tHrow(SQLException.class)
-//			.friendly(code -> {
-//				FieldList fieldsAll = clazzDefinition.fieldsAll;
-//				
-//				code.define("preparedStatement", PreparedStatement.class);
-//
-//				ListMap<String, FieldMapper> keys = fieldsAll.filter(f -> f.primaryKey);
-//
-//				String sql = JDBC.sql("DELETE ${tablename} WHERE ${causes}", clazzDefinition.tablename,
-//						String.join(" AND ", keys.map(f -> f.column.getName() + "=?")));
-//
-//				// PreparedStatement preparedStatement = conn.prepareStatement("DELETE user
-//				// WHERE id=?");
-//				code.line().Var("conn").Interface("prepareStatement").Return(PreparedStatement.class).Invoke(Const(sql))
-//					.setTo("preparedStatement");
-//
-//				int i = 1;
-//				int j = 0;
-//				for (FieldMapper fieldMapper : fieldsAll) {
-//					if (fieldMapper.primaryKey) {
-//						JdbcMapping jdbc = JDBC.map(fieldMapper.clazz);
-//
-//						code.line().Var("keys").loadElement(j++).setTo("key");
-//						code.line().Var("preparedStatement").Interface(jdbc.setName).invokeVoid(Const(i++),p->{
-//							code.Var("key");
-//							BoxUnbox.unboxToWhenNeed(fieldMapper.clazz).accept(p);									
-//							arguments.toJdbcClazz(fieldMapper.clazz, jdbc.jdbcClazz).accept(code);
-//						});
-//					}
-//				}
-//
-//				code.line().Var("preparedStatement").Interface("executeUpdate").Return(int.class).Invoke()
-//					.returnValue();
-//
-//			});
-	}
+	protected void _bridge_findByIdJdbc(ClassBody classBody) {
+		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "findByIdJdbc").return_(Object.class).throws_(SQLException.class).parameter(ACC_SYNTHETIC, "id", long.class).begin();
 
-	private void _bridge_insertJdbc(String clazzTarget) {
-//		classBody.publicMethod("insertJdbc").bridge()
-//			.parameter("data", Object.class)
-//			.reTurn(Object.class)
-//			.tHrow(SQLException.class)
-//			.friendly(code -> {
-//				code.line().Var("this").Virtual("insertJdbc").reTurn(clazzTarget).Invoke(f -> f.Var("data").checkcast(clazzTarget)).returnValue();
-//			});
-	}
+		code.LINE();
+		code.LOAD("this");
+		code.LOAD("id");
+		code.VIRTUAL("findByIdJdbc").return_($_clazzEntity).parameter(long.class).INVOKE();
+		code.RETURNTop();
 
-	private void _bridge_updateJdbc(String clazzTarget) {
-//		classBody.publicMethod("updateJdbc").bridge()
-//			.parameter("data", Object.class)
-//			.reTurn(Object.class)
-//			.tHrow(SQLException.class)
-//			.friendly(code -> {
-//				code.line().Var("this").Virtual("updateJdbc").reTurn(clazzTarget).Invoke(f -> f.Var("data").checkcast(clazzTarget)).returnValue();
-//			});
+		code.END();
 	}
-
-	private void _bridge_findByIdJdbc(String clazzTarget) {
-//		classBody.publicMethod("findByIdJdbc").bridge()
-//			.parameter("keys", Object.class, true)
-//			.reTurn(Object.class)
-//			.tHrow(SQLException.class)
-//			.friendly(code -> {
-//				code.line().Var("this").Virtual("findByIdJdbc").reTurn(clazzTarget).Invoke(f -> f.Var("keys")).returnValue();
-//			});
-	}
-	public JdbcRepositoryBuilder(Arguments arguments) {
-		super(arguments);
-	}
-
-	ClassBody classBody;
 }

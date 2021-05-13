@@ -1,9 +1,11 @@
-package nebula.data.jdbc;
+package nebula.data.jdbc.sample;
 
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+
+import nebula.data.jdbc.EntitySystem;
 
 public class UserComplexExtend extends UserComplex implements EntitySystem {
 

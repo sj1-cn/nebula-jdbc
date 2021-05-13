@@ -130,22 +130,4 @@ public class RepositoryFactory {
 			throw new RuntimeException(e);
 		}
 	}
-
-	private JdbcRowMapperBuilder rowMapperBuilder = new JdbcRowMapperBuilder(arguments);
-	Map<EntityDefinition, Class<?>> rowMappers = new HashMap<>();
-
-	@SuppressWarnings("unchecked")
-	public <T> Class<JdbcRowMapper<T>> makeJdbcRowMapper(EntityDefinition clazzDefinition) {
-		if (rowMappers.containsKey(clazzDefinition)) return (Class<JdbcRowMapper<T>>) rowMappers.get(clazzDefinition);
-
-		String clazzExtend = clazzDefinition.clazz + "Extend";
-		String clazzRowMapper = clazzExtend + "RowMapper";
-
-		byte[] code = rowMapperBuilder.make(clazzRowMapper, clazzExtend, clazzDefinition.fieldsAll);
-
-		Class<JdbcRowMapper<T>> rowMapperClazz = (Class<JdbcRowMapper<T>>) classLoader.defineClassByName(clazzRowMapper, code);
-		rowMappers.put(clazzDefinition, rowMapperClazz);
-		return rowMapperClazz;
-	}
-
 }

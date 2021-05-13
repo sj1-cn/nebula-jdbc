@@ -1,4 +1,4 @@
-package nebula.data.jdbc;
+package nebula.data.jdbc.sample;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -20,6 +20,9 @@ public class UserComplex {
 	private Date date;
 	private Time time;
 	private Timestamp timestamp;
+	public UserComplex(){
+		
+	}
 
 	public long getId() {
 		return id;

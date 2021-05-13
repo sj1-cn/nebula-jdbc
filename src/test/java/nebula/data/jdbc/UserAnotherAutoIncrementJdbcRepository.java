@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import nebula.data.jdbc.sample.UserAnother;
+import nebula.data.jdbc.sample.UserAnotherExtend;
 import nebula.data.query.Condition;
 import nebula.data.query.OrderBy;
 import nebula.jdbc.builders.schema.ColumnList;
