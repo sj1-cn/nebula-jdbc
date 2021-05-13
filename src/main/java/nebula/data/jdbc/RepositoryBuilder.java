@@ -1,9 +1,11 @@
 package nebula.data.jdbc;
 
-public class RepositoryBuilder {
-	PrimativeTypeConverters arguments;
+import cn.sj1.nebula.data.jdbc.TinyAsmPrimativeTypeConverters;
 
-	public RepositoryBuilder(PrimativeTypeConverters arguments) {
+public class RepositoryBuilder {
+	TinyAsmPrimativeTypeConverters arguments;
+
+	public RepositoryBuilder(TinyAsmPrimativeTypeConverters arguments) {
 		this.arguments = arguments;
 	}
 
