@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import nebula.jdbc.sql.builders.HasSQLRepresentation;
+import cn.sj1.nebula.jdbc.sql.HasSQLRepresentation;
 import nebula.jdbc.statements.InsertStatement;
 import nebula.jdbc.statements.SQLError;
 import nebula.jdbc.statements.SelectStatement;

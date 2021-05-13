@@ -10,7 +10,7 @@ import java.util.Map;
 import cn.sj1.nebula.data.query.CommonSQLConditionVisitor;
 import cn.sj1.nebula.data.query.Condition;
 import cn.sj1.nebula.data.query.OrderBy;
-import nebula.jdbc.sql.builders.HasSQLRepresentation;
+import cn.sj1.nebula.jdbc.sql.HasSQLRepresentation;
 import nebula.jdbc.sql.builders.schema.Column;
 import nebula.jdbc.sql.builders.schema.ColumnList;
 

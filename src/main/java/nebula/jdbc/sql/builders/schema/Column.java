@@ -3,7 +3,7 @@
  */
 package nebula.jdbc.sql.builders.schema;
 
-import nebula.jdbc.sql.builders.HasSQLRepresentation;
+import cn.sj1.nebula.jdbc.sql.HasSQLRepresentation;
 
 public interface Column extends HasSQLRepresentation {
 	String getName();

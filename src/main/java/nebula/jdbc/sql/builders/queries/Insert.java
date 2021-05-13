@@ -3,7 +3,7 @@
  */
 package nebula.jdbc.sql.builders.queries;
 
-import nebula.jdbc.sql.builders.HasSQLRepresentation;
+import cn.sj1.nebula.jdbc.sql.HasSQLRepresentation;
 
 public class Insert implements HasSQLRepresentation {
     private String table;

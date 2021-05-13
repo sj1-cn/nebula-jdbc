@@ -3,7 +3,7 @@
  */
 package nebula.jdbc.sql.builders.queries;
 
-import nebula.jdbc.sql.builders.HasSQLRepresentation;
+import cn.sj1.nebula.jdbc.sql.HasSQLRepresentation;
 
 class Rows implements HasSQLRepresentation {
 	private int limit;
