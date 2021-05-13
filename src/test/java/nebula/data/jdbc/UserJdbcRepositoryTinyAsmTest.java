@@ -39,7 +39,7 @@ public class UserJdbcRepositoryTinyAsmTest extends TestBase {
 
 		String clazzRepository = UserJdbcRepository.class.getName();
 
-		byte[] codeRepository = UserJdbcRepositoryTinyAsmBuilder.dump(clazzRepository, User.class, UserExtend.class, entityDefinition);
+		byte[] codeRepository = UserJdbcRepositoryTinyAsmBuilder.dumpStatic(clazzRepository, User.class.getName(), UserExtend.class.getName(), entityDefinition);
 
 		TinyAsmClassLoader classLoader = new TinyAsmClassLoader();
 

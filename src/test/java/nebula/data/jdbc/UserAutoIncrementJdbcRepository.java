@@ -144,8 +144,8 @@ public class UserAutoIncrementJdbcRepository implements JdbcRepository<User> {
 
 	@Override
 	public User updateJdbc(User data) throws SQLException {
-		ClassExtend extend = (ClassExtend) findByIdJdbc(data.getId());
-		if (extend.getUpdateAt() == ((ClassExtend) data).getUpdateAt()) {
+		EntitySystem extend = (EntitySystem) findByIdJdbc(data.getId());
+		if (extend.getUpdateAt() == ((EntitySystem) data).getUpdateAt()) {
 			return null;
 		}
 

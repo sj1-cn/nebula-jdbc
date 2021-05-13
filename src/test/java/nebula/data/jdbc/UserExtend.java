@@ -2,7 +2,7 @@ package nebula.data.jdbc;
 
 import java.sql.Timestamp;
 
-public class UserExtend extends User implements ClassExtend {
+public class UserExtend extends User implements EntitySystem {
 	private Timestamp createAt;
 	private Timestamp updateAt;
 

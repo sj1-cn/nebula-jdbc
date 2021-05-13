@@ -1,63 +1,64 @@
 package nebula.data.jdbc;
 
-import org.objectweb.asm.Label;
-import org.objectweb.asm.Handle;
-import org.objectweb.asm.Opcodes;
-import cn.sj1.tinyasm.core.ClassBody;
-import cn.sj1.tinyasm.core.ClassBuilder;
-import cn.sj1.tinyasm.core.MethodCode;
-import org.objectweb.asm.Type;
+import static org.objectweb.asm.Opcodes.ACC_BRIDGE;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_SUPER;
+import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
-import static cn.sj1.tinyasm.core.Adv._line;
-import static org.objectweb.asm.Opcodes.*;
-import cn.sj1.tinyasm.core.Annotation;
-import cn.sj1.tinyasm.core.Clazz;
-import nebula.jdbc.builders.schema.JDBC;
-import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
-import nebula.data.jdbc.JdbcRepository;
-import nebula.jdbc.builders.schema.Column;
-import nebula.jdbc.builders.schema.ColumnDefinition;
 import java.sql.Connection;
-import nebula.data.query.OrderBy;
-import java.sql.Timestamp;
 import java.sql.PreparedStatement;
-import nebula.data.jdbc.User;
-import nebula.jdbc.builders.queries.Select;
-import nebula.data.jdbc.UserExtendJdbcRowMapper;
-import nebula.data.jdbc.UserExtend;
-import java.util.ArrayList;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.objectweb.asm.Label;
+
+import cn.sj1.tinyasm.core.ClassBody;
+import cn.sj1.tinyasm.core.ClassBuilder;
+import cn.sj1.tinyasm.core.Clazz;
+import cn.sj1.tinyasm.core.MethodCode;
 import nebula.commons.list.ListMap;
-import nebula.data.jdbc.ClassExtend;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.lang.Object;
 import nebula.data.query.Condition;
+import nebula.data.query.OrderBy;
+import nebula.jdbc.builders.queries.Select;
+import nebula.jdbc.builders.schema.Column;
 import nebula.jdbc.builders.schema.ColumnList;
-import java.lang.String;
-import nebula.data.jdbc.PageListImpl;
-import nebula.data.jdbc.PageList;
+import nebula.jdbc.builders.schema.JDBC;
+import nebula.jdbc.builders.schema.JDBC.JdbcMapping;
 
 @SuppressWarnings("unused")
-public class UserJdbcRepositoryTinyAsmBuilder extends UserJdbcRepositoryTinyAsmDump {
+public class UserJdbcRepositoryTinyAsmBuilder {
 
-	public static byte[] dump(String clazzRepository, Class<?> classEntity, Class<?> classEntityImpl, EntityDefinition entityDefinition) throws Exception {
-		UserJdbcRepositoryTinyAsmBuilder userJdbcRepositoryTinyAsmBuilder = new UserJdbcRepositoryTinyAsmBuilder();
-		userJdbcRepositoryTinyAsmBuilder.dumpInit(clazzRepository, classEntity, classEntityImpl, entityDefinition);
-		return userJdbcRepositoryTinyAsmBuilder.dump(clazzRepository);
+	public static byte[] dumpStatic(String clazzRepository, String classEntity, String classEntityImpl, EntityDefinition entityDefinition) throws Exception {
+		UserJdbcRepositoryTinyAsmBuilder userJdbcRepositoryTinyAsmBuilder = new UserJdbcRepositoryTinyAsmBuilder(new Arguments());
+		return userJdbcRepositoryTinyAsmBuilder.dump(clazzRepository, classEntity, classEntityImpl, entityDefinition);
+	}
+
+	public UserJdbcRepositoryTinyAsmBuilder(Arguments $_arguments) {
+		this.$_arguments = $_arguments;
+	}
+
+	public byte[] dump(String clazzRepository, String classEntity, String classEntityImpl, EntityDefinition entityDefinition) {
+		try {
+			this.dumpInit(clazzRepository, classEntity, classEntityImpl, entityDefinition);
+			return this.doDump(clazzRepository);
+		} catch (Exception e) {
+			throw new  UnsupportedOperationException(e);
+		}
 	}
 
 	String $_clazzRepository;
-	Class<?> $_clazzEntity;
-	Class<?> $_clazzEntityImpl;
+	String $_clazzEntity;
+	String $_clazzEntityImpl;
 	EntityDefinition $_entityDefinition;
-	Arguments $_arguments = new Arguments();
+	Arguments $_arguments;
 	private boolean $_hasAutoIncrment = true;
 	private String $_tableName;
 
-	public void dumpInit(String clazzRepository, Class<?> classEntity, Class<?> classEntityImpl, EntityDefinition entityDefinition) {
+	public void dumpInit(String clazzRepository, String classEntity, String classEntityImpl, EntityDefinition entityDefinition) {
 		this.$_clazzRepository = clazzRepository;
 		this.$_clazzEntity = classEntity;
 		this.$_clazzEntityImpl = classEntityImpl;
@@ -65,9 +66,8 @@ public class UserJdbcRepositoryTinyAsmBuilder extends UserJdbcRepositoryTinyAsmD
 		this.$_tableName = entityDefinition.tablename;
 	}
 
-	public byte[] dump(String className) throws Exception {
-		ClassBody classBody = ClassBuilder.class_(className, Clazz.of(Object.class),Clazz.of(JdbcRepository.class,Clazz.of($_clazzEntity)))
-			.access(ACC_PUBLIC | ACC_SUPER).body();
+	public byte[] doDump(String className) throws Exception {
+		ClassBody classBody = ClassBuilder.class_(className, Clazz.of(Object.class), Clazz.of(JdbcRepository.class, Clazz.of($_clazzEntity))).access(ACC_PUBLIC | ACC_SUPER).body();
 
 		classBody.private_().field("conn", Clazz.of(Connection.class));
 		classBody.private_().field("sqlHelper", Clazz.of(SqlHelper.class));
@@ -87,7 +87,41 @@ public class UserJdbcRepositoryTinyAsmBuilder extends UserJdbcRepositoryTinyAsmD
 
 		return classBody.end().toByteArray();
 	}
-	
+
+	protected void __init_(ClassBody classBody) {
+		MethodCode code = classBody.public_().method("<init>").begin();
+
+		code.LINE();
+		code.LOAD("this");
+		code.SPECIAL(Object.class, "<init>").INVOKE();
+
+		code.LINE();
+		code.LOAD("this");
+		code.NEW(SqlHelper.class);
+		code.DUP();
+		code.SPECIAL(SqlHelper.class, "<init>").INVOKE();
+		code.PUTFIELD_OF_THIS("sqlHelper");
+
+		code.LINE();
+		code.RETURN();
+
+		code.END();
+	}
+
+	protected void _setConnection(ClassBody classBody) {
+		MethodCode code = classBody.public_().method("setConnection").parameter("conn", Connection.class).begin();
+
+		code.LINE();
+		code.LOAD("this");
+		code.LOAD("conn");
+		code.PUTFIELD_OF_THIS("conn");
+
+		code.LINE();
+		code.RETURN();
+
+		code.END();
+	}
+
 	protected void _initJdbc(ClassBody classBody) {
 		FieldList $mappers = $_entityDefinition.getFieldsAll();
 		boolean hasAutoIncrment = $mappers.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
@@ -462,92 +496,77 @@ public class UserJdbcRepositoryTinyAsmBuilder extends UserJdbcRepositoryTinyAsmD
 			List<String> names = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.getName());
 			List<String> values = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> "?");
 			String $_sql = JDBC.sql("INSERT INTO ${tablename}(${columns}) VALUES(${values})", $_entityDefinition.tablename, String.join(",", names), String.join(",", values));
-			
-			MethodCode code = classBody.public_().method("insertJdbc")
-					.return_($_clazzEntity )
-					.throws_(SQLException.class )
-					.parameter("data",$_clazzEntity).begin();
 
-				code.LINE();
-				code.LOADConstNULL();
-				code.STORE("resultSet",ResultSet.class);
+			MethodCode code = classBody.public_().method("insertJdbc").return_($_clazzEntity).throws_(SQLException.class).parameter("data", $_clazzEntity).begin();
 
-				code.LINE();
-				code.LOAD("this");
-				code.GETFIELD_OF_THIS("conn");
-				code.LOADConst($_sql);
-				code.LOADConst(1);
-				code.INTERFACE(Connection.class, "prepareStatement")
-					.return_(PreparedStatement.class)
-					.parameter(String.class)
-					.parameter(int.class).INVOKE();
-				code.STORE("preparedStatement",PreparedStatement.class);
+			code.LINE();
+			code.LOADConstNULL();
+			code.STORE("resultSet", ResultSet.class);
 
+			code.LINE();
+			code.LOAD("this");
+			code.GETFIELD_OF_THIS("conn");
+			code.LOADConst($_sql);
+			code.LOADConst(1);
+			code.INTERFACE(Connection.class, "prepareStatement").return_(PreparedStatement.class).parameter(String.class).parameter(int.class).INVOKE();
+			code.STORE("preparedStatement", PreparedStatement.class);
 
-				int $i = 1;
-				for (FieldMapper field : $_entityDefinition.fields) {
-					if (!"YES".equals(field.column.getAutoIncrment())) {							
-						JdbcMapping jdbc = JDBC.map(field.clazz);
-						int fieldIndex = $i;
-						code.LINE();
-						code.LOAD("preparedStatement");
-						code.LOADConst(fieldIndex);
-						code.LOAD("data");
-						code.VIRTUAL($_clazzEntity, field.getName).return_(field.clazz).INVOKE();
-						$_arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(code);
-						code.INTERFACE(PreparedStatement.class, jdbc.setName).parameter(int.class).parameter(jdbc.jdbcClazz).INVOKE();
+			int $i = 1;
+			for (FieldMapper field : $_entityDefinition.fields) {
+				if (!"YES".equals(field.column.getAutoIncrment())) {
+					JdbcMapping jdbc = JDBC.map(field.clazz);
+					int fieldIndex = $i;
+					code.LINE();
+					code.LOAD("preparedStatement");
+					code.LOADConst(fieldIndex);
+					code.LOAD("data");
+					code.VIRTUAL($_clazzEntity, field.getName).return_(field.clazz).INVOKE();
+					$_arguments.toJdbcClazz(field.clazz, jdbc.jdbcClazz).accept(code);
+					code.INTERFACE(PreparedStatement.class, jdbc.setName).parameter(int.class).parameter(jdbc.jdbcClazz).INVOKE();
 
-						$i++;						
-					}
+					$i++;
 				}
+			}
 
-				code.LINE();
-				code.LOAD("this");
-				code.LOAD("preparedStatement");
-				code.LOADConst($i);
-				code.VIRTUAL("bindInsertExtend").return_(int.class).parameter(PreparedStatement.class).parameter(int.class).INVOKE();
-				code.POP();
+			code.LINE();
+			code.LOAD("this");
+			code.LOAD("preparedStatement");
+			code.LOADConst($i);
+			code.VIRTUAL("bindInsertExtend").return_(int.class).parameter(PreparedStatement.class).parameter(int.class).INVOKE();
+			code.POP();
 
-				code.LINE();
-				code.LOAD("preparedStatement");
-				code.INTERFACE(PreparedStatement.class, "executeUpdate")
-					.return_(int.class).INVOKE();
-				Label label6OfIFLE = new Label();
-				code.IFLE(label6OfIFLE);
+			code.LINE();
+			code.LOAD("preparedStatement");
+			code.INTERFACE(PreparedStatement.class, "executeUpdate").return_(int.class).INVOKE();
+			Label label6OfIFLE = new Label();
+			code.IFLE(label6OfIFLE);
 
-				code.LINE();
-				code.LOAD("preparedStatement");
-				code.INTERFACE(PreparedStatement.class, "getGeneratedKeys")
-					.return_(ResultSet.class).INVOKE();
-				code.STORE("resultSet");
+			code.LINE();
+			code.LOAD("preparedStatement");
+			code.INTERFACE(PreparedStatement.class, "getGeneratedKeys").return_(ResultSet.class).INVOKE();
+			code.STORE("resultSet");
 
-				code.LINE();
-				code.LOAD("resultSet");
-				code.INTERFACE(ResultSet.class, "next")
-					.return_(boolean.class).INVOKE();
-				code.POP();
+			code.LINE();
+			code.LOAD("resultSet");
+			code.INTERFACE(ResultSet.class, "next").return_(boolean.class).INVOKE();
+			code.POP();
 
-				code.LINE();
-				code.LOAD("this");
-				code.LOAD("resultSet");
-				code.LOADConst(1);
-				code.INTERFACE(ResultSet.class, "getLong")
-					.return_(long.class)
-					.parameter(int.class).INVOKE();
-				code.VIRTUAL("findByIdJdbc")
-					.return_($_clazzEntity)
-					.parameter(long.class).INVOKE();
-				code.RETURNTop();
+			code.LINE();
+			code.LOAD("this");
+			code.LOAD("resultSet");
+			code.LOADConst(1);
+			code.INTERFACE(ResultSet.class, "getLong").return_(long.class).parameter(int.class).INVOKE();
+			code.VIRTUAL("findByIdJdbc").return_($_clazzEntity).parameter(long.class).INVOKE();
+			code.RETURNTop();
 
-				code.visitLabel(label6OfIFLE);
+			code.visitLabel(label6OfIFLE);
 
-				code.LINE();
-				code.LOADConstNULL();
-				code.RETURNTop();
+			code.LINE();
+			code.LOADConstNULL();
+			code.RETURNTop();
 
-				code.END();
-				
-				
+			code.END();
+
 		} else {
 
 			List<String> names = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.getName());
@@ -623,15 +642,15 @@ public class UserJdbcRepositoryTinyAsmBuilder extends UserJdbcRepositoryTinyAsmD
 		code.LOAD("data");
 		code.VIRTUAL($_clazzEntity, "getId").return_(long.class).INVOKE();
 		code.VIRTUAL("findByIdJdbc").return_($_clazzEntity).parameter(long.class).INVOKE();
-		code.CHECKCAST(ClassExtend.class);
-		code.STORE("extend", ClassExtend.class);
+		code.CHECKCAST(EntitySystem.class);
+		code.STORE("extend", EntitySystem.class);
 
 		code.LINE();
 		code.LOAD("extend");
-		code.INTERFACE(ClassExtend.class, "getUpdateAt").return_(Timestamp.class).INVOKE();
+		code.INTERFACE(EntitySystem.class, "getUpdateAt").return_(Timestamp.class).INVOKE();
 		code.LOAD("data");
-		code.CHECKCAST(ClassExtend.class);
-		code.INTERFACE(ClassExtend.class, "getUpdateAt").return_(Timestamp.class).INVOKE();
+		code.CHECKCAST(EntitySystem.class);
+		code.INTERFACE(EntitySystem.class, "getUpdateAt").return_(Timestamp.class).INVOKE();
 		Label label2OfIF_ACMPNE = new Label();
 		code.IF_ACMPNE(label2OfIF_ACMPNE);
 
@@ -738,55 +757,39 @@ public class UserJdbcRepositoryTinyAsmBuilder extends UserJdbcRepositoryTinyAsmD
 		code.END();
 	}
 
-
 	protected void _bridge_updateJdbc(ClassBody classBody) {
-		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "updateJdbc")
-			.return_(Object.class )
-			.throws_(SQLException.class )
-			.parameter(ACC_SYNTHETIC,"data",Object.class).begin();
+		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "updateJdbc").return_(Object.class).throws_(SQLException.class).parameter(ACC_SYNTHETIC, "data", Object.class).begin();
 
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("data");
 		code.CHECKCAST($_clazzEntity);
-		code.VIRTUAL("updateJdbc")
-			.return_($_clazzEntity)
-			.parameter($_clazzEntity).INVOKE();
+		code.VIRTUAL("updateJdbc").return_($_clazzEntity).parameter($_clazzEntity).INVOKE();
 		code.RETURNTop();
 
 		code.END();
 	}
 
 	protected void _bridge_insertJdbc(ClassBody classBody) {
-		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "insertJdbc")
-			.return_(Object.class )
-			.throws_(SQLException.class )
-			.parameter(ACC_SYNTHETIC,"data",Object.class).begin();
+		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "insertJdbc").return_(Object.class).throws_(SQLException.class).parameter(ACC_SYNTHETIC, "data", Object.class).begin();
 
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("data");
 		code.CHECKCAST($_clazzEntity);
-		code.VIRTUAL("insertJdbc")
-			.return_($_clazzEntity)
-			.parameter($_clazzEntity).INVOKE();
+		code.VIRTUAL("insertJdbc").return_($_clazzEntity).parameter($_clazzEntity).INVOKE();
 		code.RETURNTop();
 
 		code.END();
 	}
 
 	protected void _bridge_findByIdJdbc(ClassBody classBody) {
-		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "findByIdJdbc")
-			.return_(Object.class )
-			.throws_(SQLException.class )
-			.parameter(ACC_SYNTHETIC,"id",long.class).begin();
+		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "findByIdJdbc").return_(Object.class).throws_(SQLException.class).parameter(ACC_SYNTHETIC, "id", long.class).begin();
 
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("id");
-		code.VIRTUAL("findByIdJdbc")
-			.return_($_clazzEntity)
-			.parameter(long.class).INVOKE();
+		code.VIRTUAL("findByIdJdbc").return_($_clazzEntity).parameter(long.class).INVOKE();
 		code.RETURNTop();
 
 		code.END();

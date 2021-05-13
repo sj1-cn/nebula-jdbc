@@ -28,14 +28,14 @@ import nebula.jdbc.TestBase;
 
 public class JdbcRowMapperBuilderTest extends TestBase {
 
-	ClazzExtendBuilder clazzExtendBuilder;
+	EntityImplBuilder clazzExtendBuilder;
 	JdbcRowMapperBuilder builder;
 	Arguments arguments = new Arguments();
 
 	@Before
 	public void before() {
 		builder = new JdbcRowMapperBuilder(arguments);
-		clazzExtendBuilder = new ClazzExtendBuilder();
+		clazzExtendBuilder = new EntityImplBuilder();
 	}
 
 	@After

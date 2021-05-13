@@ -92,7 +92,7 @@ public class RepositoryFactory {
 		return makeJdbcRepository(clazzDefinition);
 	}
 
-	private ClazzExtendBuilder clazzExtendBuilder = new ClazzExtendBuilder();
+	private EntityImplBuilder clazzExtendBuilder = new EntityImplBuilder();
 	Map<String, Class<?>> clazzExtends = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
@@ -107,16 +107,15 @@ public class RepositoryFactory {
 		return clazzClazzExtend;
 	}
 
-	private JdbcRepositoryBuilder repositoryBuilder = new JdbcRepositoryBuilder(arguments);
+	private UserJdbcRepositoryTinyAsmBuilder repositoryBuilder = new UserJdbcRepositoryTinyAsmBuilder(arguments);
 	Map<String, Repository<?>> repositories = new HashMap<>();
 
 	private <T> Repository<T> makeJdbcRepository(EntityDefinition clazzDefinition) {
 		String clazzRepositoryName = clazzDefinition.clazz + "Repository";
 		String clazzTargetName = clazzDefinition.clazz;
 		String clazzExtendName = actualClazz(clazzDefinition).getName();
-		String clazzRowMapperName = makeJdbcRowMapper(clazzDefinition).getName();
 
-		byte[] codeRepository = repositoryBuilder.dump(clazzRepositoryName, clazzTargetName, clazzExtendName, clazzRowMapperName,
+		byte[] codeRepository = repositoryBuilder.dump(clazzRepositoryName, clazzTargetName, clazzExtendName,
 				clazzDefinition);
 
 		try {

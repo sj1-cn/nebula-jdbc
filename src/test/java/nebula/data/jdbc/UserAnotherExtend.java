@@ -2,7 +2,7 @@ package nebula.data.jdbc;
 
 import java.sql.Timestamp;
 
-public class UserAnotherExtend extends UserAnother implements ClassExtend {
+public class UserAnotherExtend extends UserAnother implements EntitySystem {
 
 	public UserAnotherExtend(long id, String name, String description, Timestamp createAt, Timestamp updateAt) {
 		super(id, name, description);

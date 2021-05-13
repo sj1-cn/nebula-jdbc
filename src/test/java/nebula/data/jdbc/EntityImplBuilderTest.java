@@ -23,13 +23,13 @@ import org.junit.Test;
 import cn.sj1.tinyasm.tools.TinyAsmTestUtils;
 import nebula.jdbc.TestBase;
 
-public class ClazzExtendBuilderTest extends TestBase {
+public class EntityImplBuilderTest extends TestBase {
 
-	ClazzExtendBuilder builder;
+	EntityImplBuilder builder;
 
 	@Before
 	public void before() {
-		builder = new ClazzExtendBuilder();
+		builder = new EntityImplBuilder();
 	}
 
 	@After

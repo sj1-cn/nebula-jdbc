@@ -5,7 +5,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
-public class UserComplexExtend extends UserComplex implements ClassExtend {
+public class UserComplexExtend extends UserComplex implements EntitySystem {
 
 	public UserComplexExtend(long id, String string, BigDecimal bigDecimal, boolean z, char c, byte b, short s, int i, long l, float f,
 			double d, Date date, Time time, Timestamp timestamp, Timestamp createAt, Timestamp updateAt) {

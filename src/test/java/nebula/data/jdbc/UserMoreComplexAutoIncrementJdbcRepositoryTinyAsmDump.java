@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.lang.Character;
 import java.lang.Long;
-import nebula.data.jdbc.ClassExtend;
+import nebula.data.jdbc.EntitySystem;
 import java.sql.ResultSet;
 import java.lang.Short;
 import java.lang.Boolean;
@@ -890,16 +890,16 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.VIRTUAL("findByIdJdbc")
 			.return_(UserMoreComplex.class)
 			.parameter(long.class).INVOKE();
-		code.CHECKCAST(ClassExtend.class);
-		code.STORE("extend",ClassExtend.class);
+		code.CHECKCAST(EntitySystem.class);
+		code.STORE("extend",EntitySystem.class);
 
 		code.LINE();
 		code.LOAD("extend");
-		code.INTERFACE(ClassExtend.class, "getUpdateAt")
+		code.INTERFACE(EntitySystem.class, "getUpdateAt")
 			.return_(Timestamp.class).INVOKE();
 		code.LOAD("data");
-		code.CHECKCAST(ClassExtend.class);
-		code.INTERFACE(ClassExtend.class, "getUpdateAt")
+		code.CHECKCAST(EntitySystem.class);
+		code.INTERFACE(EntitySystem.class, "getUpdateAt")
 			.return_(Timestamp.class).INVOKE();
 		Label label2OfIF_ACMPNE = new Label();
 		code.IF_ACMPNE(label2OfIF_ACMPNE);

@@ -137,8 +137,8 @@ public class UserAnotherAutoIncrementJdbcRepository implements JdbcRepository<Us
 
 	@Override
 	public UserAnother updateJdbc(UserAnother data) throws SQLException {
-		ClassExtend extend = (ClassExtend) findByIdJdbc(data.getId());
-		ClassExtend dataExtend = (ClassExtend)data;
+		EntitySystem extend = (EntitySystem) findByIdJdbc(data.getId());
+		EntitySystem dataExtend = (EntitySystem)data;
 		if (extend.getUpdateAt() == dataExtend.getUpdateAt()) {
 			return null;
 		}

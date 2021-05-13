@@ -2,7 +2,7 @@ package nebula.data.jdbc;
 
 import java.sql.Timestamp;
 
-public interface ClassExtend {
+public interface EntitySystem {
 
 	public Timestamp getCreateAt();
 

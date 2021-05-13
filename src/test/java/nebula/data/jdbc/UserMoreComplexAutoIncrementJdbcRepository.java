@@ -172,8 +172,8 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 
 	@Override
 	public UserMoreComplex updateJdbc(UserMoreComplex data) throws SQLException {
-		ClassExtend extend = (ClassExtend) findByIdJdbc(data.getId());
-		if (extend.getUpdateAt() == ((ClassExtend) data).getUpdateAt()) {
+		EntitySystem extend = (EntitySystem) findByIdJdbc(data.getId());
+		if (extend.getUpdateAt() == ((EntitySystem) data).getUpdateAt()) {
 			return null;
 		}
 

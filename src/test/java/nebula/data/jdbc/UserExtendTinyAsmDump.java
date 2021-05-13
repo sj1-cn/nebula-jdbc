@@ -9,7 +9,7 @@ import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
 import cn.sj1.tinyasm.core.Annotation;
 import cn.sj1.tinyasm.core.Clazz;
-import nebula.data.jdbc.ClassExtend;
+import nebula.data.jdbc.EntitySystem;
 import java.sql.Timestamp;
 import java.lang.String;
 import nebula.data.jdbc.User;
@@ -21,7 +21,7 @@ public class UserExtendTinyAsmDump {
 	}
 
 	public byte[] dump(String className) throws Exception {
-		ClassBody classBody = ClassBuilder.class_(className, User.class, ClassExtend.class)
+		ClassBody classBody = ClassBuilder.class_(className, User.class, EntitySystem.class)
 			.access(ACC_PUBLIC | ACC_SUPER).body();
 
 		classBody.private_().field("createAt", Clazz.of(Timestamp.class));

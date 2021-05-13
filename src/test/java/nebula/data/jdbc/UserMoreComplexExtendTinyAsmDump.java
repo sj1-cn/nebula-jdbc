@@ -17,13 +17,13 @@ import java.lang.Integer;
 import java.sql.Date;
 import java.math.BigDecimal;
 import java.lang.Character;
-import nebula.data.jdbc.ClassExtend;
 import java.lang.Long;
 import nebula.data.jdbc.UserMoreComplex;
 import java.lang.Short;
 import java.lang.Boolean;
 import java.lang.String;
 import java.lang.Byte;
+import nebula.data.jdbc.EntitySystem;
 @SuppressWarnings("unused")
 public class UserMoreComplexExtendTinyAsmDump {
 
@@ -32,7 +32,7 @@ public class UserMoreComplexExtendTinyAsmDump {
 	}
 
 	public byte[] dump(String className) throws Exception {
-		ClassBody classBody = ClassBuilder.class_(className, UserMoreComplex.class, ClassExtend.class)
+		ClassBody classBody = ClassBuilder.class_(className, UserMoreComplex.class, EntitySystem.class)
 			.access(ACC_PUBLIC | ACC_SUPER).body();
 
 		classBody.private_().field("createAt", Clazz.of(Timestamp.class));
