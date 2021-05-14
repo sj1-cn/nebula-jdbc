@@ -2,7 +2,7 @@ package cn.sj1.nebula.data.jdbc;
 
 import java.util.Date;
 
-public class TinyAsmDateTypeConverterUtils {
+class TinyAsmDateTypeConverterUtils {
 	public static java.sql.Date dateValueOf(Date date) {
 		return new java.sql.Date(date.getTime());
 	}

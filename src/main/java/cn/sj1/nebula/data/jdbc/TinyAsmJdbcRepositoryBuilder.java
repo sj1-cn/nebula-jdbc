@@ -35,7 +35,7 @@ import cn.sj1.tinyasm.core.MethodCode;
 import nebula.commons.list.ListMap;
 
 @SuppressWarnings("unused")
-public class TinyAsmJdbcRepositoryBuilder {
+class TinyAsmJdbcRepositoryBuilder {
 
 	public static byte[] dumpStatic(String clazzRepository, String classEntity, String classEntityImpl, EntityORMappingDefinitionList entityDefinition) throws Exception {
 		TinyAsmJdbcRepositoryBuilder userJdbcRepositoryTinyAsmBuilder = new TinyAsmJdbcRepositoryBuilder(new TinyAsmPrimativeTypeConverters());

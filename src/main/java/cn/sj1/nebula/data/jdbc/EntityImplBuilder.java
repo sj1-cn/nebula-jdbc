@@ -9,7 +9,7 @@ import cn.sj1.tinyasm.core.Clazz;
 import cn.sj1.tinyasm.core.Field;
 import cn.sj1.tinyasm.core.MethodCode;
 
-public class EntityImplBuilder {
+class EntityImplBuilder {
 	EntityORMappingDefinitionList clazz;
 	String clazzExtend;
 	String targetClazz;

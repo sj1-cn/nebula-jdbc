@@ -2,7 +2,7 @@ package cn.sj1.nebula.data.jdbc;
 
 import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
 
-public class EntityORMappingDefinition {
+class EntityORMappingDefinition {
 	final boolean primaryKey;
 	final String fieldName;
 	final String fieldGetName;

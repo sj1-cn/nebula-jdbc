@@ -19,11 +19,15 @@ import cn.sj1.nebula.jdbc.builders.schema.db.JdbcDababaseMetadata;
 public class DBSchemaMerge {
 	static Logger logger = LoggerFactory.getLogger(DBSchemaMerge.class);
 
-	JdbcDababaseMetadata jdbcDababaseMetadata = new JdbcDababaseMetadata();
+	private static DBSchemaMerge schemaMerge = new DBSchemaMerge();
 
-	public boolean merge(Connection conn, String tableName, ColumnList columnsExpected) throws SQLException {
+	public static boolean merge(Connection conn, String tableName, ColumnList columnsExpected) throws SQLException {
+		return schemaMerge.mergeTable(conn, tableName, columnsExpected);
+	}
+
+	public boolean mergeTable(Connection conn, String tableName, ColumnList columnsExpected) throws SQLException {
 		{
-			ColumnList columnsActual = jdbcDababaseMetadata.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			if (columnsActual.size() == 0) {
 				return false;
 			}
@@ -36,7 +40,7 @@ public class DBSchemaMerge {
 			statement.close();
 		}
 		{
-			ColumnList columnsActual = jdbcDababaseMetadata.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			List<AlterTableColumnCommand> commandBus = compare(columnsExpected, columnsActual);
 			assert commandBus.size() == 0;
 			return true;
@@ -111,7 +115,7 @@ public class DBSchemaMerge {
 	}
 
 	public ColumnList getColumns(Connection conn, String tableName) throws SQLException {
-		return this.jdbcDababaseMetadata.getColumns(conn, tableName);
+		return JdbcDababaseMetadata.getColumns(conn, tableName);
 	}
 
 }

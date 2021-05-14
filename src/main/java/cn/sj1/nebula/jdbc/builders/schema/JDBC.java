@@ -150,7 +150,7 @@ public class JDBC {
 		}
 	}
 
-	static 	public  String typeDefinition(JDBCType dataType, int columnSize, int decimalDigits) {
+	static public String typeDefinition(JDBCType dataType, int columnSize, int decimalDigits) {
 		String definition;
 		ColumnType columnType = JDBC.mapJDBCType2RealColumnTypeName.get(dataType);
 
@@ -173,8 +173,7 @@ public class JDBC {
 	}
 
 	public static boolean ignoreSize(JDBCType dataType) {
-		return dataType == JDBCType.DATE || dataType == JDBCType.TIME || dataType == JDBCType.TIMESTAMP
-				|| dataType == JDBCType.TIME_WITH_TIMEZONE || dataType == JDBCType.TIMESTAMP_WITH_TIMEZONE || dataType == JDBCType.BOOLEAN;
+		return dataType == JDBCType.DATE || dataType == JDBCType.TIME || dataType == JDBCType.TIMESTAMP || dataType == JDBCType.TIME_WITH_TIMEZONE || dataType == JDBCType.TIMESTAMP_WITH_TIMEZONE || dataType == JDBCType.BOOLEAN;
 	}
 
 	public static EnumMap<JDBCType, ColumnType> mapJDBCType2RealColumnTypeName = new EnumMap<>(JDBCType.class);
@@ -298,7 +297,7 @@ public class JDBC {
 
 	public static boolean mergeIfExists(Connection conn, String tableName, ColumnList columnsExpected) {
 		try {
-			return new DBSchemaMerge().merge(conn, tableName, columnsExpected);
+			return DBSchemaMerge.merge(conn, tableName, columnsExpected);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

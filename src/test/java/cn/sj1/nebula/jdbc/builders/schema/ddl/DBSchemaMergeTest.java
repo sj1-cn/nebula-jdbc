@@ -37,7 +37,6 @@ public class DBSchemaMergeTest extends TestBase {
 	public TestName name = new TestName();
 	String tableName = "UserComplex";
 	DBSchemaMerge dbSchemaMerge = new DBSchemaMerge();
-	JdbcDababaseMetadata meta = new JdbcDababaseMetadata();
 	ColumnList columnsPrepared;
 	Connection conn;
 
@@ -79,7 +78,7 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(DECIMAL("height"));
 		columnsExpected.push(VARCHAR("description"));
 
-		ColumnList actual = meta.getColumns(conn, tableName);
+		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
 		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
@@ -96,7 +95,7 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(VARCHAR("description"));
 		columnsExpected.push(DECIMAL("age"));
 
-		ColumnList actual = meta.getColumns(conn, tableName);
+		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
 		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
@@ -144,7 +143,7 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(CHAR("description"));// change type
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNull(columnsActual.get("favor"));
 			assertNotEquals(columnsExpected.get("height").toString(), columnsActual.get("height").toString());
 			assertNotEquals(columnsExpected.get("name").toString(), columnsActual.get("name").toString());
@@ -154,7 +153,7 @@ public class DBSchemaMergeTest extends TestBase {
 		dbSchemaMerge.merge(conn, tableName, columnsExpected);
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertEquals(columnsActual.get("favor").toString(), columnsActual.get("favor").toString());
 			assertEquals(columnsExpected.get("height").toString(), columnsActual.get("height").toString());
 			assertEquals(columnsExpected.get("name").toString(), columnsActual.get("name").toString());
@@ -168,14 +167,14 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(VARCHAR("favor").size(1024));
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNull(columnsActual.get("favor"));
 		}
 
 		dbSchemaMerge.merge(conn, tableName, columnsExpected);
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertEquals(columnsActual.get("favor").toString(), columnsActual.get("favor").toString());
 		}
 	}
@@ -186,14 +185,14 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(BIGINT("height"));
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNotEquals(columnsExpected.get("height"), columnsActual.get("height").toString());
 		}
 
 		dbSchemaMerge.merge(conn, tableName, columnsExpected);
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertEquals(columnsExpected.get("height").toString(), columnsActual.get("height").toString());
 		}
 	}
@@ -204,13 +203,13 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(DECIMAL("height").size(32));
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNotEquals(columnsExpected.get("height").toString(), columnsActual.get("height").toString());
 		}
 
 		dbSchemaMerge.merge(conn, tableName, columnsExpected);
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertEquals(columnsExpected.get("height").toString(), columnsActual.get("height").toString());
 		}
 	}
@@ -221,14 +220,14 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(DECIMAL("height").size(32).digits(10));
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNotEquals(columnsExpected.get("height").toString(), columnsActual.get("height").toString());
 		}
 
 		dbSchemaMerge.merge(conn, tableName, columnsExpected);
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertEquals(columnsExpected.get("height").toString(), columnsActual.get("height").toString());
 		}
 	}
@@ -239,14 +238,14 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(VARCHAR("name").remarks("person's name"));
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNotEquals(columnsExpected.get("name").toString(), columnsActual.get("name").toString());
 		}
 
 		dbSchemaMerge.merge(conn, tableName, columnsExpected);
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertEquals(columnsExpected.get("name").toString(), columnsActual.get("name").toString());
 		}
 	}
@@ -257,14 +256,14 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(DECIMAL("height").size(50).digits(10).required().remarks("person's height"));
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNotEquals(columnsExpected.get("height").toString(), columnsActual.get("height").toString());
 		}
 
 		dbSchemaMerge.merge(conn, tableName, columnsExpected);
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertEquals(columnsExpected.get("height").toString(), columnsActual.get("height").toString());
 		}
 	}
@@ -275,14 +274,14 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(VARCHAR("name").required());
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNotEquals(columnsExpected.get("name").toString(), columnsActual.get("name").toString());
 		}
 
 		dbSchemaMerge.merge(conn, tableName, columnsExpected);
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertEquals(columnsExpected.get("name").toString(), columnsActual.get("name").toString());
 		}
 	}
@@ -293,14 +292,14 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.remove("name");
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNotNull(columnsActual.get("name"));
 		}
 
 		dbSchemaMerge.merge(conn, tableName, columnsExpected);
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNull(columnsActual.get("name"));
 		}
 	}
@@ -310,7 +309,7 @@ public class DBSchemaMergeTest extends TestBase {
 
 		AlterTable.AddColumnCommand addColumn = new AlterTable.AddColumnCommand(VARCHAR("favor").size(1024));
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNull(columnsActual.get("favor"));
 		}
 
@@ -321,7 +320,7 @@ public class DBSchemaMergeTest extends TestBase {
 		assertEquals(0, results[0]);
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertEquals(addColumn.getColumn().toString(), columnsActual.get("favor").toString());
 		}
 	}
@@ -331,7 +330,7 @@ public class DBSchemaMergeTest extends TestBase {
 
 		AlterTable.AlterColumnCommand alterColumn = new AlterTable.AlterColumnCommand(BIGINT("height"));
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNotEquals(alterColumn.getColumn().toString(), columnsActual.get("height").toString());
 		}
 
@@ -342,7 +341,7 @@ public class DBSchemaMergeTest extends TestBase {
 		assertEquals(0, results[0]);
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertEquals(alterColumn.getColumn().toString(), columnsActual.get("height").toString());
 		}
 	}
@@ -352,7 +351,7 @@ public class DBSchemaMergeTest extends TestBase {
 
 		AlterTable.AlterColumnCommand alterColumn = new AlterTable.AlterColumnCommand(DECIMAL("height").size(32));
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNotEquals(alterColumn.getColumn().toString(), columnsActual.get("height").toString());
 		}
 
@@ -363,7 +362,7 @@ public class DBSchemaMergeTest extends TestBase {
 		assertEquals(0, results[0]);
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertEquals(alterColumn.getColumn().toString(), columnsActual.get("height").toString());
 		}
 	}
@@ -374,7 +373,7 @@ public class DBSchemaMergeTest extends TestBase {
 		AlterTable.AlterColumnCommand alterColumn = new AlterTable.AlterColumnCommand(
 				DECIMAL("height").size(32).digits(10));
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNotEquals(alterColumn.getColumn().toString(), columnsActual.get("height").toString());
 		}
 
@@ -385,7 +384,7 @@ public class DBSchemaMergeTest extends TestBase {
 		assertEquals(0, results[0]);
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertEquals(alterColumn.getColumn().toString(), columnsActual.get("height").toString());
 		}
 	}
@@ -396,7 +395,7 @@ public class DBSchemaMergeTest extends TestBase {
 		AlterTable.AlterColumnRemarksCommand alterColumn = new AlterTable.AlterColumnRemarksCommand(
 				VARCHAR("name").remarks("person's name"));
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNotEquals(alterColumn.getColumn().toString(), columnsActual.get("name").toString());
 		}
 
@@ -407,7 +406,7 @@ public class DBSchemaMergeTest extends TestBase {
 		assertEquals(0, results[0]);
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertEquals(alterColumn.getColumn().toString(), columnsActual.get("name").toString());
 		}
 	}
@@ -418,7 +417,7 @@ public class DBSchemaMergeTest extends TestBase {
 		AlterTable.AlterColumnNullableCommand alterColumn = new AlterTable.AlterColumnNullableCommand(
 				VARCHAR("name").required());
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNotEquals(alterColumn.getColumn().toString(), columnsActual.get("name").toString());
 		}
 
@@ -429,7 +428,7 @@ public class DBSchemaMergeTest extends TestBase {
 		assertEquals(0, results[0]);
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertEquals(alterColumn.getColumn().toString(), columnsActual.get("name").toString());
 		}
 	}
@@ -439,7 +438,7 @@ public class DBSchemaMergeTest extends TestBase {
 
 		AlterTable.DropColumnCommand addColumn = new AlterTable.DropColumnCommand(VARCHAR("name").size(1024));
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNotNull(columnsActual.get("name"));
 		}
 
@@ -450,7 +449,7 @@ public class DBSchemaMergeTest extends TestBase {
 		assertEquals(0, results[0]);
 
 		{
-			ColumnList columnsActual = meta.getColumns(conn, tableName);
+			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNull(columnsActual.get("name"));
 		}
 	}
@@ -464,7 +463,7 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(BIGINT("height"));
 		columnsExpected.push(VARCHAR("description"));
 
-		ColumnList actual = meta.getColumns(conn, tableName);
+		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
 		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
@@ -483,7 +482,7 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(DECIMAL("height"));
 		columnsExpected.push(VARCHAR("description"));
 
-		ColumnList actual = meta.getColumns(conn, tableName);
+		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
 		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
@@ -502,7 +501,7 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(DECIMAL("height").size(20).digits(2));
 		columnsExpected.push(VARCHAR("description"));
 
-		ColumnList actual = meta.getColumns(conn, tableName);
+		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
 		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
@@ -522,7 +521,7 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(DECIMAL("height"));
 		columnsExpected.push(VARCHAR("description"));
 
-		ColumnList actual = meta.getColumns(conn, tableName);
+		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
 		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
@@ -542,7 +541,7 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(DECIMAL("height"));
 		columnsExpected.push(VARCHAR("description"));
 
-		ColumnList actual = meta.getColumns(conn, tableName);
+		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
 		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
@@ -559,7 +558,7 @@ public class DBSchemaMergeTest extends TestBase {
 		columnsExpected.push(DECIMAL("height"));
 		columnsExpected.push(VARCHAR("description"));
 
-		ColumnList actual = meta.getColumns(conn, tableName);
+		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
 		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
 
@@ -569,7 +568,7 @@ public class DBSchemaMergeTest extends TestBase {
 
 	@Test
 	public void testGetCurrentActualColumns() throws SQLException {
-		List<ColumnDefinition> actual = meta.getColumns(conn, tableName).list();
+		List<ColumnDefinition> actual = JdbcDababaseMetadata.getColumns(conn, tableName).list();
 		assertListtoString(columnsPrepared.list(), actual);
 	}
 

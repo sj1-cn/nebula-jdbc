@@ -12,7 +12,7 @@ import nebula.commons.list.ListMap;
 
 public class JdbcDababaseMetadata {
 
-	public JdbcDatabaseInfo getDatabaseInfo(Connection connection) throws SQLException {
+	static public JdbcDatabaseInfo getDatabaseInfo(Connection connection) throws SQLException {
 
 		ListMap<Integer, JdbcTypeInfo> types = new ListMap<>(t -> t.dataType);
 
@@ -55,7 +55,7 @@ public class JdbcDababaseMetadata {
 		return jdbcDatabase;
 	}
 
-	public ColumnList getColumns(Connection conn, String tableName) throws SQLException {
+	static public ColumnList getColumns(Connection conn, String tableName) throws SQLException {
 		ColumnList columnsActual = new ColumnList();
 		DatabaseMetaData meta = conn.getMetaData();
 

@@ -69,6 +69,7 @@ public class UserJdbcRepositoryTest extends TestBase {
 		userRepository.setConnection(connection);
 
 		userRepository.init();
+		userRepository.init();
 
 		PageList<User> users = userRepository.list(0, 10);
 
@@ -207,7 +208,7 @@ public class UserJdbcRepositoryTest extends TestBase {
 		JdbcRepository<User> userRepository = new UserJdbcRepository();
 		userRepository.setConnection(connection);
 
-//		connection.createStatement().execute("CREATE TABLE USER (id INTEGER PRIMARY KEY, description VARCHAR)");
+		connection.createStatement().execute("CREATE TABLE USER (id INTEGER PRIMARY KEY, description VARCHAR)");
 
 		userRepository.init();
 

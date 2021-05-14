@@ -2,7 +2,7 @@ package cn.sj1.nebula.data.jdbc;
 
 import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.TIMESTAMP;
 
-public class EntityORMappingDefinitionList {
+class EntityORMappingDefinitionList {
 	final String name;
 	final String entityPojoClassName;
 	final String jdbcTablename;

@@ -11,6 +11,7 @@ import cn.sj1.nebula.data.query.Condition;
 import cn.sj1.nebula.data.query.OrderBy;
 import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
 import cn.sj1.nebula.jdbc.builders.schema.JDBC;
+import cn.sj1.nebula.jdbc.builders.schema.ddl.DBSchemaMerge;
 
 public interface JdbcRepository<T> extends Repository<T> {
 	void setConnection(Connection conn);
@@ -123,8 +124,19 @@ public interface JdbcRepository<T> extends Repository<T> {
 
 	int deleteByIdJdbc(long id) throws SQLException;
 
+	/**
+	 * 这个函数不应该放在这里，有时间移走
+	 * @param conn
+	 * @param tableName
+	 * @param columnsExpected
+	 * @return
+	 */
 	default boolean mergeIfExists(Connection conn, String tableName, ColumnList columnsExpected) {
-		return false;
+		try {
+			return DBSchemaMerge.merge(conn, tableName, columnsExpected);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 //	int deleteJdbcByName(String name) throws SQLException;

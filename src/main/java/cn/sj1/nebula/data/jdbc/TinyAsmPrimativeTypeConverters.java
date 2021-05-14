@@ -22,7 +22,7 @@ import cn.sj1.tinyasm.core.MethodCode;
 //java.util: Date, Optional (around any other supported type), and UUID
 //
 //java.util.Collection and Java arrays (stored as SQL arrays). Some additional setup may be required depending on the type of array element.
-public class TinyAsmPrimativeTypeConverters {
+class TinyAsmPrimativeTypeConverters {
 
 	static Consumer<MethodCode> doNothing = f -> {
 	};
