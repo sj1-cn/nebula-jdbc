@@ -29,8 +29,8 @@ import org.junit.rules.TestName;
 import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
 import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
 import cn.sj1.nebula.jdbc.builders.schema.JDBC;
+import cn.sj1.nebula.jdbc.builders.schema.db.JdbcDababaseMetadata;
 import nebula.jdbc.TestBase;
-import nebula.jdbc.meta.JdbcDababaseMetadata;
 
 public class DBSchemaMergeTest extends TestBase {
 	@Rule

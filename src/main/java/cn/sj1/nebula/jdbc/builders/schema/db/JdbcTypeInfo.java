@@ -1,4 +1,4 @@
-package nebula.jdbc.meta;
+package cn.sj1.nebula.jdbc.builders.schema.db;
 
 public class JdbcTypeInfo {
 	String typeName;

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
 import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
 import cn.sj1.nebula.jdbc.builders.schema.JDBC;
-import nebula.jdbc.meta.JdbcDababaseMetadata;
+import cn.sj1.nebula.jdbc.builders.schema.db.JdbcDababaseMetadata;
 
 public class DBSchemaMerge {
 	static Logger logger = LoggerFactory.getLogger(DBSchemaMerge.class);

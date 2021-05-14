@@ -7,9 +7,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import cn.sj1.nebula.jdbc.builders.schema.db.JdbcDababaseMetadata;
+import cn.sj1.nebula.jdbc.builders.schema.db.JdbcDatabaseInfo;
 import nebula.jdbc.TestBase;
-import nebula.jdbc.meta.JdbcDababaseMetadata;
-import nebula.jdbc.meta.JdbcDatabaseInfo;
 
 public class JdbcDababaseMetadataTest extends TestBase {
 	Connection connection;
