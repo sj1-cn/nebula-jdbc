@@ -12,7 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import cn.sj1.nebula.data.basic.PageList;
+import cn.sj1.nebula.data.PageList;
 import cn.sj1.nebula.data.jdbc.sample.User;
 import cn.sj1.nebula.data.query.Condition;
 import nebula.jdbc.TestBase;

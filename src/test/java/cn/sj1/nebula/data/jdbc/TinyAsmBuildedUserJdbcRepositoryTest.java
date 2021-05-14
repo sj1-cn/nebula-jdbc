@@ -14,7 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import cn.sj1.nebula.data.basic.PageList;
+import cn.sj1.nebula.data.PageList;
 import cn.sj1.nebula.data.jdbc.sample.User;
 import cn.sj1.nebula.data.jdbc.sample.UserExtend;
 import cn.sj1.nebula.data.query.Condition;
@@ -27,7 +27,7 @@ public class TinyAsmBuildedUserJdbcRepositoryTest extends TestBase {
 	TinyAsmPrimativeTypeConverters arguments = new TinyAsmPrimativeTypeConverters();
 	Connection connection;
 	JdbcRepository<User> userRepository;
-	EntityPojoDbMappingDefinitions entityDefinition;
+	EntityORMappingDefinitionList entityDefinition;
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -35,10 +35,10 @@ public class TinyAsmBuildedUserJdbcRepositoryTest extends TestBase {
 		connection = super.openConnection();
 
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new EntityPojoFieldJdbcMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
-		entityDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
+		clazzFields.push(new EntityORMappingDefinition(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
+		clazzFields.push(new EntityORMappingDefinition("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
+		clazzFields.push(new EntityORMappingDefinition("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
+		entityDefinition = new EntityORMappingDefinitionList(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserJdbcRepository.class.getName();
 

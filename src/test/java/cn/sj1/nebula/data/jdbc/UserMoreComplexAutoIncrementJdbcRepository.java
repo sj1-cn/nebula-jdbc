@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.sj1.nebula.data.basic.EntitySystem;
-import cn.sj1.nebula.data.basic.PageList;
+import cn.sj1.nebula.data.EntityAudit;
+import cn.sj1.nebula.data.PageList;
 import cn.sj1.nebula.data.basic.PageListImpl;
 import cn.sj1.nebula.data.jdbc.sample.UserMoreComplex;
 import cn.sj1.nebula.data.jdbc.sample.UserMoreComplexExtend;
@@ -178,8 +178,8 @@ public class UserMoreComplexAutoIncrementJdbcRepository implements JdbcRepositor
 
 	@Override
 	public UserMoreComplex updateJdbc(UserMoreComplex data) throws SQLException {
-		EntitySystem extend = (EntitySystem) findByIdJdbc(data.getId());
-		if (extend.getUpdateAt() == ((EntitySystem) data).getUpdateAt()) {
+		EntityAudit extend = (EntityAudit) findByIdJdbc(data.getId());
+		if (extend.getUpdateAt() == ((EntityAudit) data).getUpdateAt()) {
 			return null;
 		}
 

@@ -2,7 +2,7 @@ package cn.sj1.nebula.data.jdbc;
 
 import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.TIMESTAMP;
 
-public class EntityPojoDbMappingDefinitions {
+public class EntityORMappingDefinitionList {
 	final String name;
 	final String entityPojoClassName;
 	final String jdbcTablename;
@@ -10,7 +10,7 @@ public class EntityPojoDbMappingDefinitions {
 	final FieldList systemFields;
 	final FieldList fieldsAll;
 
-	public EntityPojoDbMappingDefinitions(String name,String clazz, String tablename, FieldList entityFields) {
+	public EntityORMappingDefinitionList(String name,String clazz, String tablename, FieldList entityFields) {
 		super();
 		this.name = name;
 		this.entityPojoClassName = clazz;
@@ -48,7 +48,7 @@ public class EntityPojoDbMappingDefinitions {
 
 	static FieldList defaultSystemFields = new FieldList();
 	static {
-		defaultSystemFields.push(new EntityPojoFieldJdbcMapper("createAt", "getCreateAt", java.sql.Timestamp.class, TIMESTAMP("createAt")));
-		defaultSystemFields.push(new EntityPojoFieldJdbcMapper("updateAt", "getUpdateAt", java.sql.Timestamp.class, TIMESTAMP("updateAt")));
+		defaultSystemFields.push(new EntityORMappingDefinition("createAt", "getCreateAt", java.sql.Timestamp.class, TIMESTAMP("createAt")));
+		defaultSystemFields.push(new EntityORMappingDefinition("updateAt", "getUpdateAt", java.sql.Timestamp.class, TIMESTAMP("updateAt")));
 	}
 }

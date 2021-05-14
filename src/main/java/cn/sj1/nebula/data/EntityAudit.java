@@ -1,8 +1,8 @@
-package cn.sj1.nebula.data.basic;
+package cn.sj1.nebula.data;
 
 import java.sql.Timestamp;
 
-public interface EntitySystem {
+public interface EntityAudit {
 
 	public Timestamp getCreateAt();
 

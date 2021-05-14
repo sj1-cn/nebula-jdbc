@@ -64,10 +64,10 @@ public class TinyAsmJdbcRepositoryBuilderTinyASMifierTest {
 		Class<?> expectedClazz = UserJdbcRepository.class;
 
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new EntityPojoFieldJdbcMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
-		EntityPojoDbMappingDefinitions entityDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
+		clazzFields.push(new EntityORMappingDefinition(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
+		clazzFields.push(new EntityORMappingDefinition("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
+		clazzFields.push(new EntityORMappingDefinition("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
+		EntityORMappingDefinitionList entityDefinition = new EntityORMappingDefinitionList(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserJdbcRepository.class.getName();
 
@@ -85,10 +85,10 @@ public class TinyAsmJdbcRepositoryBuilderTinyASMifierTest {
 		Class<?> expectedClazz = UserAutoIncrementJdbcRepository.class;
 
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new EntityPojoFieldJdbcMapper(true, "id", "getId", long.class, INTEGER("id").primarykey().autoIncrement()));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("name", "getName", String.class, VARCHAR("name")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("description", "getDescription", String.class, VARCHAR("description")));
-		EntityPojoDbMappingDefinitions entityDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
+		clazzFields.push(new EntityORMappingDefinition(true, "id", "getId", long.class, INTEGER("id").primarykey().autoIncrement()));
+		clazzFields.push(new EntityORMappingDefinition("name", "getName", String.class, VARCHAR("name")));
+		clazzFields.push(new EntityORMappingDefinition("description", "getDescription", String.class, VARCHAR("description")));
+		EntityORMappingDefinitionList entityDefinition = new EntityORMappingDefinitionList(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserAutoIncrementJdbcRepository.class.getName();
 

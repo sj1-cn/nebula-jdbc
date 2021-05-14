@@ -1,4 +1,4 @@
-package cn.sj1.nebula.data.basic;
+package cn.sj1.nebula.data;
 
 import java.util.List;
 

@@ -9,6 +9,8 @@ import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
 import cn.sj1.tinyasm.core.Annotation;
 import cn.sj1.tinyasm.core.Clazz;
+import cn.sj1.nebula.data.EntityAudit;
+import cn.sj1.nebula.data.PageList;
 import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
 import java.sql.Connection;
 import cn.sj1.nebula.data.jdbc.JdbcRepository;
@@ -20,12 +22,10 @@ import cn.sj1.nebula.data.basic.PageListImpl;
 import java.sql.PreparedStatement;
 import cn.sj1.nebula.data.jdbc.sample.UserExtend;
 import java.util.ArrayList;
-import cn.sj1.nebula.data.basic.PageList;
 import java.sql.SQLException;
 import cn.sj1.nebula.data.query.OrderBy;
 import java.util.List;
 import java.sql.ResultSet;
-import cn.sj1.nebula.data.basic.EntitySystem;
 import java.sql.Statement;
 import java.lang.Object;
 import com.dbal.jdbc.builders.queries.Select;
@@ -692,16 +692,16 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.VIRTUAL("findByIdJdbc")
 			.return_(User.class)
 			.parameter(long.class).INVOKE();
-		code.CHECKCAST(EntitySystem.class);
-		code.STORE("extend",EntitySystem.class);
+		code.CHECKCAST(EntityAudit.class);
+		code.STORE("extend",EntityAudit.class);
 
 		code.LINE();
 		code.LOAD("extend");
-		code.INTERFACE(EntitySystem.class, "getUpdateAt")
+		code.INTERFACE(EntityAudit.class, "getUpdateAt")
 			.return_(Timestamp.class).INVOKE();
 		code.LOAD("data");
-		code.CHECKCAST(EntitySystem.class);
-		code.INTERFACE(EntitySystem.class, "getUpdateAt")
+		code.CHECKCAST(EntityAudit.class);
+		code.INTERFACE(EntityAudit.class, "getUpdateAt")
 			.return_(Timestamp.class).INVOKE();
 		Label label2OfIF_ACMPNE = new Label();
 		code.IF_ACMPNE(label2OfIF_ACMPNE);

@@ -2,7 +2,7 @@ package cn.sj1.nebula.data.jdbc;
 
 import java.sql.Timestamp;
 
-import cn.sj1.nebula.data.basic.EntitySystem;
+import cn.sj1.nebula.data.EntityAudit;
 import cn.sj1.tinyasm.core.ClassBody;
 import cn.sj1.tinyasm.core.ClassBuilder;
 import cn.sj1.tinyasm.core.Clazz;
@@ -10,15 +10,15 @@ import cn.sj1.tinyasm.core.Field;
 import cn.sj1.tinyasm.core.MethodCode;
 
 public class EntityImplBuilder {
-	EntityPojoDbMappingDefinitions clazz;
+	EntityORMappingDefinitionList clazz;
 	String clazzExtend;
 	String targetClazz;
 
-	public byte[] make(String clazzExtend, String targetClazz, EntityPojoDbMappingDefinitions clazz)  {
+	public byte[] make(String clazzExtend, String targetClazz, EntityORMappingDefinitionList clazz)  {
 		this.clazzExtend = clazzExtend;
 		this.targetClazz = targetClazz;
 		this.clazz = clazz;
-		ClassBody classBody = ClassBuilder.class_(clazzExtend).extends_(targetClazz).implements_(EntitySystem.class).body();
+		ClassBody classBody = ClassBuilder.class_(clazzExtend).extends_(targetClazz).implements_(EntityAudit.class).body();
 
 		classBody.private_().field("createAt", Clazz.of(Timestamp.class));
 		classBody.private_().field("updateAt", Clazz.of(Timestamp.class));
@@ -51,7 +51,7 @@ public class EntityImplBuilder {
 		code.LINE();
 		code.LOAD("this");
 		
-		for (EntityPojoFieldJdbcMapper fieldMapper : clazz.entityFields) {
+		for (EntityORMappingDefinition fieldMapper : clazz.entityFields) {
 			code.LOAD(fieldMapper.fieldName);
 		}
 		Class<?>[] clazzes = new Class<?>[clazz.entityFields.size()];

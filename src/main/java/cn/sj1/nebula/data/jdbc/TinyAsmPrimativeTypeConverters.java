@@ -118,19 +118,19 @@ public class TinyAsmPrimativeTypeConverters {
 		});
 
 		register(Date.class, java.sql.Date.class, code -> {
-			code.STATIC(TinyAsmDateTypeUtils.class, "dateValueOf").parameter(Date.class).return_(java.sql.Date.class).INVOKE();
+			code.STATIC(TinyAsmDateTypeConverterUtils.class, "dateValueOf").parameter(Date.class).return_(java.sql.Date.class).INVOKE();
 		}, code -> {
-			code.STATIC(TinyAsmDateTypeUtils.class, "dateValueOf").parameter(java.sql.Date.class).return_(Date.class).INVOKE();
+			code.STATIC(TinyAsmDateTypeConverterUtils.class, "dateValueOf").parameter(java.sql.Date.class).return_(Date.class).INVOKE();
 		});
 		register(Date.class, java.sql.Time.class, code -> {
-			code.STATIC(TinyAsmDateTypeUtils.class, "timeValueOf").parameter(Date.class).return_(java.sql.Time.class).INVOKE();
+			code.STATIC(TinyAsmDateTypeConverterUtils.class, "timeValueOf").parameter(Date.class).return_(java.sql.Time.class).INVOKE();
 		}, code -> {
-			code.STATIC(TinyAsmDateTypeUtils.class, "dateValueOf").parameter(java.sql.Time.class).return_(Date.class).INVOKE();
+			code.STATIC(TinyAsmDateTypeConverterUtils.class, "dateValueOf").parameter(java.sql.Time.class).return_(Date.class).INVOKE();
 		});
 		register(Date.class, java.sql.Timestamp.class, code -> {
-			code.STATIC(TinyAsmDateTypeUtils.class, "timestampValueOf").parameter(Date.class).return_(java.sql.Timestamp.class).INVOKE();
+			code.STATIC(TinyAsmDateTypeConverterUtils.class, "timestampValueOf").parameter(Date.class).return_(java.sql.Timestamp.class).INVOKE();
 		}, code -> {
-			code.STATIC(TinyAsmDateTypeUtils.class, "dateValueOf").parameter(java.sql.Timestamp.class).return_(Date.class).INVOKE();
+			code.STATIC(TinyAsmDateTypeConverterUtils.class, "dateValueOf").parameter(java.sql.Timestamp.class).return_(Date.class).INVOKE();
 		});
 	}
 

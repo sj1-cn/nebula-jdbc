@@ -57,15 +57,15 @@ public class TinyAsmJdbcRepositoryBuilderTest extends TestBase {
 
 	@Test
 	public void testUserJdbcRepository() {
-		EntityPojoDbMappingDefinitions clazzDefinition;
+		EntityORMappingDefinitionList clazzDefinition;
 
 		FieldList clazzFields = new FieldList();
 
-		clazzFields.push(new EntityPojoFieldJdbcMapper(true, "id", "getId", long.class, INTEGER("id")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("name", "getName", String.class, VARCHAR("name")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("description", "getDescription", String.class, VARCHAR("description")));
+		clazzFields.push(new EntityORMappingDefinition(true, "id", "getId", long.class, INTEGER("id")));
+		clazzFields.push(new EntityORMappingDefinition("name", "getName", String.class, VARCHAR("name")));
+		clazzFields.push(new EntityORMappingDefinition("description", "getDescription", String.class, VARCHAR("description")));
 
-		clazzDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
+		clazzDefinition = new EntityORMappingDefinitionList(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserJdbcRepository.class.getName();
 		String clazzTarget = User.class.getName();
@@ -80,12 +80,12 @@ public class TinyAsmJdbcRepositoryBuilderTest extends TestBase {
 
 	@Test
 	public void testUserAutoIncrementJdbcRepository() {
-		EntityPojoDbMappingDefinitions clazzDefinition;
+		EntityORMappingDefinitionList clazzDefinition;
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new EntityPojoFieldJdbcMapper(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER).autoIncrement()));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
-		clazzDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), UserMoreComplex.class.getName(), User.class.getSimpleName(), clazzFields);
+		clazzFields.push(new EntityORMappingDefinition(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER).autoIncrement()));
+		clazzFields.push(new EntityORMappingDefinition("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
+		clazzFields.push(new EntityORMappingDefinition("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
+		clazzDefinition = new EntityORMappingDefinitionList(User.class.getSimpleName(), UserMoreComplex.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserAutoIncrementJdbcRepository.class.getName();
 		String clazzTarget = User.class.getName();
@@ -100,23 +100,23 @@ public class TinyAsmJdbcRepositoryBuilderTest extends TestBase {
 
 	@Test
 	public void testUserMoreComplexAutoIncrementJdbcRepository() {
-		EntityPojoDbMappingDefinitions clazzDefinition;
+		EntityORMappingDefinitionList clazzDefinition;
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new EntityPojoFieldJdbcMapper(true, "id", "getId", long.class, BIGINT("id").primarykey().autoIncrement()));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("string", "getString", String.class, VARCHAR("string")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("bigDecimal", "getBigDecimal", java.math.BigDecimal.class, DECIMAL("bigDecimal")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("z", "getZ", Boolean.class, BOOLEAN("z")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("c", "getC", Character.class, CHAR("c")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("b", "getB", Byte.class, TINYINT("b")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("s", "getS", Short.class, SMALLINT("s")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("i", "getI", Integer.class, INTEGER("i")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("l", "getL", Long.class, BIGINT("l")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("f", "getF", Float.class, FLOAT("f")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("d", "getD", Double.class, DOUBLE("d")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("date", "getDate", java.sql.Date.class, DATE("date")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("time", "getTime", java.sql.Time.class, TIME("time")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("timestamp", "getTimestamp", java.sql.Timestamp.class, TIMESTAMP("timestamp")));
-		clazzDefinition = new EntityPojoDbMappingDefinitions(UserMoreComplex.class.getSimpleName(), UserMoreComplex.class.getName(), UserMoreComplex.class.getSimpleName(), clazzFields);
+		clazzFields.push(new EntityORMappingDefinition(true, "id", "getId", long.class, BIGINT("id").primarykey().autoIncrement()));
+		clazzFields.push(new EntityORMappingDefinition("string", "getString", String.class, VARCHAR("string")));
+		clazzFields.push(new EntityORMappingDefinition("bigDecimal", "getBigDecimal", java.math.BigDecimal.class, DECIMAL("bigDecimal")));
+		clazzFields.push(new EntityORMappingDefinition("z", "getZ", Boolean.class, BOOLEAN("z")));
+		clazzFields.push(new EntityORMappingDefinition("c", "getC", Character.class, CHAR("c")));
+		clazzFields.push(new EntityORMappingDefinition("b", "getB", Byte.class, TINYINT("b")));
+		clazzFields.push(new EntityORMappingDefinition("s", "getS", Short.class, SMALLINT("s")));
+		clazzFields.push(new EntityORMappingDefinition("i", "getI", Integer.class, INTEGER("i")));
+		clazzFields.push(new EntityORMappingDefinition("l", "getL", Long.class, BIGINT("l")));
+		clazzFields.push(new EntityORMappingDefinition("f", "getF", Float.class, FLOAT("f")));
+		clazzFields.push(new EntityORMappingDefinition("d", "getD", Double.class, DOUBLE("d")));
+		clazzFields.push(new EntityORMappingDefinition("date", "getDate", java.sql.Date.class, DATE("date")));
+		clazzFields.push(new EntityORMappingDefinition("time", "getTime", java.sql.Time.class, TIME("time")));
+		clazzFields.push(new EntityORMappingDefinition("timestamp", "getTimestamp", java.sql.Timestamp.class, TIMESTAMP("timestamp")));
+		clazzDefinition = new EntityORMappingDefinitionList(UserMoreComplex.class.getSimpleName(), UserMoreComplex.class.getName(), UserMoreComplex.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserMoreComplexAutoIncrementJdbcRepository.class.getName();
 		String clazzTarget = UserMoreComplex.class.getName();
@@ -132,14 +132,14 @@ public class TinyAsmJdbcRepositoryBuilderTest extends TestBase {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testUser() throws Exception {
-		EntityPojoDbMappingDefinitions clazzDefinition;
+		EntityORMappingDefinitionList clazzDefinition;
 
 		FieldList clazzFields = new FieldList();
 
-		clazzFields.push(new EntityPojoFieldJdbcMapper(true, "id", "getId", long.class, INTEGER("id")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("name", "getName", String.class, VARCHAR("name")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("description", "getDescription", String.class, VARCHAR("description")));
-		clazzDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
+		clazzFields.push(new EntityORMappingDefinition(true, "id", "getId", long.class, INTEGER("id")));
+		clazzFields.push(new EntityORMappingDefinition("name", "getName", String.class, VARCHAR("name")));
+		clazzFields.push(new EntityORMappingDefinition("description", "getDescription", String.class, VARCHAR("description")));
+		clazzDefinition = new EntityORMappingDefinitionList(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserJdbcRepository.class.getName();
 		String clazzTarget = User.class.getName();

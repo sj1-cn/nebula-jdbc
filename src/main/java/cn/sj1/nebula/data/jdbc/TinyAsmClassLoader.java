@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-class MyClassLoader extends ClassLoader {
+class TinyAsmClassLoader extends ClassLoader {
 	public Class<?> defineClassByName(String name, byte[] b) {
 		return defineClassByName(name, b, 0, b.length);
 	}
@@ -19,6 +19,8 @@ class MyClassLoader extends ClassLoader {
 	}
 
 	private void saveClassDefine(String name, byte[] b) {
+		if (!new File("target").exists()) return;
+		
 		File root = new File("target/generated-sources");
 		if (!root.exists()) root.mkdirs();
 

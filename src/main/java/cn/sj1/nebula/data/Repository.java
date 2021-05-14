@@ -1,6 +1,5 @@
-package cn.sj1.nebula.data.jdbc;
+package cn.sj1.nebula.data;
 
-import cn.sj1.nebula.data.basic.PageList;
 import cn.sj1.nebula.data.query.Condition;
 import cn.sj1.nebula.data.query.OrderBy;
 

@@ -9,6 +9,7 @@ import java.sql.JDBCType;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.sj1.nebula.data.Repository;
 import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
 import cn.sj1.nebula.jdbc.builders.schema.JDBC;
 
@@ -16,18 +17,18 @@ public class JdbcRepositoryFactory {
 
 	Connection conn;
 
-	private final MyClassLoader classLoader = new MyClassLoader();
+	private final TinyAsmClassLoader classLoader = new TinyAsmClassLoader();
 	private final TinyAsmPrimativeTypeConverters primativeTypeConverters = new TinyAsmPrimativeTypeConverters();
 	private TinyAsmJdbcRepositoryBuilder repositoryBuilder = new TinyAsmJdbcRepositoryBuilder(primativeTypeConverters);
 
-	Map<String, EntityPojoDbMappingDefinitions> cachedClazzDefinations = new HashMap<>();
+	Map<String, EntityORMappingDefinitionList> cachedClazzDefinations = new HashMap<>();
 	
 	public JdbcRepositoryFactory(Connection conn) {
 		this.conn = conn;
 	}
 
 
-	public EntityPojoDbMappingDefinitions build(Class<?> type) {
+	public EntityORMappingDefinitionList build(Class<?> type) {
 		if (cachedClazzDefinations.containsKey(type.getName())) return cachedClazzDefinations.get(type.getName());
 
 		String name = type.getSimpleName();
@@ -46,16 +47,16 @@ public class JdbcRepositoryFactory {
 				String getname = getName(field.getName(), field.getType());
 				boolean primaryKey = "id".equals(fieldname);
 				if (primaryKey) {
-					EntityPojoFieldJdbcMapper mapper = new EntityPojoFieldJdbcMapper(primaryKey, fieldname, getname, fieldClazz, column.autoIncrement());
+					EntityORMappingDefinition mapper = new EntityORMappingDefinition(primaryKey, fieldname, getname, fieldClazz, column.autoIncrement());
 					fields.push(mapper);
 				} else {
-					EntityPojoFieldJdbcMapper mapper = new EntityPojoFieldJdbcMapper(primaryKey, fieldname, getname, fieldClazz, column);
+					EntityORMappingDefinition mapper = new EntityORMappingDefinition(primaryKey, fieldname, getname, fieldClazz, column);
 					fields.push(mapper);
 				}
 			}
 		}
 
-		EntityPojoDbMappingDefinitions clazzDefinition = new EntityPojoDbMappingDefinitions(name, type.getName(), tablename, fields);
+		EntityORMappingDefinitionList clazzDefinition = new EntityORMappingDefinitionList(name, type.getName(), tablename, fields);
 		cachedClazzDefinations.put(type.getName(), clazzDefinition);
 		return clazzDefinition;
 	}
@@ -64,14 +65,14 @@ public class JdbcRepositoryFactory {
 	public <T> Class<T> getEntityImplClass(Class<T> clazzTarget) {
 		if (cachedEntityImplClasses.containsKey(clazzTarget.getName())) return (Class<T>) cachedEntityImplClasses.get(clazzTarget.getName());
 
-		EntityPojoDbMappingDefinitions clazzDefinition = build(clazzTarget);
+		EntityORMappingDefinitionList clazzDefinition = build(clazzTarget);
 
 		Class<T> clazzClazzExtend = makeClazzExtend(clazzDefinition);
 		return clazzClazzExtend;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Class<T> getEntityImplClass(EntityPojoDbMappingDefinitions clazzDefinition) {
+	public <T> Class<T> getEntityImplClass(EntityORMappingDefinitionList clazzDefinition) {
 		if (cachedEntityImplClasses.containsKey(clazzDefinition.entityPojoClassName)) return (Class<T>) cachedEntityImplClasses.get(clazzDefinition.entityPojoClassName);
 		Class<T> clazzClazzExtend = makeClazzExtend(clazzDefinition);
 		return clazzClazzExtend;
@@ -81,13 +82,13 @@ public class JdbcRepositoryFactory {
 	public <T> Repository<T> getRepository(Class<T> clazz) {
 		if (cachedRepositories.containsKey(clazz.getName())) return (Repository<T>) cachedRepositories.get(clazz.getName());
 
-		EntityPojoDbMappingDefinitions clazzDefinition = build(clazz);
+		EntityORMappingDefinitionList clazzDefinition = build(clazz);
 
 		return makeJdbcRepository(clazzDefinition);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Repository<T> getRepository(EntityPojoDbMappingDefinitions clazzDefinition) {
+	public <T> Repository<T> getRepository(EntityORMappingDefinitionList clazzDefinition) {
 		if (cachedRepositories.containsKey(clazzDefinition.entityPojoClassName)) return (Repository<T>) cachedRepositories.get(clazzDefinition.entityPojoClassName);
 
 		return makeJdbcRepository(clazzDefinition);
@@ -97,7 +98,7 @@ public class JdbcRepositoryFactory {
 	Map<String, Class<?>> cachedEntityImplClasses = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
-	private <T> Class<T> makeClazzExtend(EntityPojoDbMappingDefinitions clazzDefinition) {
+	private <T> Class<T> makeClazzExtend(EntityORMappingDefinitionList clazzDefinition) {
 		String entityPojoClassName = clazzDefinition.getEntityPojoClassName();
 		String entityPojoImplClassName = entityPojoClassName + "Extend";
 
@@ -110,7 +111,7 @@ public class JdbcRepositoryFactory {
 
 	Map<String, Repository<?>> cachedRepositories = new HashMap<>();
 
-	private <T> Repository<T> makeJdbcRepository(EntityPojoDbMappingDefinitions entityPojoDbMappingDefinitions) {
+	private <T> Repository<T> makeJdbcRepository(EntityORMappingDefinitionList entityPojoDbMappingDefinitions) {
 		String repositoryClassName = entityPojoDbMappingDefinitions.entityPojoClassName + "Repository";
 		String entityPojoClassName = entityPojoDbMappingDefinitions.entityPojoClassName;
 		String clazzExtendName = getEntityImplClass(entityPojoDbMappingDefinitions).getName();

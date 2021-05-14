@@ -2,9 +2,9 @@ package cn.sj1.nebula.data.jdbc.sample;
 
 import java.sql.Timestamp;
 
-import cn.sj1.nebula.data.basic.EntitySystem;
+import cn.sj1.nebula.data.EntityAudit;
 
-public class UserExtend extends User implements EntitySystem {
+public class UserExtend extends User implements EntityAudit {
 	private Timestamp createAt;
 	private Timestamp updateAt;
 

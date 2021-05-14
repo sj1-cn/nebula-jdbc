@@ -49,11 +49,11 @@ public class EntityImplBuilderTest extends TestBase {
 
 		FieldList clazzFields = new FieldList();
 
-		clazzFields.push(new EntityPojoFieldJdbcMapper("id", "getId", long.class, INTEGER("ID")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("name", "getName", String.class, VARCHAR("NAME")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("description", "getDescription", String.class, VARCHAR("description")));
+		clazzFields.push(new EntityORMappingDefinition("id", "getId", long.class, INTEGER("ID")));
+		clazzFields.push(new EntityORMappingDefinition("name", "getName", String.class, VARCHAR("NAME")));
+		clazzFields.push(new EntityORMappingDefinition("description", "getDescription", String.class, VARCHAR("description")));
 
-		EntityPojoDbMappingDefinitions clazzDefinition = new EntityPojoDbMappingDefinitions(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName().toUpperCase(), clazzFields);
+		EntityORMappingDefinitionList clazzDefinition = new EntityORMappingDefinitionList(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName().toUpperCase(), clazzFields);
 
 		String targetClazz = User.class.getName();
 		String clazzExtend = targetClazz + "Extend";
@@ -67,24 +67,24 @@ public class EntityImplBuilderTest extends TestBase {
 	@Test
 	public void testUserMoreComplexJdbcRowMapper() {
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new EntityPojoFieldJdbcMapper("id", "getId", long.class, BIGINT("id").primarykey().autoIncrement()));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("string", "getString", String.class, VARCHAR("string")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("bigDecimal", "getBigDecimal", java.math.BigDecimal.class, NUMERIC("bigDecimal")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("z", "getZ", Boolean.class, BOOLEAN("z")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("c", "getC", Character.class, CHAR("c")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("b", "getB", Byte.class, BIT("b")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("s", "getS", Short.class, SMALLINT("s")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("i", "getI", Integer.class, INTEGER("i")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("l", "getL", Long.class, BIGINT("l")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("f", "getF", Float.class, FLOAT("f")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("d", "getD", Double.class, DOUBLE("d")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("date", "getDate", java.sql.Date.class, DATE("date")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("time", "getTime", java.sql.Time.class, TIME("time")));
-		clazzFields.push(new EntityPojoFieldJdbcMapper("timestamp", "getTimestamp", java.sql.Timestamp.class, TIMESTAMP("timestamp")));
+		clazzFields.push(new EntityORMappingDefinition("id", "getId", long.class, BIGINT("id").primarykey().autoIncrement()));
+		clazzFields.push(new EntityORMappingDefinition("string", "getString", String.class, VARCHAR("string")));
+		clazzFields.push(new EntityORMappingDefinition("bigDecimal", "getBigDecimal", java.math.BigDecimal.class, NUMERIC("bigDecimal")));
+		clazzFields.push(new EntityORMappingDefinition("z", "getZ", Boolean.class, BOOLEAN("z")));
+		clazzFields.push(new EntityORMappingDefinition("c", "getC", Character.class, CHAR("c")));
+		clazzFields.push(new EntityORMappingDefinition("b", "getB", Byte.class, BIT("b")));
+		clazzFields.push(new EntityORMappingDefinition("s", "getS", Short.class, SMALLINT("s")));
+		clazzFields.push(new EntityORMappingDefinition("i", "getI", Integer.class, INTEGER("i")));
+		clazzFields.push(new EntityORMappingDefinition("l", "getL", Long.class, BIGINT("l")));
+		clazzFields.push(new EntityORMappingDefinition("f", "getF", Float.class, FLOAT("f")));
+		clazzFields.push(new EntityORMappingDefinition("d", "getD", Double.class, DOUBLE("d")));
+		clazzFields.push(new EntityORMappingDefinition("date", "getDate", java.sql.Date.class, DATE("date")));
+		clazzFields.push(new EntityORMappingDefinition("time", "getTime", java.sql.Time.class, TIME("time")));
+		clazzFields.push(new EntityORMappingDefinition("timestamp", "getTimestamp", java.sql.Timestamp.class, TIMESTAMP("timestamp")));
 
 		String targetClazz = UserMoreComplex.class.getName();
 		String clazzExtend = targetClazz + "Extend";
-		EntityPojoDbMappingDefinitions clazzDefinition = new EntityPojoDbMappingDefinitions(UserMoreComplex.class.getSimpleName(),UserMoreComplex.class.getName(), UserMoreComplex.class.getSimpleName().toUpperCase(),
+		EntityORMappingDefinitionList clazzDefinition = new EntityORMappingDefinitionList(UserMoreComplex.class.getSimpleName(),UserMoreComplex.class.getName(), UserMoreComplex.class.getSimpleName().toUpperCase(),
 				clazzFields);
 
 		byte[] code = builder.make(clazzExtend, targetClazz, clazzDefinition);

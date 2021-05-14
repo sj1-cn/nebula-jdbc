@@ -5,7 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import cn.sj1.nebula.data.basic.PageList;
+import cn.sj1.nebula.data.PageList;
+import cn.sj1.nebula.data.Repository;
 import cn.sj1.nebula.data.query.Condition;
 import cn.sj1.nebula.data.query.OrderBy;
 import cn.sj1.nebula.jdbc.builders.schema.ColumnList;

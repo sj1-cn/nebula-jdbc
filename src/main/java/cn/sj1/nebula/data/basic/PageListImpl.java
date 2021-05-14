@@ -2,6 +2,8 @@ package cn.sj1.nebula.data.basic;
 
 import java.util.ArrayList;
 
+import cn.sj1.nebula.data.PageList;
+
 public class PageListImpl<E> extends ArrayList<E> implements PageList<E> {
 	private static final long serialVersionUID = 6276525867983275677L;
 

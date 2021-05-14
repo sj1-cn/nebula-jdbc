@@ -9,8 +9,11 @@ import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
 import cn.sj1.tinyasm.core.Annotation;
 import cn.sj1.tinyasm.core.Clazz;
+
 import java.lang.Float;
 import java.sql.Time;
+
+import cn.sj1.nebula.data.EntityAudit;
 import cn.sj1.nebula.data.jdbc.sample.UserMoreComplex;
 import java.lang.Double;
 import java.sql.Timestamp;
@@ -20,7 +23,6 @@ import java.math.BigDecimal;
 import java.lang.Character;
 import java.lang.Long;
 import java.lang.Short;
-import cn.sj1.nebula.data.basic.EntitySystem;
 import java.lang.Boolean;
 import java.lang.String;
 import java.lang.Byte;
@@ -32,7 +34,7 @@ public class UserMoreComplexExtendTinyAsmDump {
 	}
 
 	public byte[] dump(String className) throws Exception {
-		ClassBody classBody = ClassBuilder.class_(className, UserMoreComplex.class, EntitySystem.class)
+		ClassBody classBody = ClassBuilder.class_(className, UserMoreComplex.class, EntityAudit.class)
 			.access(ACC_PUBLIC | ACC_SUPER).body();
 
 		classBody.private_().field("createAt", Clazz.of(Timestamp.class));

@@ -19,8 +19,8 @@ import org.objectweb.asm.Label;
 import com.dbal.jdbc.builders.queries.Select;
 import com.dbal.jdbc.builders.schema.Column;
 
-import cn.sj1.nebula.data.basic.EntitySystem;
-import cn.sj1.nebula.data.basic.PageList;
+import cn.sj1.nebula.data.EntityAudit;
+import cn.sj1.nebula.data.PageList;
 import cn.sj1.nebula.data.basic.PageListImpl;
 import cn.sj1.nebula.data.query.Condition;
 import cn.sj1.nebula.data.query.OrderBy;
@@ -37,7 +37,7 @@ import nebula.commons.list.ListMap;
 @SuppressWarnings("unused")
 public class TinyAsmJdbcRepositoryBuilder {
 
-	public static byte[] dumpStatic(String clazzRepository, String classEntity, String classEntityImpl, EntityPojoDbMappingDefinitions entityDefinition) throws Exception {
+	public static byte[] dumpStatic(String clazzRepository, String classEntity, String classEntityImpl, EntityORMappingDefinitionList entityDefinition) throws Exception {
 		TinyAsmJdbcRepositoryBuilder userJdbcRepositoryTinyAsmBuilder = new TinyAsmJdbcRepositoryBuilder(new TinyAsmPrimativeTypeConverters());
 		return userJdbcRepositoryTinyAsmBuilder.dump(clazzRepository, classEntity, classEntityImpl, entityDefinition);
 	}
@@ -46,7 +46,7 @@ public class TinyAsmJdbcRepositoryBuilder {
 		this.$_arguments = $_arguments;
 	}
 
-	public byte[] dump(String clazzRepository, String classEntity, String classEntityImpl, EntityPojoDbMappingDefinitions entityDefinition) {
+	public byte[] dump(String clazzRepository, String classEntity, String classEntityImpl, EntityORMappingDefinitionList entityDefinition) {
 		try {
 			this.dumpInit(clazzRepository, classEntity, classEntityImpl, entityDefinition);
 			return this.doDump(clazzRepository);
@@ -58,12 +58,12 @@ public class TinyAsmJdbcRepositoryBuilder {
 	String $_clazzRepository;
 	String $_clazzEntity;
 	String $_clazzEntityImpl;
-	EntityPojoDbMappingDefinitions $_entityDefinition;
+	EntityORMappingDefinitionList $_entityDefinition;
 	TinyAsmPrimativeTypeConverters $_arguments;
 	private boolean $_hasAutoIncrment = true;
 	private String $_tableName;
 
-	public void dumpInit(String clazzRepository, String classEntity, String classEntityImpl, EntityPojoDbMappingDefinitions entityDefinition) {
+	public void dumpInit(String clazzRepository, String classEntity, String classEntityImpl, EntityORMappingDefinitionList entityDefinition) {
 		this.$_clazzRepository = clazzRepository;
 		this.$_clazzEntity = classEntity;
 		this.$_clazzEntityImpl = classEntityImpl;
@@ -149,7 +149,7 @@ public class TinyAsmJdbcRepositoryBuilder {
 		code.SPECIAL(ColumnList.class, "<init>").INVOKE();
 		code.STORE("columnList", ColumnList.class);
 
-		for (EntityPojoFieldJdbcMapper $field : $mappers) {
+		for (EntityORMappingDefinition $field : $mappers) {
 			code.LINE();
 			code.LOAD("columnList");
 			code.LOADConst($field.column.toString());
@@ -407,7 +407,7 @@ public class TinyAsmJdbcRepositoryBuilder {
 
 		FieldList $fields = $_entityDefinition.getFieldsAll();
 		for (int i = 0; i < $fields.size(); i++) {
-			EntityPojoFieldJdbcMapper fieldMapper = $fields.get(i);
+			EntityORMappingDefinition fieldMapper = $fields.get(i);
 			String name = fieldMapper.fieldName;
 			JdbcMapping jdbcMapping = JDBC.map(fieldMapper.clazz);
 			assert jdbcMapping != null : name + "'s type [" + fieldMapper.clazz.getName() + "] has not jdbc type";
@@ -495,7 +495,7 @@ public class TinyAsmJdbcRepositoryBuilder {
 	protected void _insertJdbc(ClassBody classBody) {
 		FieldList fields = $_entityDefinition.entityFields;
 		boolean hasAutoIncrment = fields.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
-		EntityPojoFieldJdbcMapper keyField = fields.filter(f -> f.isPrimaryKey()).get(0);
+		EntityORMappingDefinition keyField = fields.filter(f -> f.isPrimaryKey()).get(0);
 
 		if (hasAutoIncrment) {
 			List<String> names = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.name());
@@ -517,7 +517,7 @@ public class TinyAsmJdbcRepositoryBuilder {
 			code.STORE("preparedStatement", PreparedStatement.class);
 
 			int $i = 1;
-			for (EntityPojoFieldJdbcMapper field : $_entityDefinition.entityFields) {
+			for (EntityORMappingDefinition field : $_entityDefinition.entityFields) {
 				if (!"YES".equals(field.column.getAutoIncrment())) {
 					JdbcMapping jdbc = JDBC.map(field.clazz);
 					int fieldIndex = $i;
@@ -588,7 +588,7 @@ public class TinyAsmJdbcRepositoryBuilder {
 			code.STORE("preparedStatement", PreparedStatement.class);
 
 			int $i = 1;
-			for (EntityPojoFieldJdbcMapper field : $_entityDefinition.entityFields) {
+			for (EntityORMappingDefinition field : $_entityDefinition.entityFields) {
 				JdbcMapping jdbc = JDBC.map(field.clazz);
 				int fieldIndex = $i;
 				code.LINE();
@@ -634,9 +634,9 @@ public class TinyAsmJdbcRepositoryBuilder {
 
 	protected void _updateJdbc(ClassBody classBody) {
 		FieldList $_fieldsAll = $_entityDefinition.fieldsAll;
-		ListMap<String, EntityPojoFieldJdbcMapper> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
-		ListMap<String, EntityPojoFieldJdbcMapper> $_othersWithoutCreate = $_fieldsAll.filter(f -> !f.primaryKey && !"createAt".equals(f.fieldName));
-		ListMap<String, EntityPojoFieldJdbcMapper> $_othersWithoutExtend = $_entityDefinition.entityFields.filter(f -> !f.primaryKey);
+		ListMap<String, EntityORMappingDefinition> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
+		ListMap<String, EntityORMappingDefinition> $_othersWithoutCreate = $_fieldsAll.filter(f -> !f.primaryKey && !"createAt".equals(f.fieldName));
+		ListMap<String, EntityORMappingDefinition> $_othersWithoutExtend = $_entityDefinition.entityFields.filter(f -> !f.primaryKey);
 		String $_sql = JDBC.sql("UPDATE ${tablename} SET ${setvalues} WHERE ${causes}", $_entityDefinition.jdbcTablename, String.join(",", $_othersWithoutCreate.map(f -> f.fieldName + "=?")),
 				String.join(" AND ", $_keys.map(f -> f.fieldName + "=?")));
 
@@ -647,15 +647,15 @@ public class TinyAsmJdbcRepositoryBuilder {
 		code.LOAD("data");
 		code.VIRTUAL($_clazzEntity, "getId").return_(long.class).INVOKE();
 		code.VIRTUAL("findByIdJdbc").return_($_clazzEntity).parameter(long.class).INVOKE();
-		code.CHECKCAST(EntitySystem.class);
-		code.STORE("extend", EntitySystem.class);
+		code.CHECKCAST(EntityAudit.class);
+		code.STORE("extend", EntityAudit.class);
 
 		code.LINE();
 		code.LOAD("extend");
-		code.INTERFACE(EntitySystem.class, "getUpdateAt").return_(Timestamp.class).INVOKE();
+		code.INTERFACE(EntityAudit.class, "getUpdateAt").return_(Timestamp.class).INVOKE();
 		code.LOAD("data");
-		code.CHECKCAST(EntitySystem.class);
-		code.INTERFACE(EntitySystem.class, "getUpdateAt").return_(Timestamp.class).INVOKE();
+		code.CHECKCAST(EntityAudit.class);
+		code.INTERFACE(EntityAudit.class, "getUpdateAt").return_(Timestamp.class).INVOKE();
 		Label label2OfIF_ACMPNE = new Label();
 		code.IF_ACMPNE(label2OfIF_ACMPNE);
 
@@ -673,7 +673,7 @@ public class TinyAsmJdbcRepositoryBuilder {
 		code.STORE("preparedStatement", PreparedStatement.class);
 
 		int i = 1;
-		for (EntityPojoFieldJdbcMapper field : $_othersWithoutExtend) {
+		for (EntityORMappingDefinition field : $_othersWithoutExtend) {
 			JdbcMapping jdbc = JDBC.map(field.clazz);
 
 			int fieldIndex = i;
@@ -696,7 +696,7 @@ public class TinyAsmJdbcRepositoryBuilder {
 		code.POP();
 
 		// preparedStatement.setLong(3, data.getId());
-		for (EntityPojoFieldJdbcMapper field : $_keys) {
+		for (EntityORMappingDefinition field : $_keys) {
 
 			JdbcMapping jdbc = JDBC.map(field.clazz);
 
@@ -736,7 +736,7 @@ public class TinyAsmJdbcRepositoryBuilder {
 
 	protected void _deleteByIdJdbc(ClassBody classBody) {
 		FieldList $_fieldsAll = $_entityDefinition.fieldsAll;
-		ListMap<String, EntityPojoFieldJdbcMapper> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
+		ListMap<String, EntityORMappingDefinition> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
 		String $_sql = JDBC.sql("DELETE ${tablename} WHERE ${causes}", $_entityDefinition.jdbcTablename, String.join(" AND ", $_keys.map(f -> f.column.name() + "=?")));
 
 		MethodCode code = classBody.public_().method("deleteByIdJdbc").return_(int.class).throws_(SQLException.class).parameter("id", long.class).begin();

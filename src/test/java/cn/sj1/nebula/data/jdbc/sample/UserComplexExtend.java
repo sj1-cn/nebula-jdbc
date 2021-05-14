@@ -5,9 +5,9 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
-import cn.sj1.nebula.data.basic.EntitySystem;
+import cn.sj1.nebula.data.EntityAudit;
 
-public class UserComplexExtend extends UserComplex implements EntitySystem {
+public class UserComplexExtend extends UserComplex implements EntityAudit {
 
 	public UserComplexExtend(long id, String string, BigDecimal bigDecimal, boolean z, char c, byte b, short s, int i, long l, float f,
 			double d, Date date, Time time, Timestamp timestamp, Timestamp createAt, Timestamp updateAt) {
