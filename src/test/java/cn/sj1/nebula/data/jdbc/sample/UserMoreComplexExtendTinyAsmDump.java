@@ -9,11 +9,8 @@ import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
 import cn.sj1.tinyasm.core.Annotation;
 import cn.sj1.tinyasm.core.Clazz;
-
 import java.lang.Float;
 import java.sql.Time;
-
-import cn.sj1.nebula.data.EntityAudit;
 import cn.sj1.nebula.data.jdbc.sample.UserMoreComplex;
 import java.lang.Double;
 import java.sql.Timestamp;
@@ -26,6 +23,7 @@ import java.lang.Short;
 import java.lang.Boolean;
 import java.lang.String;
 import java.lang.Byte;
+import cn.sj1.nebula.data.EntityAudit;
 @SuppressWarnings("unused")
 public class UserMoreComplexExtendTinyAsmDump {
 

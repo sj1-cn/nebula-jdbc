@@ -9,8 +9,6 @@ import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
 import cn.sj1.tinyasm.core.Annotation;
 import cn.sj1.tinyasm.core.Clazz;
-import cn.sj1.nebula.data.EntityAudit;
-import cn.sj1.nebula.data.PageList;
 import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
 import java.lang.Float;
 import java.sql.Connection;
@@ -25,11 +23,13 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.lang.Character;
 import java.lang.Long;
+import cn.sj1.nebula.data.PageList;
 import java.sql.ResultSet;
 import java.lang.Short;
 import java.lang.Boolean;
 import java.lang.String;
 import java.lang.Byte;
+import cn.sj1.nebula.data.EntityAudit;
 import cn.sj1.nebula.data.jdbc.sample.UserMoreComplex;
 import cn.sj1.nebula.data.query.Condition;
 import java.sql.Timestamp;
@@ -58,15 +58,15 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		_setConnection(classBody);
 		_initJdbc(classBody);
 		_listJdbc(classBody);
-		_listJdbc_cnsj1nebuladataqueryCondition_cnsj1nebuladataqueryOrderBy_int_int_cnsj1nebuladatabasicPageList(classBody);
+		_listJdbc_cnsj1nebuladataqueryCondition_cnsj1nebuladataqueryOrderBy_int_int_cnsj1nebuladataPageList(classBody);
 		_toEntity(classBody);
 		_findByIdJdbc(classBody);
 		_insertJdbc(classBody);
 		_updateJdbc(classBody);
 		_deleteByIdJdbc(classBody);
+		_bridge_findByIdJdbc(classBody);
 		_bridge_updateJdbc(classBody);
 		_bridge_insertJdbc(classBody);
-		_bridge_findByIdJdbc(classBody);
 
 		return classBody.end().toByteArray();
 	}
@@ -295,16 +295,13 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.INTERFACE(PreparedStatement.class, "executeQuery")
 			.return_(ResultSet.class).INVOKE();
 		code.STORE("resultSet",ResultSet.class);
-		Label label6OfGOTO = new Label();
-
-		code.visitLabel(label6OfGOTO);
 
 		code.LINE();
-		code.LOAD("resultSet");
-		code.INTERFACE(ResultSet.class, "next")
-			.return_(boolean.class).INVOKE();
-		Label label4OfIFEQ = new Label();
-		code.IFEQ(label4OfIFEQ);
+		Label label4OfGOTO = new Label();
+		code.GOTO(label4OfGOTO);
+		Label label6OfIFNE = new Label();
+
+		code.visitLabel(label6OfIFNE);
 
 		code.LINE();
 		code.LOAD("datas");
@@ -317,9 +314,14 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 			.return_(boolean.class)
 			.parameter(Object.class).INVOKE();
 		code.POP();
-		code.GOTO(label6OfGOTO);
 
-		code.visitLabel(label4OfIFEQ);
+		code.visitLabel(label4OfGOTO);
+
+		code.LINE();
+		code.LOAD("resultSet");
+		code.INTERFACE(ResultSet.class, "next")
+			.return_(boolean.class).INVOKE();
+		code.IFNE(label6OfIFNE);
 
 		code.LINE();
 		code.LOAD("resultSet");
@@ -382,7 +384,7 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.END();
 	}
 
-	protected void _listJdbc_cnsj1nebuladataqueryCondition_cnsj1nebuladataqueryOrderBy_int_int_cnsj1nebuladatabasicPageList(ClassBody classBody) {
+	protected void _listJdbc_cnsj1nebuladataqueryCondition_cnsj1nebuladataqueryOrderBy_int_int_cnsj1nebuladataPageList(ClassBody classBody) {
 		MethodCode code = classBody.public_().method("listJdbc")
 			.return_(Clazz.of(PageList.class,Clazz.of(UserMoreComplex.class)) )
 			.throws_(SQLException.class )
@@ -442,16 +444,13 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.INTERFACE(PreparedStatement.class, "executeQuery")
 			.return_(ResultSet.class).INVOKE();
 		code.STORE("resultSet",ResultSet.class);
-		Label label6OfGOTO = new Label();
-
-		code.visitLabel(label6OfGOTO);
 
 		code.LINE();
-		code.LOAD("resultSet");
-		code.INTERFACE(ResultSet.class, "next")
-			.return_(boolean.class).INVOKE();
-		Label label4OfIFEQ = new Label();
-		code.IFEQ(label4OfIFEQ);
+		Label label4OfGOTO = new Label();
+		code.GOTO(label4OfGOTO);
+		Label label6OfIFNE = new Label();
+
+		code.visitLabel(label6OfIFNE);
 
 		code.LINE();
 		code.LOAD("datas");
@@ -464,9 +463,14 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 			.return_(boolean.class)
 			.parameter(Object.class).INVOKE();
 		code.POP();
-		code.GOTO(label6OfGOTO);
 
-		code.visitLabel(label4OfIFEQ);
+		code.visitLabel(label4OfGOTO);
+
+		code.LINE();
+		code.LOAD("resultSet");
+		code.INTERFACE(ResultSet.class, "next")
+			.return_(boolean.class).INVOKE();
+		code.IFNE(label6OfIFNE);
 
 		code.LINE();
 		code.LOAD("resultSet");
@@ -774,16 +778,13 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.INTERFACE(PreparedStatement.class, "executeQuery")
 			.return_(ResultSet.class).INVOKE();
 		code.STORE("resultSet",ResultSet.class);
-		Label label7OfGOTO = new Label();
-
-		code.visitLabel(label7OfGOTO);
 
 		code.LINE();
-		code.LOAD("resultSet");
-		code.INTERFACE(ResultSet.class, "next")
-			.return_(boolean.class).INVOKE();
-		Label label5OfIFEQ = new Label();
-		code.IFEQ(label5OfIFEQ);
+		Label label5OfGOTO = new Label();
+		code.GOTO(label5OfGOTO);
+		Label label7OfIFNE = new Label();
+
+		code.visitLabel(label7OfIFNE);
 
 		code.LINE();
 		code.LOAD("datas");
@@ -796,9 +797,14 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 			.return_(boolean.class)
 			.parameter(Object.class).INVOKE();
 		code.POP();
-		code.GOTO(label7OfGOTO);
 
-		code.visitLabel(label5OfIFEQ);
+		code.visitLabel(label5OfGOTO);
+
+		code.LINE();
+		code.LOAD("resultSet");
+		code.INTERFACE(ResultSet.class, "next")
+			.return_(boolean.class).INVOKE();
+		code.IFNE(label7OfIFNE);
 
 		code.LINE();
 		code.LOAD("datas");
@@ -1302,15 +1308,32 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		code.END();
 	}
 
+	protected void _bridge_findByIdJdbc(ClassBody classBody) {
+		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "findByIdJdbc")
+			.return_(Object.class )
+			.throws_(SQLException.class )
+			.parameter("var1",long.class).begin();
+
+		code.LINE();
+		code.LOAD("this");
+		code.LOAD("var1");
+		code.VIRTUAL("findByIdJdbc")
+			.return_(UserMoreComplex.class)
+			.parameter(long.class).INVOKE();
+		code.RETURNTop();
+
+		code.END();
+	}
+
 	protected void _bridge_updateJdbc(ClassBody classBody) {
 		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "updateJdbc")
 			.return_(Object.class )
 			.throws_(SQLException.class )
-			.parameter(ACC_SYNTHETIC,"data",Object.class).begin();
+			.parameter("var1",Object.class).begin();
 
 		code.LINE();
 		code.LOAD("this");
-		code.LOAD("data");
+		code.LOAD("var1");
 		code.CHECKCAST(UserMoreComplex.class);
 		code.VIRTUAL("updateJdbc")
 			.return_(UserMoreComplex.class)
@@ -1324,32 +1347,15 @@ public class UserMoreComplexAutoIncrementJdbcRepositoryTinyAsmDump {
 		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "insertJdbc")
 			.return_(Object.class )
 			.throws_(SQLException.class )
-			.parameter(ACC_SYNTHETIC,"data",Object.class).begin();
+			.parameter("var1",Object.class).begin();
 
 		code.LINE();
 		code.LOAD("this");
-		code.LOAD("data");
+		code.LOAD("var1");
 		code.CHECKCAST(UserMoreComplex.class);
 		code.VIRTUAL("insertJdbc")
 			.return_(UserMoreComplex.class)
 			.parameter(UserMoreComplex.class).INVOKE();
-		code.RETURNTop();
-
-		code.END();
-	}
-
-	protected void _bridge_findByIdJdbc(ClassBody classBody) {
-		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "findByIdJdbc")
-			.return_(Object.class )
-			.throws_(SQLException.class )
-			.parameter(ACC_SYNTHETIC,"id",long.class).begin();
-
-		code.LINE();
-		code.LOAD("this");
-		code.LOAD("id");
-		code.VIRTUAL("findByIdJdbc")
-			.return_(UserMoreComplex.class)
-			.parameter(long.class).INVOKE();
 		code.RETURNTop();
 
 		code.END();
