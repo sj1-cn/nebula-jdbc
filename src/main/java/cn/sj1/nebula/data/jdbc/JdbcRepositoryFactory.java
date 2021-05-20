@@ -28,7 +28,7 @@ public class JdbcRepositoryFactory {
 	}
 
 
-	public EntityORMappingDefinitionList build(Class<?> type) {
+	public EntityORMappingDefinitionList createORMappingDefinitionListFromPojoClassFile(Class<?> type) {
 		if (cachedClazzDefinations.containsKey(type.getName())) return cachedClazzDefinations.get(type.getName());
 
 		String name = type.getSimpleName();
@@ -65,7 +65,7 @@ public class JdbcRepositoryFactory {
 	public <T> Class<T> getEntityImplClass(Class<T> clazzTarget) {
 		if (cachedEntityImplClasses.containsKey(clazzTarget.getName())) return (Class<T>) cachedEntityImplClasses.get(clazzTarget.getName());
 
-		EntityORMappingDefinitionList clazzDefinition = build(clazzTarget);
+		EntityORMappingDefinitionList clazzDefinition = createORMappingDefinitionListFromPojoClassFile(clazzTarget);
 
 		Class<T> clazzClazzExtend = makeClazzExtend(clazzDefinition);
 		return clazzClazzExtend;
@@ -79,10 +79,10 @@ public class JdbcRepositoryFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Repository<T> getRepository(Class<T> clazz) {
+	public <T> Repository<T> getRepositoryFromPojo(Class<T> clazz) {
 		if (cachedRepositories.containsKey(clazz.getName())) return (Repository<T>) cachedRepositories.get(clazz.getName());
 
-		EntityORMappingDefinitionList clazzDefinition = build(clazz);
+		EntityORMappingDefinitionList clazzDefinition = createORMappingDefinitionListFromPojoClassFile(clazz);
 
 		return makeJdbcRepository(clazzDefinition);
 	}

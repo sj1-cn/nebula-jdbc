@@ -35,7 +35,7 @@ public class RepositoryFactoryTest extends TestBase {
 
 	@Test
 	public void test_getRepository() {
-		Repository<User> userRepository = repositoryFactory.getRepository(User.class);
+		Repository<User> userRepository = repositoryFactory.getRepositoryFromPojo(User.class);
 
 		assert userRepository.getClass().getName() != null;
 	}
@@ -43,7 +43,7 @@ public class RepositoryFactoryTest extends TestBase {
 	@Test
 	public void test_getUserRepository() {
 
-		Repository<User> userRepository = repositoryFactory.getRepository(User.class);
+		Repository<User> userRepository = repositoryFactory.getRepositoryFromPojo(User.class);
 
 		userRepository.init();
 
@@ -92,7 +92,7 @@ public class RepositoryFactoryTest extends TestBase {
 
 	@Test
 	public void test_getUserComplexRepository() {
-		Repository<UserComplex> userRepository = repositoryFactory.getRepository(UserComplex.class);
+		Repository<UserComplex> userRepository = repositoryFactory.getRepositoryFromPojo(UserComplex.class);
 		List<UserComplex> userlist;
 		userRepository.init();
 		{
@@ -154,7 +154,7 @@ public class RepositoryFactoryTest extends TestBase {
 	@Test
 	public void test_getUserMoreComplexRepository() {
 
-		Repository<UserMoreComplex> userRepository = repositoryFactory.getRepository(UserMoreComplex.class);
+		Repository<UserMoreComplex> userRepository = repositoryFactory.getRepositoryFromPojo(UserMoreComplex.class);
 		List<UserMoreComplex> userlist;
 		userRepository.init();
 		{
