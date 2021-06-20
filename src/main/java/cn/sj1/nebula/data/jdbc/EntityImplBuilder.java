@@ -10,11 +10,11 @@ import cn.sj1.tinyasm.core.Field;
 import cn.sj1.tinyasm.core.MethodCode;
 
 class EntityImplBuilder {
-	EntityORMappingDefinitionList clazz;
+	PersistentEntity clazz;
 	String clazzExtend;
 	String targetClazz;
 
-	public byte[] make(String clazzExtend, String targetClazz, EntityORMappingDefinitionList clazz)  {
+	public byte[] make(String clazzExtend, String targetClazz, PersistentEntity clazz)  {
 		this.clazzExtend = clazzExtend;
 		this.targetClazz = targetClazz;
 		this.clazz = clazz;
@@ -51,7 +51,7 @@ class EntityImplBuilder {
 		code.LINE();
 		code.LOAD("this");
 		
-		for (EntityORMappingDefinition fieldMapper : clazz.entityFields) {
+		for (PersistentProperty fieldMapper : clazz.entityFields) {
 			code.LOAD(fieldMapper.fieldName);
 		}
 		Class<?>[] clazzes = new Class<?>[clazz.entityFields.size()];

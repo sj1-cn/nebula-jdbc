@@ -21,14 +21,14 @@ public class JdbcRepositoryFactory {
 	private final TinyAsmPrimativeTypeConverters primativeTypeConverters = new TinyAsmPrimativeTypeConverters();
 	private TinyAsmJdbcRepositoryBuilder repositoryBuilder = new TinyAsmJdbcRepositoryBuilder(primativeTypeConverters);
 
-	Map<String, EntityORMappingDefinitionList> cachedClazzDefinations = new HashMap<>();
+	Map<String, PersistentEntity> cachedClazzDefinations = new HashMap<>();
 	
 	public JdbcRepositoryFactory(Connection conn) {
 		this.conn = conn;
 	}
 
 
-	public EntityORMappingDefinitionList createORMappingDefinitionListFromPojoClassFile(Class<?> type) {
+	public PersistentEntity build(Class<?> type) {
 		if (cachedClazzDefinations.containsKey(type.getName())) return cachedClazzDefinations.get(type.getName());
 
 		String name = type.getSimpleName();
@@ -47,16 +47,16 @@ public class JdbcRepositoryFactory {
 				String getname = getName(field.getName(), field.getType());
 				boolean primaryKey = "id".equals(fieldname);
 				if (primaryKey) {
-					EntityORMappingDefinition mapper = new EntityORMappingDefinition(primaryKey, fieldname, getname, fieldClazz, column.autoIncrement());
+					PersistentProperty mapper = new PersistentProperty(primaryKey, fieldname, getname, fieldClazz, column.autoIncrement());
 					fields.push(mapper);
 				} else {
-					EntityORMappingDefinition mapper = new EntityORMappingDefinition(primaryKey, fieldname, getname, fieldClazz, column);
+					PersistentProperty mapper = new PersistentProperty(primaryKey, fieldname, getname, fieldClazz, column);
 					fields.push(mapper);
 				}
 			}
 		}
 
-		EntityORMappingDefinitionList clazzDefinition = new EntityORMappingDefinitionList(name, type.getName(), tablename, fields);
+		PersistentEntity clazzDefinition = new PersistentEntity(name, type.getName(), tablename, fields);
 		cachedClazzDefinations.put(type.getName(), clazzDefinition);
 		return clazzDefinition;
 	}
@@ -65,15 +65,15 @@ public class JdbcRepositoryFactory {
 	public <T> Class<T> getEntityImplClass(Class<T> clazzTarget) {
 		if (cachedEntityImplClasses.containsKey(clazzTarget.getName())) return (Class<T>) cachedEntityImplClasses.get(clazzTarget.getName());
 
-		EntityORMappingDefinitionList clazzDefinition = createORMappingDefinitionListFromPojoClassFile(clazzTarget);
+		PersistentEntity clazzDefinition = build(clazzTarget);
 
 		Class<T> clazzClazzExtend = makeClazzExtend(clazzDefinition);
 		return clazzClazzExtend;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Class<T> getEntityImplClass(EntityORMappingDefinitionList clazzDefinition) {
-		if (cachedEntityImplClasses.containsKey(clazzDefinition.entityPojoClassName)) return (Class<T>) cachedEntityImplClasses.get(clazzDefinition.entityPojoClassName);
+	public <T> Class<T> getEntityImplClass(PersistentEntity clazzDefinition) {
+		if (cachedEntityImplClasses.containsKey(clazzDefinition.javaClass)) return (Class<T>) cachedEntityImplClasses.get(clazzDefinition.javaClass);
 		Class<T> clazzClazzExtend = makeClazzExtend(clazzDefinition);
 		return clazzClazzExtend;
 	}
@@ -82,14 +82,14 @@ public class JdbcRepositoryFactory {
 	public <T> Repository<T> getRepositoryFromPojo(Class<T> clazz) {
 		if (cachedRepositories.containsKey(clazz.getName())) return (Repository<T>) cachedRepositories.get(clazz.getName());
 
-		EntityORMappingDefinitionList clazzDefinition = createORMappingDefinitionListFromPojoClassFile(clazz);
+		PersistentEntity clazzDefinition = build(clazz);
 
 		return makeJdbcRepository(clazzDefinition);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Repository<T> getRepository(EntityORMappingDefinitionList clazzDefinition) {
-		if (cachedRepositories.containsKey(clazzDefinition.entityPojoClassName)) return (Repository<T>) cachedRepositories.get(clazzDefinition.entityPojoClassName);
+	public <T> Repository<T> getRepository(PersistentEntity clazzDefinition) {
+		if (cachedRepositories.containsKey(clazzDefinition.javaClass)) return (Repository<T>) cachedRepositories.get(clazzDefinition.javaClass);
 
 		return makeJdbcRepository(clazzDefinition);
 	}
@@ -98,7 +98,7 @@ public class JdbcRepositoryFactory {
 	Map<String, Class<?>> cachedEntityImplClasses = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
-	private <T> Class<T> makeClazzExtend(EntityORMappingDefinitionList clazzDefinition) {
+	private <T> Class<T> makeClazzExtend(PersistentEntity clazzDefinition) {
 		String entityPojoClassName = clazzDefinition.getEntityPojoClassName();
 		String entityPojoImplClassName = entityPojoClassName + "Extend";
 
@@ -111,9 +111,9 @@ public class JdbcRepositoryFactory {
 
 	Map<String, Repository<?>> cachedRepositories = new HashMap<>();
 
-	private <T> Repository<T> makeJdbcRepository(EntityORMappingDefinitionList entityPojoDbMappingDefinitions) {
-		String repositoryClassName = entityPojoDbMappingDefinitions.entityPojoClassName + "Repository";
-		String entityPojoClassName = entityPojoDbMappingDefinitions.entityPojoClassName;
+	private <T> Repository<T> makeJdbcRepository(PersistentEntity entityPojoDbMappingDefinitions) {
+		String repositoryClassName = entityPojoDbMappingDefinitions.javaClass + "Repository";
+		String entityPojoClassName = entityPojoDbMappingDefinitions.javaClass;
 		String clazzExtendName = getEntityImplClass(entityPojoDbMappingDefinitions).getName();
 
 		byte[] codeRepository = repositoryBuilder.dump(repositoryClassName, entityPojoClassName, clazzExtendName,
@@ -125,7 +125,7 @@ public class JdbcRepositoryFactory {
 					codeRepository);
 			JdbcRepository<T> jdbcRepository = clazzJdbcRepository.getConstructor().newInstance();
 			jdbcRepository.setConnection(this.conn);
-			cachedRepositories.put(entityPojoDbMappingDefinitions.entityPojoClassName, jdbcRepository);
+			cachedRepositories.put(entityPojoDbMappingDefinitions.javaClass, jdbcRepository);
 			return jdbcRepository;
 		} catch (Exception e) {
 			throw new RuntimeException(e);

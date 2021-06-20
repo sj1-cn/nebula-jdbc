@@ -2,18 +2,18 @@ package cn.sj1.nebula.data.jdbc;
 
 import static cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition.TIMESTAMP;
 
-public class EntityORMappingDefinitionList {
+public class PersistentEntity {
 	final String name;
-	final String entityPojoClassName;
+	final String javaClass;
 	final String jdbcTablename;
 	final FieldList entityFields;
 	final FieldList systemFields;
 	final FieldList fieldsAll;
 
-	public EntityORMappingDefinitionList(String name,String clazz, String tablename, FieldList entityFields) {
+	public PersistentEntity(String name,String clazz, String tablename, FieldList entityFields) {
 		super();
 		this.name = name;
-		this.entityPojoClassName = clazz;
+		this.javaClass = clazz;
 		this.jdbcTablename = tablename.toUpperCase();
 		this.entityFields = entityFields;
 		this.systemFields = defaultSystemFields;
@@ -31,7 +31,7 @@ public class EntityORMappingDefinitionList {
 	}
 
 	public String getEntityPojoClassName() {
-		return entityPojoClassName;
+		return javaClass;
 	}
 
 	public FieldList getFields() {
@@ -48,7 +48,7 @@ public class EntityORMappingDefinitionList {
 
 	static FieldList defaultSystemFields = new FieldList();
 	static {
-		defaultSystemFields.push(new EntityORMappingDefinition("createAt", "getCreateAt", java.sql.Timestamp.class, TIMESTAMP("createAt")));
-		defaultSystemFields.push(new EntityORMappingDefinition("updateAt", "getUpdateAt", java.sql.Timestamp.class, TIMESTAMP("updateAt")));
+		defaultSystemFields.push(new PersistentProperty("createAt", "getCreateAt", java.sql.Timestamp.class, TIMESTAMP("createAt")));
+		defaultSystemFields.push(new PersistentProperty("updateAt", "getUpdateAt", java.sql.Timestamp.class, TIMESTAMP("updateAt")));
 	}
 }

@@ -37,7 +37,7 @@ import nebula.commons.list.ListMap;
 @SuppressWarnings("unused")
 class TinyAsmJdbcRepositoryBuilder {
 
-	public static byte[] dumpStatic(String clazzRepository, String classEntity, String classEntityImpl, EntityORMappingDefinitionList entityDefinition) throws Exception {
+	public static byte[] dumpStatic(String clazzRepository, String classEntity, String classEntityImpl, PersistentEntity entityDefinition) throws Exception {
 		TinyAsmJdbcRepositoryBuilder userJdbcRepositoryTinyAsmBuilder = new TinyAsmJdbcRepositoryBuilder(new TinyAsmPrimativeTypeConverters());
 		return userJdbcRepositoryTinyAsmBuilder.dump(clazzRepository, classEntity, classEntityImpl, entityDefinition);
 	}
@@ -46,7 +46,7 @@ class TinyAsmJdbcRepositoryBuilder {
 		this.$_arguments = $_arguments;
 	}
 
-	public byte[] dump(String clazzRepository, String classEntity, String classEntityImpl, EntityORMappingDefinitionList entityDefinition) {
+	public byte[] dump(String clazzRepository, String classEntity, String classEntityImpl, PersistentEntity entityDefinition) {
 		try {
 			this.dumpInit(clazzRepository, classEntity, classEntityImpl, entityDefinition);
 			return this.doDump(clazzRepository);
@@ -58,12 +58,12 @@ class TinyAsmJdbcRepositoryBuilder {
 	String $_clazzRepository;
 	String $_clazzEntity;
 	String $_clazzEntityImpl;
-	EntityORMappingDefinitionList $_entityDefinition;
+	PersistentEntity $_entityDefinition;
 	TinyAsmPrimativeTypeConverters $_arguments;
 	private boolean $_hasAutoIncrment = true;
 	private String $_tableName;
 
-	public void dumpInit(String clazzRepository, String classEntity, String classEntityImpl, EntityORMappingDefinitionList entityDefinition) {
+	public void dumpInit(String clazzRepository, String classEntity, String classEntityImpl, PersistentEntity entityDefinition) {
 		this.$_clazzRepository = clazzRepository;
 		this.$_clazzEntity = classEntity;
 		this.$_clazzEntityImpl = classEntityImpl;
@@ -149,7 +149,7 @@ class TinyAsmJdbcRepositoryBuilder {
 		code.SPECIAL(ColumnList.class, "<init>").INVOKE();
 		code.STORE("columnList", ColumnList.class);
 
-		for (EntityORMappingDefinition $field : $mappers) {
+		for (PersistentProperty $field : $mappers) {
 			code.LINE();
 			code.LOAD("columnList");
 			code.LOADConst($field.column.toString());
@@ -407,7 +407,7 @@ class TinyAsmJdbcRepositoryBuilder {
 
 		FieldList $fields = $_entityDefinition.getFieldsAll();
 		for (int i = 0; i < $fields.size(); i++) {
-			EntityORMappingDefinition fieldMapper = $fields.get(i);
+			PersistentProperty fieldMapper = $fields.get(i);
 			String name = fieldMapper.fieldName;
 			JdbcMapping jdbcMapping = JDBC.map(fieldMapper.clazz);
 			assert jdbcMapping != null : name + "'s type [" + fieldMapper.clazz.getName() + "] has not jdbc type";
@@ -495,7 +495,7 @@ class TinyAsmJdbcRepositoryBuilder {
 	protected void _insertJdbc(ClassBody classBody) {
 		FieldList fields = $_entityDefinition.entityFields;
 		boolean hasAutoIncrment = fields.anyMatch(f -> "YES".equals(f.column.getAutoIncrment()));
-		EntityORMappingDefinition keyField = fields.filter(f -> f.isPrimaryKey()).get(0);
+		PersistentProperty keyField = fields.filter(f -> f.isPrimaryKey()).get(0);
 
 		if (hasAutoIncrment) {
 			List<String> names = $_entityDefinition.fieldsAll.filter(f -> !"YES".equals(f.column.getAutoIncrment())).map(f -> f.column.name());
@@ -517,7 +517,7 @@ class TinyAsmJdbcRepositoryBuilder {
 			code.STORE("preparedStatement", PreparedStatement.class);
 
 			int $i = 1;
-			for (EntityORMappingDefinition field : $_entityDefinition.entityFields) {
+			for (PersistentProperty field : $_entityDefinition.entityFields) {
 				if (!"YES".equals(field.column.getAutoIncrment())) {
 					JdbcMapping jdbc = JDBC.map(field.clazz);
 					int fieldIndex = $i;
@@ -588,7 +588,7 @@ class TinyAsmJdbcRepositoryBuilder {
 			code.STORE("preparedStatement", PreparedStatement.class);
 
 			int $i = 1;
-			for (EntityORMappingDefinition field : $_entityDefinition.entityFields) {
+			for (PersistentProperty field : $_entityDefinition.entityFields) {
 				JdbcMapping jdbc = JDBC.map(field.clazz);
 				int fieldIndex = $i;
 				code.LINE();
@@ -634,9 +634,9 @@ class TinyAsmJdbcRepositoryBuilder {
 
 	protected void _updateJdbc(ClassBody classBody) {
 		FieldList $_fieldsAll = $_entityDefinition.fieldsAll;
-		ListMap<String, EntityORMappingDefinition> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
-		ListMap<String, EntityORMappingDefinition> $_othersWithoutCreate = $_fieldsAll.filter(f -> !f.primaryKey && !"createAt".equals(f.fieldName));
-		ListMap<String, EntityORMappingDefinition> $_othersWithoutExtend = $_entityDefinition.entityFields.filter(f -> !f.primaryKey);
+		ListMap<String, PersistentProperty> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
+		ListMap<String, PersistentProperty> $_othersWithoutCreate = $_fieldsAll.filter(f -> !f.primaryKey && !"createAt".equals(f.fieldName));
+		ListMap<String, PersistentProperty> $_othersWithoutExtend = $_entityDefinition.entityFields.filter(f -> !f.primaryKey);
 		String $_sql = JDBC.sql("UPDATE ${tablename} SET ${setvalues} WHERE ${causes}", $_entityDefinition.jdbcTablename, String.join(",", $_othersWithoutCreate.map(f -> f.fieldName + "=?")),
 				String.join(" AND ", $_keys.map(f -> f.fieldName + "=?")));
 
@@ -673,7 +673,7 @@ class TinyAsmJdbcRepositoryBuilder {
 		code.STORE("preparedStatement", PreparedStatement.class);
 
 		int i = 1;
-		for (EntityORMappingDefinition field : $_othersWithoutExtend) {
+		for (PersistentProperty field : $_othersWithoutExtend) {
 			JdbcMapping jdbc = JDBC.map(field.clazz);
 
 			int fieldIndex = i;
@@ -696,7 +696,7 @@ class TinyAsmJdbcRepositoryBuilder {
 		code.POP();
 
 		// preparedStatement.setLong(3, data.getId());
-		for (EntityORMappingDefinition field : $_keys) {
+		for (PersistentProperty field : $_keys) {
 
 			JdbcMapping jdbc = JDBC.map(field.clazz);
 
@@ -736,7 +736,7 @@ class TinyAsmJdbcRepositoryBuilder {
 
 	protected void _deleteByIdJdbc(ClassBody classBody) {
 		FieldList $_fieldsAll = $_entityDefinition.fieldsAll;
-		ListMap<String, EntityORMappingDefinition> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
+		ListMap<String, PersistentProperty> $_keys = $_fieldsAll.filter(f -> f.primaryKey);
 		String $_sql = JDBC.sql("DELETE ${tablename} WHERE ${causes}", $_entityDefinition.jdbcTablename, String.join(" AND ", $_keys.map(f -> f.column.name() + "=?")));
 
 		MethodCode code = classBody.public_().method("deleteByIdJdbc").return_(int.class).throws_(SQLException.class).parameter("id", long.class).begin();

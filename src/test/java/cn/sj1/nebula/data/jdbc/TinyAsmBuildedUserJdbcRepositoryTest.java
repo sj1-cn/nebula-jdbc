@@ -27,7 +27,7 @@ public class TinyAsmBuildedUserJdbcRepositoryTest extends TestBase {
 	TinyAsmPrimativeTypeConverters arguments = new TinyAsmPrimativeTypeConverters();
 	Connection connection;
 	JdbcRepository<User> userRepository;
-	EntityORMappingDefinitionList entityDefinition;
+	PersistentEntity entityDefinition;
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -35,10 +35,10 @@ public class TinyAsmBuildedUserJdbcRepositoryTest extends TestBase {
 		connection = super.openConnection();
 
 		FieldList clazzFields = new FieldList();
-		clazzFields.push(new EntityORMappingDefinition(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
-		clazzFields.push(new EntityORMappingDefinition("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
-		clazzFields.push(new EntityORMappingDefinition("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
-		entityDefinition = new EntityORMappingDefinitionList(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
+		clazzFields.push(new PersistentProperty(true, "id", "getId", long.class, new ColumnDefinition("id", INTEGER)));
+		clazzFields.push(new PersistentProperty("name", "getName", String.class, new ColumnDefinition("name", VARCHAR)));
+		clazzFields.push(new PersistentProperty("description", "getDescription", String.class, new ColumnDefinition("description", VARCHAR)));
+		entityDefinition = new PersistentEntity(User.class.getSimpleName(), User.class.getName(), User.class.getSimpleName(), clazzFields);
 
 		String clazzRepository = UserJdbcRepository.class.getName();
 

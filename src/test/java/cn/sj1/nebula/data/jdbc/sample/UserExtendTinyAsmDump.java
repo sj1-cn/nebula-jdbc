@@ -1,33 +1,36 @@
 package cn.sj1.nebula.data.jdbc.sample;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.Handle;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
-import cn.sj1.tinyasm.core.ClassBody;
-import cn.sj1.tinyasm.core.ClassBuilder;
-import cn.sj1.tinyasm.core.MethodCode;
 import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
+
 import cn.sj1.tinyasm.core.Annotation;
+import cn.sj1.tinyasm.core.ClassBody;
+import cn.sj1.tinyasm.core.ClassBuilder;
 import cn.sj1.tinyasm.core.Clazz;
-import cn.sj1.nebula.data.jdbc.sample.User;
+import cn.sj1.tinyasm.core.MethodCode;
+
 import java.sql.Timestamp;
-import java.lang.String;
+
 import cn.sj1.nebula.data.EntityAudit;
+import cn.sj1.nebula.data.jdbc.sample.User;
+
 @SuppressWarnings("unused")
 public class UserExtendTinyAsmDump {
 
-	public static byte[] dump () throws Exception {
-		return new UserExtendTinyAsmDump().dump("cn.sj1.nebula.data.jdbc.sample.UserExtend");
+	public static byte[] dump() throws Exception {
+		return new UserExtendTinyAsmDump().build("cn.sj1.nebula.data.jdbc.sample.UserExtend");
 	}
 
-	public byte[] dump(String className) throws Exception {
+	public byte[] build(String className) throws Exception {
 		ClassBody classBody = ClassBuilder.class_(className, User.class, EntityAudit.class)
 			.access(ACC_PUBLIC | ACC_SUPER).body();
 
 		classBody.private_().field("createAt", Clazz.of(Timestamp.class));
 		classBody.private_().field("updateAt", Clazz.of(Timestamp.class));
 		__init_(classBody);
-		__init__long_String_String_javasqlTimestamp_javasqlTimestamp_void(classBody);
+		__init__long_String_String_Timestamp_Timestamp_void(classBody);
 		_getCreateAt(classBody);
 		_setCreateAt(classBody);
 		_getUpdateAt(classBody);
@@ -49,7 +52,7 @@ public class UserExtendTinyAsmDump {
 		code.END();
 	}
 
-	protected void __init__long_String_String_javasqlTimestamp_javasqlTimestamp_void(ClassBody classBody) {
+	protected void __init__long_String_String_Timestamp_Timestamp_void(ClassBody classBody) {
 		MethodCode code = classBody.public_().method("<init>")
 			.parameter("id",long.class)
 			.parameter("name",String.class)
@@ -70,12 +73,12 @@ public class UserExtendTinyAsmDump {
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("createAt");
-		code.PUTFIELD_OF_THIS("createAt");
+		code.PUTFIELD("createAt", Timestamp.class);
 
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("updateAt");
-		code.PUTFIELD_OF_THIS("updateAt");
+		code.PUTFIELD("updateAt", Timestamp.class);
 
 		code.LINE();
 		code.RETURN();
@@ -89,7 +92,7 @@ public class UserExtendTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("createAt");
+		code.GETFIELD("createAt", Timestamp.class);
 		code.RETURNTop();
 
 		code.END();
@@ -102,7 +105,7 @@ public class UserExtendTinyAsmDump {
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("createAt");
-		code.PUTFIELD_OF_THIS("createAt");
+		code.PUTFIELD("createAt", Timestamp.class);
 
 		code.LINE();
 		code.RETURN();
@@ -116,7 +119,7 @@ public class UserExtendTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("updateAt");
+		code.GETFIELD("updateAt", Timestamp.class);
 		code.RETURNTop();
 
 		code.END();
@@ -129,7 +132,7 @@ public class UserExtendTinyAsmDump {
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("updateAt");
-		code.PUTFIELD_OF_THIS("updateAt");
+		code.PUTFIELD("updateAt", Timestamp.class);
 
 		code.LINE();
 		code.RETURN();

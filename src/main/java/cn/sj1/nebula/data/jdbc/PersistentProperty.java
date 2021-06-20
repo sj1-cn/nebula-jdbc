@@ -2,7 +2,7 @@ package cn.sj1.nebula.data.jdbc;
 
 import cn.sj1.nebula.jdbc.builders.schema.ColumnDefinition;
 
-public class EntityORMappingDefinition {
+public class PersistentProperty {
 	final boolean primaryKey;
 	final String fieldName;
 	final String fieldGetName;
@@ -29,7 +29,7 @@ public class EntityORMappingDefinition {
 		return column;
 	}
 
-	public EntityORMappingDefinition(boolean primaryKey, String javaname, String fieldGetName, Class<?> fieldClazz,
+	public PersistentProperty(boolean primaryKey, String javaname, String fieldGetName, Class<?> fieldClazz,
 			ColumnDefinition column) {
 		super();
 		this.primaryKey = primaryKey;
@@ -40,7 +40,7 @@ public class EntityORMappingDefinition {
 		if(primaryKey) this.column.primarykey();
 	}
 
-	public EntityORMappingDefinition(String javaname, String getname, Class<?> fieldClazz, ColumnDefinition column) {
+	public PersistentProperty(String javaname, String getname, Class<?> fieldClazz, ColumnDefinition column) {
 		this(false, javaname, getname, fieldClazz, column);
 	}
 

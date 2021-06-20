@@ -1,43 +1,46 @@
 package cn.sj1.nebula.data.jdbc;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.Handle;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
-import cn.sj1.tinyasm.core.ClassBody;
-import cn.sj1.tinyasm.core.ClassBuilder;
-import cn.sj1.tinyasm.core.MethodCode;
 import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
+
 import cn.sj1.tinyasm.core.Annotation;
+import cn.sj1.tinyasm.core.ClassBody;
+import cn.sj1.tinyasm.core.ClassBuilder;
 import cn.sj1.tinyasm.core.Clazz;
-import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
+import cn.sj1.tinyasm.core.MethodCode;
+
 import java.sql.Connection;
-import cn.sj1.nebula.data.jdbc.JdbcRepository;
-import cn.sj1.nebula.data.util.SqlHelper;
-import cn.sj1.nebula.data.query.Condition;
-import cn.sj1.nebula.data.jdbc.sample.User;
-import java.sql.Timestamp;
-import cn.sj1.nebula.data.basic.PageListImpl;
 import java.sql.PreparedStatement;
-import cn.sj1.nebula.data.jdbc.sample.UserExtend;
-import java.util.ArrayList;
-import java.sql.SQLException;
-import cn.sj1.nebula.data.query.OrderBy;
-import java.util.List;
-import cn.sj1.nebula.data.PageList;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
-import java.lang.Object;
-import com.dbal.jdbc.builders.queries.Select;
-import java.lang.String;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
 import cn.sj1.nebula.data.EntityAudit;
+import cn.sj1.nebula.data.PageList;
+import cn.sj1.nebula.data.basic.PageListImpl;
+import cn.sj1.nebula.data.jdbc.JdbcRepository;
+import cn.sj1.nebula.data.jdbc.sample.User;
+import cn.sj1.nebula.data.jdbc.sample.UserExtend;
+import cn.sj1.nebula.data.query.Condition;
+import cn.sj1.nebula.data.query.OrderBy;
+import cn.sj1.nebula.data.util.SqlHelper;
+import cn.sj1.nebula.jdbc.builders.schema.ColumnList;
+
+import com.dbal.jdbc.builders.queries.Select;
+
 @SuppressWarnings("unused")
 public class UserJdbcRepositoryTinyAsmDump {
 
-	public static byte[] dump () throws Exception {
-		return new UserJdbcRepositoryTinyAsmDump().dump("cn.sj1.nebula.data.jdbc.UserJdbcRepository");
+	public static byte[] dump() throws Exception {
+		return new UserJdbcRepositoryTinyAsmDump().build("cn.sj1.nebula.data.jdbc.UserJdbcRepository");
 	}
 
-	public byte[] dump(String className) throws Exception {
+	public byte[] build(String className) throws Exception {
 		ClassBody classBody = ClassBuilder.class_(className, Clazz.of(Object.class),Clazz.of(JdbcRepository.class,Clazz.of(User.class)))
 			.access(ACC_PUBLIC | ACC_SUPER).body();
 
@@ -47,15 +50,15 @@ public class UserJdbcRepositoryTinyAsmDump {
 		_setConnection(classBody);
 		_initJdbc(classBody);
 		_listJdbc(classBody);
-		_listJdbc_cnsj1nebuladataqueryCondition_cnsj1nebuladataqueryOrderBy_int_int_cnsj1nebuladataPageList(classBody);
+		_listJdbc_queryCondition_queryOrderBy_int_int_PageList(classBody);
 		_toEntity(classBody);
 		_findByIdJdbc(classBody);
 		_insertJdbc(classBody);
 		_updateJdbc(classBody);
 		_deleteByIdJdbc(classBody);
-		_bridge_findByIdJdbc(classBody);
 		_bridge_updateJdbc(classBody);
 		_bridge_insertJdbc(classBody);
+		_bridge_findByIdJdbc(classBody);
 
 		return classBody.end().toByteArray();
 	}
@@ -72,7 +75,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.NEW(SqlHelper.class);
 		code.DUP();
 		code.SPECIAL(SqlHelper.class, "<init>").INVOKE();
-		code.PUTFIELD_OF_THIS("sqlHelper");
+		code.PUTFIELD("sqlHelper", SqlHelper.class);
 
 		code.LINE();
 		code.RETURN();
@@ -87,7 +90,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("conn");
-		code.PUTFIELD_OF_THIS("conn");
+		code.PUTFIELD("conn", Connection.class);
 
 		code.LINE();
 		code.RETURN();
@@ -138,7 +141,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("conn");
+		code.GETFIELD("conn", Connection.class);
 		code.LOADConst("USER");
 		code.LOAD("columnList");
 		code.VIRTUAL("mergeIfExists")
@@ -151,7 +154,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("conn");
+		code.GETFIELD("conn", Connection.class);
 		code.LOADConst("CREATE TABLE USER(id INTEGER(10),name VARCHAR(256),description VARCHAR(256),createAt TIMESTAMP,updateAt TIMESTAMP,PRIMARY KEY(id))");
 		code.INTERFACE(Connection.class, "prepareStatement")
 			.return_(PreparedStatement.class)
@@ -187,7 +190,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("sqlHelper");
+		code.GETFIELD("sqlHelper", SqlHelper.class);
 		code.LOADConst("id,name,description,createAt,updateAt");
 		code.VIRTUAL(SqlHelper.class, "select")
 			.return_(Select.class)
@@ -210,7 +213,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("conn");
+		code.GETFIELD("conn", Connection.class);
 		code.LOAD("sql");
 		code.INTERFACE(Connection.class, "prepareStatement")
 			.return_(PreparedStatement.class)
@@ -218,13 +221,16 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.INTERFACE(PreparedStatement.class, "executeQuery")
 			.return_(ResultSet.class).INVOKE();
 		code.STORE("resultSet",ResultSet.class);
+		Label label6OfGOTO = new Label();
+
+		code.visitLabel(label6OfGOTO);
 
 		code.LINE();
-		Label label4OfGOTO = new Label();
-		code.GOTO(label4OfGOTO);
-		Label label6OfIFNE = new Label();
-
-		code.visitLabel(label6OfIFNE);
+		code.LOAD("resultSet");
+		code.INTERFACE(ResultSet.class, "next")
+			.return_(boolean.class).INVOKE();
+		Label label4OfIFEQ = new Label();
+		code.IFEQ(label4OfIFEQ);
 
 		code.LINE();
 		code.LOAD("datas");
@@ -237,14 +243,9 @@ public class UserJdbcRepositoryTinyAsmDump {
 			.return_(boolean.class)
 			.parameter(Object.class).INVOKE();
 		code.POP();
+		code.GOTO(label6OfGOTO);
 
-		code.visitLabel(label4OfGOTO);
-
-		code.LINE();
-		code.LOAD("resultSet");
-		code.INTERFACE(ResultSet.class, "next")
-			.return_(boolean.class).INVOKE();
-		code.IFNE(label6OfIFNE);
+		code.visitLabel(label4OfIFEQ);
 
 		code.LINE();
 		code.LOAD("resultSet");
@@ -252,7 +253,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("sqlHelper");
+		code.GETFIELD("sqlHelper", SqlHelper.class);
 		code.LOADConst("count(1)");
 		code.VIRTUAL(SqlHelper.class, "select")
 			.return_(Select.class)
@@ -267,7 +268,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("conn");
+		code.GETFIELD("conn", Connection.class);
 		code.INTERFACE(Connection.class, "createStatement")
 			.return_(Statement.class).INVOKE();
 		code.LOAD("sqlCount");
@@ -307,7 +308,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.END();
 	}
 
-	protected void _listJdbc_cnsj1nebuladataqueryCondition_cnsj1nebuladataqueryOrderBy_int_int_cnsj1nebuladataPageList(ClassBody classBody) {
+	protected void _listJdbc_queryCondition_queryOrderBy_int_int_PageList(ClassBody classBody) {
 		MethodCode code = classBody.public_().method("listJdbc")
 			.return_(Clazz.of(PageList.class,Clazz.of(User.class)) )
 			.throws_(SQLException.class )
@@ -328,7 +329,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("sqlHelper");
+		code.GETFIELD("sqlHelper", SqlHelper.class);
 		code.LOADConst("id,name,description,createAt,updateAt");
 		code.VIRTUAL(SqlHelper.class, "select")
 			.return_(Select.class)
@@ -359,7 +360,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("conn");
+		code.GETFIELD("conn", Connection.class);
 		code.LOAD("sql");
 		code.INTERFACE(Connection.class, "prepareStatement")
 			.return_(PreparedStatement.class)
@@ -367,13 +368,16 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.INTERFACE(PreparedStatement.class, "executeQuery")
 			.return_(ResultSet.class).INVOKE();
 		code.STORE("resultSet",ResultSet.class);
+		Label label6OfGOTO = new Label();
+
+		code.visitLabel(label6OfGOTO);
 
 		code.LINE();
-		Label label4OfGOTO = new Label();
-		code.GOTO(label4OfGOTO);
-		Label label6OfIFNE = new Label();
-
-		code.visitLabel(label6OfIFNE);
+		code.LOAD("resultSet");
+		code.INTERFACE(ResultSet.class, "next")
+			.return_(boolean.class).INVOKE();
+		Label label4OfIFEQ = new Label();
+		code.IFEQ(label4OfIFEQ);
 
 		code.LINE();
 		code.LOAD("datas");
@@ -386,14 +390,9 @@ public class UserJdbcRepositoryTinyAsmDump {
 			.return_(boolean.class)
 			.parameter(Object.class).INVOKE();
 		code.POP();
+		code.GOTO(label6OfGOTO);
 
-		code.visitLabel(label4OfGOTO);
-
-		code.LINE();
-		code.LOAD("resultSet");
-		code.INTERFACE(ResultSet.class, "next")
-			.return_(boolean.class).INVOKE();
-		code.IFNE(label6OfIFNE);
+		code.visitLabel(label4OfIFEQ);
 
 		code.LINE();
 		code.LOAD("resultSet");
@@ -401,7 +400,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("sqlHelper");
+		code.GETFIELD("sqlHelper", SqlHelper.class);
 		code.LOADConst("count(1)");
 		code.VIRTUAL(SqlHelper.class, "select")
 			.return_(Select.class)
@@ -420,7 +419,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("conn");
+		code.GETFIELD("conn", Connection.class);
 		code.INTERFACE(Connection.class, "createStatement")
 			.return_(Statement.class).INVOKE();
 		code.LOAD("sqlCount");
@@ -543,7 +542,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("conn");
+		code.GETFIELD("conn", Connection.class);
 		code.LOADConst("SELECT id, name, description, createAt, updateAt FROM USER WHERE id = ?");
 		code.INTERFACE(Connection.class, "prepareStatement")
 			.return_(PreparedStatement.class)
@@ -563,13 +562,16 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.INTERFACE(PreparedStatement.class, "executeQuery")
 			.return_(ResultSet.class).INVOKE();
 		code.STORE("resultSet",ResultSet.class);
+		Label label7OfGOTO = new Label();
+
+		code.visitLabel(label7OfGOTO);
 
 		code.LINE();
-		Label label5OfGOTO = new Label();
-		code.GOTO(label5OfGOTO);
-		Label label7OfIFNE = new Label();
-
-		code.visitLabel(label7OfIFNE);
+		code.LOAD("resultSet");
+		code.INTERFACE(ResultSet.class, "next")
+			.return_(boolean.class).INVOKE();
+		Label label5OfIFEQ = new Label();
+		code.IFEQ(label5OfIFEQ);
 
 		code.LINE();
 		code.LOAD("datas");
@@ -582,14 +584,9 @@ public class UserJdbcRepositoryTinyAsmDump {
 			.return_(boolean.class)
 			.parameter(Object.class).INVOKE();
 		code.POP();
+		code.GOTO(label7OfGOTO);
 
-		code.visitLabel(label5OfGOTO);
-
-		code.LINE();
-		code.LOAD("resultSet");
-		code.INTERFACE(ResultSet.class, "next")
-			.return_(boolean.class).INVOKE();
-		code.IFNE(label7OfIFNE);
+		code.visitLabel(label5OfIFEQ);
 
 		code.LINE();
 		code.LOAD("datas");
@@ -611,7 +608,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("conn");
+		code.GETFIELD("conn", Connection.class);
 		code.LOADConst("INSERT INTO USER(id,name,description,createAt,updateAt) VALUES(?,?,?,?,?)");
 		code.INTERFACE(Connection.class, "prepareStatement")
 			.return_(PreparedStatement.class)
@@ -720,7 +717,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("conn");
+		code.GETFIELD("conn", Connection.class);
 		code.LOADConst("UPDATE USER SET name=?,description=?,updateAt=? WHERE id=?");
 		code.INTERFACE(Connection.class, "prepareStatement")
 			.return_(PreparedStatement.class)
@@ -801,7 +798,7 @@ public class UserJdbcRepositoryTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("conn");
+		code.GETFIELD("conn", Connection.class);
 		code.LOADConst("DELETE USER WHERE id=?");
 		code.INTERFACE(Connection.class, "prepareStatement")
 			.return_(PreparedStatement.class)
@@ -825,32 +822,15 @@ public class UserJdbcRepositoryTinyAsmDump {
 		code.END();
 	}
 
-	protected void _bridge_findByIdJdbc(ClassBody classBody) {
-		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "findByIdJdbc")
-			.return_(Object.class )
-			.throws_(SQLException.class )
-			.parameter("var1",long.class).begin();
-
-		code.LINE();
-		code.LOAD("this");
-		code.LOAD("var1");
-		code.VIRTUAL("findByIdJdbc")
-			.return_(User.class)
-			.parameter(long.class).INVOKE();
-		code.RETURNTop();
-
-		code.END();
-	}
-
 	protected void _bridge_updateJdbc(ClassBody classBody) {
 		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "updateJdbc")
 			.return_(Object.class )
 			.throws_(SQLException.class )
-			.parameter("var1",Object.class).begin();
+			.parameter(ACC_SYNTHETIC,"data",Object.class).begin();
 
 		code.LINE();
 		code.LOAD("this");
-		code.LOAD("var1");
+		code.LOAD("data");
 		code.CHECKCAST(User.class);
 		code.VIRTUAL("updateJdbc")
 			.return_(User.class)
@@ -864,15 +844,32 @@ public class UserJdbcRepositoryTinyAsmDump {
 		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "insertJdbc")
 			.return_(Object.class )
 			.throws_(SQLException.class )
-			.parameter("var1",Object.class).begin();
+			.parameter(ACC_SYNTHETIC,"data",Object.class).begin();
 
 		code.LINE();
 		code.LOAD("this");
-		code.LOAD("var1");
+		code.LOAD("data");
 		code.CHECKCAST(User.class);
 		code.VIRTUAL("insertJdbc")
 			.return_(User.class)
 			.parameter(User.class).INVOKE();
+		code.RETURNTop();
+
+		code.END();
+	}
+
+	protected void _bridge_findByIdJdbc(ClassBody classBody) {
+		MethodCode code = classBody.method(ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC, "findByIdJdbc")
+			.return_(Object.class )
+			.throws_(SQLException.class )
+			.parameter(ACC_SYNTHETIC,"id",long.class).begin();
+
+		code.LINE();
+		code.LOAD("this");
+		code.LOAD("id");
+		code.VIRTUAL("findByIdJdbc")
+			.return_(User.class)
+			.parameter(long.class).INVOKE();
 		code.RETURNTop();
 
 		code.END();

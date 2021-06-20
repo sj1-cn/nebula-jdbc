@@ -14,7 +14,7 @@
 		<jacoco.version>0.8.6</jacoco.version>
 		<junit.version>4.13.1</junit.version>
 		<nebula.version>1.1.0</nebula.version>
-		<tinyasm.version>0.3.4.1</tinyasm.version>
+		<tinyasm.version>1.0.1</tinyasm.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<mockito.version>1.10.19</mockito.version>
 		<log4j.version>2.14.0</log4j.version>
@@ -24,11 +24,6 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>nebula</groupId>
-			<artifactId>nebula-commons</artifactId>
-			<version>${nebula.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>nebula</groupId>
 			<artifactId>nebula-lang</artifactId>

@@ -1,44 +1,39 @@
 package cn.sj1.nebula.data.jdbc.sample;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.Handle;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
-import cn.sj1.tinyasm.core.ClassBody;
-import cn.sj1.tinyasm.core.ClassBuilder;
-import cn.sj1.tinyasm.core.MethodCode;
 import org.objectweb.asm.Type;
 import static org.objectweb.asm.Opcodes.*;
+
 import cn.sj1.tinyasm.core.Annotation;
+import cn.sj1.tinyasm.core.ClassBody;
+import cn.sj1.tinyasm.core.ClassBuilder;
 import cn.sj1.tinyasm.core.Clazz;
-import java.lang.Float;
-import java.sql.Time;
-import cn.sj1.nebula.data.jdbc.sample.UserMoreComplex;
-import java.lang.Double;
-import java.sql.Timestamp;
-import java.lang.Integer;
-import java.sql.Date;
+import cn.sj1.tinyasm.core.MethodCode;
+
 import java.math.BigDecimal;
-import java.lang.Character;
-import java.lang.Long;
-import java.lang.Short;
-import java.lang.Boolean;
-import java.lang.String;
-import java.lang.Byte;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+
 import cn.sj1.nebula.data.EntityAudit;
+import cn.sj1.nebula.data.jdbc.sample.UserMoreComplex;
+
 @SuppressWarnings("unused")
 public class UserMoreComplexExtendTinyAsmDump {
 
-	public static byte[] dump () throws Exception {
-		return new UserMoreComplexExtendTinyAsmDump().dump("cn.sj1.nebula.data.jdbc.sample.UserMoreComplexExtend");
+	public static byte[] dump() throws Exception {
+		return new UserMoreComplexExtendTinyAsmDump().build("cn.sj1.nebula.data.jdbc.sample.UserMoreComplexExtend");
 	}
 
-	public byte[] dump(String className) throws Exception {
+	public byte[] build(String className) throws Exception {
 		ClassBody classBody = ClassBuilder.class_(className, UserMoreComplex.class, EntityAudit.class)
 			.access(ACC_PUBLIC | ACC_SUPER).body();
 
 		classBody.private_().field("createAt", Clazz.of(Timestamp.class));
 		classBody.private_().field("updateAt", Clazz.of(Timestamp.class));
 		__init_(classBody);
-		__init__long_String_javamathBigDecimal_Boolean_Character_Byte_Short_Integer_Long_Float_Double_javasqlDate_javasqlTime_javasqlTimestamp_javasqlTimestamp_javasqlTimestamp_void(classBody);
+		__init__long_String_javamathBigDecimal_Boolean_Character_Byte_Short_Integer_Long_Float_Double_Date_Time_Timestamp_Timestamp_Timestamp_void(classBody);
 		_getCreateAt(classBody);
 		_setCreateAt(classBody);
 		_getUpdateAt(classBody);
@@ -60,7 +55,7 @@ public class UserMoreComplexExtendTinyAsmDump {
 		code.END();
 	}
 
-	protected void __init__long_String_javamathBigDecimal_Boolean_Character_Byte_Short_Integer_Long_Float_Double_javasqlDate_javasqlTime_javasqlTimestamp_javasqlTimestamp_javasqlTimestamp_void(ClassBody classBody) {
+	protected void __init__long_String_javamathBigDecimal_Boolean_Character_Byte_Short_Integer_Long_Float_Double_Date_Time_Timestamp_Timestamp_Timestamp_void(ClassBody classBody) {
 		MethodCode code = classBody.public_().method("<init>")
 			.parameter("id",long.class)
 			.parameter("string",String.class)
@@ -114,12 +109,12 @@ public class UserMoreComplexExtendTinyAsmDump {
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("createAt");
-		code.PUTFIELD_OF_THIS("createAt");
+		code.PUTFIELD("createAt", Timestamp.class);
 
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("updateAt");
-		code.PUTFIELD_OF_THIS("updateAt");
+		code.PUTFIELD("updateAt", Timestamp.class);
 
 		code.LINE();
 		code.RETURN();
@@ -133,7 +128,7 @@ public class UserMoreComplexExtendTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("createAt");
+		code.GETFIELD("createAt", Timestamp.class);
 		code.RETURNTop();
 
 		code.END();
@@ -146,7 +141,7 @@ public class UserMoreComplexExtendTinyAsmDump {
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("createAt");
-		code.PUTFIELD_OF_THIS("createAt");
+		code.PUTFIELD("createAt", Timestamp.class);
 
 		code.LINE();
 		code.RETURN();
@@ -160,7 +155,7 @@ public class UserMoreComplexExtendTinyAsmDump {
 
 		code.LINE();
 		code.LOAD("this");
-		code.GETFIELD_OF_THIS("updateAt");
+		code.GETFIELD("updateAt", Timestamp.class);
 		code.RETURNTop();
 
 		code.END();
@@ -173,7 +168,7 @@ public class UserMoreComplexExtendTinyAsmDump {
 		code.LINE();
 		code.LOAD("this");
 		code.LOAD("updateAt");
-		code.PUTFIELD_OF_THIS("updateAt");
+		code.PUTFIELD("updateAt", Timestamp.class);
 
 		code.LINE();
 		code.RETURN();

@@ -7,6 +7,7 @@ import com.dbal.jdbc.builders.schema.Column;
 
 import nebula.commons.list.StringListMap;
 
+
 public class ColumnList extends StringListMap<ColumnDefinition> {
 	public ColumnList() {
 		super(c -> c.columnName);
