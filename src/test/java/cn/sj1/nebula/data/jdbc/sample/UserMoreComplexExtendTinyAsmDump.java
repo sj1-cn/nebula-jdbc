@@ -27,8 +27,7 @@ public class UserMoreComplexExtendTinyAsmDump {
 	}
 
 	public byte[] build(String className) throws Exception {
-		ClassBody classBody = ClassBuilder.class_(className, UserMoreComplex.class, EntityAudit.class)
-			.access(ACC_PUBLIC | ACC_SUPER).body();
+		ClassBody classBody = ClassBuilder.class_(className, UserMoreComplex.class, EntityAudit.class).body();
 
 		classBody.private_().field("createAt", Clazz.of(Timestamp.class));
 		classBody.private_().field("updateAt", Clazz.of(Timestamp.class));

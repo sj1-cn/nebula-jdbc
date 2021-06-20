@@ -41,8 +41,7 @@ public class UserAutoIncrementJdbcRepositoryTinyAsmDump {
 	}
 
 	public byte[] build(String className) throws Exception {
-		ClassBody classBody = ClassBuilder.class_(className, Clazz.of(Object.class),Clazz.of(JdbcRepository.class,Clazz.of(User.class)))
-			.access(ACC_PUBLIC | ACC_SUPER).body();
+		ClassBody classBody = ClassBuilder.class_(className, Clazz.of(Object.class),Clazz.of(JdbcRepository.class,Clazz.of(User.class))).body();
 
 		classBody.private_().field("conn", Clazz.of(Connection.class));
 		classBody.private_().field("sqlHelper", Clazz.of(SqlHelper.class));
