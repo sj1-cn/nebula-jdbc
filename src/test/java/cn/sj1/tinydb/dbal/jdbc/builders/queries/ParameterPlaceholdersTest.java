@@ -3,11 +3,12 @@
  */
 package cn.sj1.tinydb.dbal.jdbc.builders.queries;
 
-import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
 
-import cn.sj1.tinydb.dbal.jdbc.builders.queries.ParameterPlaceholders;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
 
 public class ParameterPlaceholdersTest {
     @Test
@@ -20,8 +21,8 @@ public class ParameterPlaceholdersTest {
         assertEquals("(?, ?, ?, ?)", ParameterPlaceholders.generate(4));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void it_does_not_generate_placeholders_for_non_positive_numeric_values() {
-        ParameterPlaceholders.generate(0);
+    	assertThrows(IllegalStateException.class, () ->{ ParameterPlaceholders.generate(0);});
     }
 }

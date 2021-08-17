@@ -11,9 +11,9 @@ public class AlterTable {
 
 	}
 
-	public static class AlterColumnCommand extends AlterTableColumnCommand {
+	public static class ChangeColumnTypeCommand extends AlterTableColumnCommand {
 
-		public AlterColumnCommand(ColumnDefinition column) {
+		public ChangeColumnTypeCommand(ColumnDefinition column) {
 			super(column);
 		}
 	}

@@ -41,7 +41,7 @@ public class SelectStatement<T> extends SQLStatement {
     }
 
     public SelectStatement<T> select(String... columns) {
-        select.columns(columns);
+        select.addColumns(columns);
         return this;
     }
 

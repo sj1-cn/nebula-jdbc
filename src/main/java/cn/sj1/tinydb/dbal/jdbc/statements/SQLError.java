@@ -9,7 +9,12 @@ import java.util.Arrays;
 import cn.sj1.tinydb.dbal.jdbc.builders.HasSQLRepresentation;
 
 public class SQLError extends RuntimeException {
-    private SQLError(String format, SQLException cause) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private SQLError(String format, SQLException cause) {
         super(format, cause);
     }
 

@@ -4,11 +4,9 @@ import static cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition.BIT;
 import static cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition.DECIMAL;
 import static cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition.IDENTITY;
 import static cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition.VARCHAR;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
-
-import cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition;
+import org.junit.jupiter.api.Test;
 
 public class ColumnDefinitionTest {
 

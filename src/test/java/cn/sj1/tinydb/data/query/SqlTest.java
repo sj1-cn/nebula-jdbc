@@ -2,9 +2,9 @@ package cn.sj1.tinydb.data.query;
 
 import static cn.sj1.tinydb.data.query.Condition.and;
 import static cn.sj1.tinydb.data.query.Condition.field;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import cn.sj1.tinydb.data.query.CommonSQLConditionVisitor;
 import cn.sj1.tinydb.data.query.Condition;

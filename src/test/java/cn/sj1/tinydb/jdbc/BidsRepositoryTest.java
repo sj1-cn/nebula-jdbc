@@ -1,6 +1,6 @@
 package cn.sj1.tinydb.jdbc;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BidsRepositoryTest {
 

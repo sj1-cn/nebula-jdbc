@@ -4,11 +4,10 @@
 package cn.sj1.tinydb.dbal.jdbc.builders.schema;
 
 import static cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition.IDENTITY;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
-
-import cn.sj1.tinydb.dbal.jdbc.builders.schema.ForeignKey;
+import org.junit.jupiter.api.Test;
 
 public class ForeignKeyTest {
 	@Test
@@ -17,15 +16,19 @@ public class ForeignKeyTest {
 		assertEquals("FOREIGN KEY (user_id) REFERENCES users(id)", key.toSQL());
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void it_fails_to_convert_if_no_table_is_referenced() {
-		ForeignKey key = new ForeignKey(IDENTITY("user_id")).references("id");
-		key.toSQL();
+		assertThrows(IllegalStateException.class, () -> {
+			ForeignKey key = new ForeignKey(IDENTITY("user_id")).references("id");
+			key.toSQL();
+		});
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void it_fails_to_convert_if_no_column_is_referenced() {
-		ForeignKey key = new ForeignKey(IDENTITY("user_id")).on("users");
-		key.toSQL();
+		assertThrows(IllegalStateException.class, () -> {
+			ForeignKey key = new ForeignKey(IDENTITY("user_id")).on("users");
+			key.toSQL();
+		});
 	}
 }

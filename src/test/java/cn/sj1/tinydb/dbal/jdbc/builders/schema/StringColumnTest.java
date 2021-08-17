@@ -4,9 +4,9 @@
 package cn.sj1.tinydb.dbal.jdbc.builders.schema;
 
 import static cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition.VARCHAR;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 public class StringColumnTest {
 	@Test
 	public void it_converts_to_sql_a_string_column_with_a_default_length() {

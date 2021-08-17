@@ -6,5 +6,5 @@ package cn.sj1.tinydb.dbal.jdbc.builders.schema;
 import cn.sj1.tinydb.dbal.jdbc.builders.HasSQLRepresentation;
 
 public interface Column extends HasSQLRepresentation {
-	String name();
+	String getName();
 }

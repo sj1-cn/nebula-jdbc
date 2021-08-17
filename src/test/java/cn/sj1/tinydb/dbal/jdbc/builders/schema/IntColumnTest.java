@@ -4,14 +4,14 @@
 package cn.sj1.tinydb.dbal.jdbc.builders.schema;
 
 import static cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition.INTEGER;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class IntColumnTest {
 
-	@Before
+	@BeforeEach
 	public void newColumn() {
 	}
 

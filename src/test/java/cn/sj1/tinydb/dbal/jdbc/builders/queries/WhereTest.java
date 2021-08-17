@@ -3,11 +3,11 @@
  */
 package cn.sj1.tinydb.dbal.jdbc.builders.queries;
 
-import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
 
-import cn.sj1.tinydb.dbal.jdbc.builders.queries.Where;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class WhereTest {
     private Where where = Where.empty();

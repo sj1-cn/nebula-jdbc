@@ -3,11 +3,12 @@
  */
 package cn.sj1.tinydb.dbal.jdbc.builders.queries;
 
-import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
 
-import cn.sj1.tinydb.dbal.jdbc.builders.queries.Update;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
 import cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition;
 import cn.sj1.tinydb.jdbc.builders.schema.ColumnList;
 

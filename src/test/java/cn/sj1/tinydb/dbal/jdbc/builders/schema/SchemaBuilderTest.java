@@ -11,10 +11,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.junit.Test;
-
-import cn.sj1.tinydb.dbal.jdbc.builders.schema.SchemaBuilder;
-import cn.sj1.tinydb.dbal.jdbc.builders.schema.Table;
+import org.junit.jupiter.api.Test;
 
 public class SchemaBuilderTest {
 

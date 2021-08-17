@@ -2,14 +2,14 @@ package cn.sj1.tinydb.jdbc.builders.schema.ddl;
 
 import static cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition.BIGINT;
 import static cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition.CHAR;
-import static cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition.DECIMAL;
+import static cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition.*;
 import static cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition.IDENTITY;
 import static cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition.VARCHAR;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -20,37 +20,51 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 import cn.sj1.tinydb.jdbc.TestBase;
 import cn.sj1.tinydb.jdbc.builders.schema.ColumnDefinition;
 import cn.sj1.tinydb.jdbc.builders.schema.ColumnList;
-import cn.sj1.tinydb.jdbc.builders.schema.JDBC;
 import cn.sj1.tinydb.jdbc.builders.schema.db.JdbcDababaseMetadata;
-import cn.sj1.tinydb.jdbc.builders.schema.ddl.AlterTable;
-import cn.sj1.tinydb.jdbc.builders.schema.ddl.AlterTableColumnCommand;
-import cn.sj1.tinydb.jdbc.builders.schema.ddl.DBSchemaMerge;
 
-public class DBSchemaMergeTest extends TestBase {
-	@Rule
-	public TestName name = new TestName();
-	String tableName = "UserComplex";
-	DBSchemaMerge dbSchemaMerge = new DBSchemaMerge();
+public class PostgresqlDBSchemaMergeTest extends TestBase {
+
+	String tableName = "usercomplex".toLowerCase();
+	DBSchemaMerge dbSchemaMerge;
 	ColumnList columnsPrepared;
+
+	HikariDataSource dataSource;
 	Connection conn;
 
-	@Before
+	@BeforeEach
 	public void before() throws SQLException {
+
+		HikariConfig config = new HikariConfig();
+		config.setJdbcUrl("jdbc:postgresql://localhost:5432/tinydbtest");
+		config.addDataSourceProperty("user", "wangshilian");
+		config.addDataSourceProperty("password", "Freewill1984");
+
+		dataSource = new HikariDataSource(config);
+		conn = dataSource.getConnection();
+
+		dbSchemaMerge = new DBSchemaMerge(conn);
+
 		columnsPrepared = new ColumnList();
 		columnsPrepared.push(IDENTITY("id"));
 		columnsPrepared.push(VARCHAR("name"));
 		columnsPrepared.push(DECIMAL("height"));
 		columnsPrepared.push(VARCHAR("description"));
-		conn = super.openConnection(name.getMethodName());
+
+		try {
+			conn.createStatement().execute("drop table " + tableName + ";");
+		} catch (SQLException e) {
+		}
+
 		{
 			List<String> ls = new ArrayList<>();
 			List<String> keys = new ArrayList<>();
@@ -60,16 +74,19 @@ public class DBSchemaMergeTest extends TestBase {
 					keys.add(columnDefinition.getColumnName());
 				}
 			}
-			String sqlCreateTable = JDBC.sql(
-					"CREATE TABLE ${tablename}(${columndefinitions},PRIMARY KEY(${keys}))", tableName,
+
+			// TODO
+			String sqlCreateTable = String.format("CREATE TABLE %s (%s,PRIMARY KEY(%s))", tableName,
 					String.join(",", ls), String.join(",", keys));
 
 			conn.createStatement().execute(sqlCreateTable);
 		}
 	}
 
-	@After
-	public void after() {
+	@AfterEach
+	public void tearDown() throws SQLException {
+		dataSource.close();
+		conn.close();
 	}
 
 	@Test
@@ -83,7 +100,7 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
-		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual,true);
 
 		assertEquals(0, commandBus.size());
 	}
@@ -100,11 +117,11 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
-		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual,true);
 
 		assertEquals(1, commandBus.size());
 		assertTrue(commandBus.get(0) instanceof AlterTable.AddColumnCommand);
-		assertEquals("age", commandBus.get(0).getColumn().name());
+		assertEquals("age", commandBus.get(0).getColumn().getName());
 	}
 
 	@Test
@@ -114,17 +131,17 @@ public class DBSchemaMergeTest extends TestBase {
 		Statement statement = mock(Statement.class);
 
 		dbSchemaMerge.prepareMerge(statement, tableName, addColumn);
-		verify(statement).addBatch("ALTER TABLE UserComplex ADD COLUMN name VARCHAR(256)");
+		verify(statement).addBatch("ALTER TABLE usercomplex ADD COLUMN name VARCHAR(256)");
 	}
 
 	@Test
 	public void test_prepareMerge_alterColumn_prepare() throws SQLException {
 
-		AlterTable.AlterColumnCommand addColumn = new AlterTable.AlterColumnCommand(VARCHAR("name"));
+		AlterTable.ChangeColumnTypeCommand addColumn = new AlterTable.ChangeColumnTypeCommand(VARCHAR("name"));
 		Statement statement = mock(Statement.class);
 
 		dbSchemaMerge.prepareMerge(statement, tableName, addColumn);
-		verify(statement).addBatch("ALTER TABLE UserComplex ALTER COLUMN name VARCHAR(256)");
+		verify(statement).addBatch("ALTER TABLE usercomplex ALTER COLUMN name TYPE VARCHAR(256)");
 	}
 
 	@Test
@@ -134,7 +151,7 @@ public class DBSchemaMergeTest extends TestBase {
 		Statement statement = mock(Statement.class);
 
 		dbSchemaMerge.prepareMerge(statement, tableName, addColumn);
-		verify(statement).addBatch("ALTER TABLE UserComplex DROP COLUMN name");
+		verify(statement).addBatch("ALTER TABLE usercomplex DROP COLUMN name");
 	}
 
 	@Test
@@ -158,7 +175,7 @@ public class DBSchemaMergeTest extends TestBase {
 		{
 			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertEquals(columnsActual.get("favor").toString(), columnsActual.get("favor").toString());
-			assertEquals(columnsExpected.get("height").toString(), columnsActual.get("height").toString());
+			assertEquals(columnsExpected.get("height").toString().replaceAll("DECIMAL", "NUMERIC"), columnsActual.get("height").toString().replaceAll("DECIMAL", "NUMERIC"));
 			assertEquals(columnsExpected.get("name").toString(), columnsActual.get("name").toString());
 			assertEquals(columnsExpected.get("description").toString(), columnsActual.get("description").toString());
 		}
@@ -166,24 +183,35 @@ public class DBSchemaMergeTest extends TestBase {
 
 	@Test
 	public void test_merge_addColumn_exec() throws SQLException {
+
+//		matchColumnChange(VARCHAR("favor").size(1024));
+		String name = "favor";
+//		matchColumnChange(INTEGER(name), name);
+
+		matchColumnChange(BOOLEAN(name), name);
+//		matchColumnChange(BIGINT("favor"));
+//		matchColumnChange(VARCHAR("favor"));
+	}
+
+	private void matchColumnChange(ColumnDefinition columnTarget, String name) throws SQLException {
 		ColumnList columnsExpected = columnsPrepared.copy();
-		columnsExpected.push(VARCHAR("favor").size(1024));
+		columnsExpected.push(columnTarget);
 
 		{
 			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
-			assertNull(columnsActual.get("favor"));
+			assertNull(columnsActual.get(name));
 		}
 
 		dbSchemaMerge.merge(conn, tableName, columnsExpected);
 
 		{
 			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
-			assertEquals(columnsActual.get("favor").toString(), columnsActual.get("favor").toString());
+			assertEquals(columnsActual.get(name).toString(), columnsActual.get(name).toString());
 		}
 	}
 
 	@Test
-	public void test_merge_alterColumn_change_type_exec() throws SQLException {
+	public void test_merge_alterColumn_change_type_exec_BIGINT() throws SQLException {
 		ColumnList columnsExpected = columnsPrepared.copy();
 		columnsExpected.push(BIGINT("height"));
 
@@ -213,7 +241,7 @@ public class DBSchemaMergeTest extends TestBase {
 		dbSchemaMerge.merge(conn, tableName, columnsExpected);
 		{
 			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
-			assertEquals(columnsExpected.get("height").toString(), columnsActual.get("height").toString());
+			assertEquals(columnsExpected.get("height").toString().replaceAll("DECIMAL", "NUMERIC"), columnsActual.get("height").toString().replaceAll("DECIMAL", "NUMERIC"));
 		}
 	}
 
@@ -231,7 +259,7 @@ public class DBSchemaMergeTest extends TestBase {
 
 		{
 			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
-			assertEquals(columnsExpected.get("height").toString(), columnsActual.get("height").toString());
+			assertEquals(columnsExpected.get("height").toString().replaceAll("DECIMAL", "NUMERIC"), columnsActual.get("height").toString().replaceAll("DECIMAL", "NUMERIC"));
 		}
 	}
 
@@ -267,7 +295,7 @@ public class DBSchemaMergeTest extends TestBase {
 
 		{
 			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
-			assertEquals(columnsExpected.get("height").toString(), columnsActual.get("height").toString());
+			assertEquals(columnsExpected.get("height").toString().replaceAll("DECIMAL", "NUMERIC"), columnsActual.get("height").toString().replaceAll("DECIMAL", "NUMERIC"));
 		}
 	}
 
@@ -331,7 +359,7 @@ public class DBSchemaMergeTest extends TestBase {
 	@Test
 	public void test_prepareMerge_alterColumn_change_type_exec() throws SQLException {
 
-		AlterTable.AlterColumnCommand alterColumn = new AlterTable.AlterColumnCommand(BIGINT("height"));
+		AlterTable.ChangeColumnTypeCommand alterColumn = new AlterTable.ChangeColumnTypeCommand(BIGINT("height"));
 		{
 			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNotEquals(alterColumn.getColumn().toString(), columnsActual.get("height").toString());
@@ -352,7 +380,7 @@ public class DBSchemaMergeTest extends TestBase {
 	@Test
 	public void test_prepareMerge_alterColumn_change_size_exec() throws SQLException {
 
-		AlterTable.AlterColumnCommand alterColumn = new AlterTable.AlterColumnCommand(DECIMAL("height").size(32));
+		AlterTable.ChangeColumnTypeCommand alterColumn = new AlterTable.ChangeColumnTypeCommand(DECIMAL("height").size(32));
 		{
 			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
 			assertNotEquals(alterColumn.getColumn().toString(), columnsActual.get("height").toString());
@@ -366,14 +394,14 @@ public class DBSchemaMergeTest extends TestBase {
 
 		{
 			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
-			assertEquals(alterColumn.getColumn().toString(), columnsActual.get("height").toString());
+			assertEquals(alterColumn.getColumn().toString().replaceAll("DECIMAL", "NUMERIC"), columnsActual.get("height").toString().replaceAll("DECIMAL", "NUMERIC"));
 		}
 	}
 
 	@Test
 	public void test_prepareMerge_alterColumn_change_digit_exec() throws SQLException {
 
-		AlterTable.AlterColumnCommand alterColumn = new AlterTable.AlterColumnCommand(
+		AlterTable.ChangeColumnTypeCommand alterColumn = new AlterTable.ChangeColumnTypeCommand(
 				DECIMAL("height").size(32).digits(10));
 		{
 			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
@@ -388,7 +416,7 @@ public class DBSchemaMergeTest extends TestBase {
 
 		{
 			ColumnList columnsActual = JdbcDababaseMetadata.getColumns(conn, tableName);
-			assertEquals(alterColumn.getColumn().toString(), columnsActual.get("height").toString());
+			assertEquals(alterColumn.getColumn().toString().replaceAll("DECIMAL", "NUMERIC"), columnsActual.get("height").toString().replaceAll("DECIMAL", "NUMERIC"));
 		}
 	}
 
@@ -468,11 +496,11 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
-		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual,true);
 
 		assertEquals(1, commandBus.size());
-		assertTrue(commandBus.get(0) instanceof AlterTable.AlterColumnCommand);
-		assertEquals("height", commandBus.get(0).getColumn().name());
+		assertTrue(commandBus.get(0) instanceof AlterTable.ChangeColumnTypeCommand);
+		assertEquals("height", commandBus.get(0).getColumn().getName());
 		assertEquals(JDBCType.BIGINT, commandBus.get(0).getColumn().getDataType());
 	}
 
@@ -487,11 +515,11 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
-		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual,true);
 
 		assertEquals(1, commandBus.size());
-		assertTrue(commandBus.get(0) instanceof AlterTable.AlterColumnCommand);
-		assertEquals("name", commandBus.get(0).getColumn().name());
+		assertTrue(commandBus.get(0) instanceof AlterTable.ChangeColumnTypeCommand);
+		assertEquals("name", commandBus.get(0).getColumn().getName());
 		assertEquals(1024, commandBus.get(0).getColumn().getColumnSize());
 	}
 
@@ -506,11 +534,11 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
-		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual,true);
 
 		assertEquals(1, commandBus.size());
-		assertTrue(commandBus.get(0) instanceof AlterTable.AlterColumnCommand);
-		assertEquals("height", commandBus.get(0).getColumn().name());
+		assertTrue(commandBus.get(0) instanceof AlterTable.ChangeColumnTypeCommand);
+		assertEquals("height", commandBus.get(0).getColumn().getName());
 		assertEquals(20, commandBus.get(0).getColumn().getColumnSize());
 		assertEquals(2, commandBus.get(0).getColumn().getDecimalDigits());
 	}
@@ -526,7 +554,7 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
-		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual,true);
 
 		assertEquals(1, commandBus.size());
 		assertTrue(commandBus.get(0) instanceof AlterTable.AlterColumnRemarksCommand);
@@ -546,7 +574,7 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
-		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual,true);
 
 		assertEquals(1, commandBus.size());
 		assertEquals("AlterColumnNullableCommand [name VARCHAR(256) NOT NULL]", commandBus.get(0).toString());
@@ -563,7 +591,7 @@ public class DBSchemaMergeTest extends TestBase {
 
 		ColumnList actual = JdbcDababaseMetadata.getColumns(conn, tableName);
 
-		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual);
+		List<AlterTableColumnCommand> commandBus = dbSchemaMerge.compare(columnsExpected, actual,true);
 
 		assertEquals(1, commandBus.size());
 		assertEquals("DropColumnCommand [name VARCHAR(256)]", commandBus.get(0).toString());
@@ -572,7 +600,11 @@ public class DBSchemaMergeTest extends TestBase {
 	@Test
 	public void testGetCurrentActualColumns() throws SQLException {
 		List<ColumnDefinition> actual = JdbcDababaseMetadata.getColumns(conn, tableName).list();
-		assertListtoString(columnsPrepared.list(), actual);
+		List<?> expected = columnsPrepared.list();
+		assertEquals(expected.size(), actual.size());
+		for (int i = 0; i < expected.size(); i++) {
+			assertEquals(expected.get(i).toString().replaceAll("DECIMAL", "NUMERIC"), actual.get(i).toString().replaceAll("DECIMAL", "NUMERIC"));
+		}
 	}
 
 }

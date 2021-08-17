@@ -3,17 +3,18 @@
  */
 package cn.sj1.tinydb.dbal.jdbc.builders.queries;
 
-import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
-import org.junit.Test;
 
-import cn.sj1.tinydb.dbal.jdbc.builders.queries.Rows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class RowsTest {
     private Rows rows;
 
-    @Before
+    @BeforeEach
     public void initRows() {
         rows = Rows.all();
     }
@@ -38,13 +39,13 @@ public class RowsTest {
         assertEquals("LIMIT 10 OFFSET 30", rows.toSQL());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void it_does_not_allow_a_negative_limit() {
-        rows.countTo(-3);
+    	assertThrows(IllegalArgumentException.class, () ->{ rows.countTo(-3);});
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void it_does_not_allow_a_negative_offset() {
-        rows.startingAt(-4);
+    	assertThrows(IllegalArgumentException.class, () ->{  rows.startingAt(-4);});
     }
 }

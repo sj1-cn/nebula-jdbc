@@ -1,29 +1,28 @@
 package cn.sj1.tinydb.jdbc;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import cn.sj1.tinyasm.tools.TinyAsmTestUtils;
-
 public class TestBase {
-	@Rule
-	public TestName name = new TestName();
+
+	String testname;
+
+	@BeforeEach
+	public void setUp(TestInfo testinfo) {
+		this.testname = testinfo.getTestMethod().get().getName();
+	}
 
 	public Connection openConnection() {
-		return openConnection(this.getClass().getName() + "_" + name.getMethodName());
+		return openConnection(this.getClass().getName() + "_" + testname);
 	}
 
 	static public void assertListtoString(List<?> expected, List<?> actual) {
@@ -61,48 +60,5 @@ public class TestBase {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	protected MyClassLoader classLoader = new MyClassLoader();
-
-	protected class MyClassLoader extends ClassLoader {
-		public Class<?> defineClassByName(String name, byte[] b, int off, int len) {
-			{
-				File root = new File("target/generated-test-sources");
-				if (!root.exists()) root.mkdirs();
-
-				File file = new File(root, name.replace(".", "/") + ".class");
-				if (!file.getParentFile().exists()) {
-					makesureFolderExists(file.getParentFile());
-				}
-
-				try {
-					FileOutputStream o = new FileOutputStream(file);
-					o.write(b);
-					o.close();
-				} catch (FileNotFoundException e) {
-					throw new RuntimeException(e);
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-			Class<?> clazz = super.defineClass(name, b, off, len);
-			return clazz;
-		}
-
-		private void makesureFolderExists(File file) {
-			if (!file.getParentFile().exists()) makesureFolderExists(file.getParentFile());
-			file.mkdir();
-		}
-
-		public Class<?> defineClassByName(String name, byte[] b) {
-			Class<?> clazz = defineClassByName(name, b, 0, b.length);
-			return clazz;
-		}
-	}
-
-	public static String toString(String targetClazz, byte[] code) {
-		return TinyAsmTestUtils.toString(targetClazz, code);
 	}
 }

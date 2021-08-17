@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import cn.sj1.tinydb.dbal.jdbc.QueryParameters;
 
