@@ -6,10 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import cn.sj1.tinydb.data.query.CommonSQLConditionVisitor;
-import cn.sj1.tinydb.data.query.Condition;
-import cn.sj1.tinydb.data.query.OrderBy;
-
 public class SqlTest {
 
 	@Test

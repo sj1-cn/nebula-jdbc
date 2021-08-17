@@ -3,9 +3,9 @@ package cn.sj1.tinydb.data.jdbc;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import cn.sj1.tinydb.jdbc.TestBase;
 import cn.sj1.tinydb.jdbc.builders.schema.db.JdbcDababaseMetadata;
@@ -14,17 +14,18 @@ import cn.sj1.tinydb.jdbc.builders.schema.db.JdbcDatabaseInfo;
 public class JdbcDababaseMetadataTest extends TestBase {
 	Connection connection;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		connection = super.openConnection();
 	}
 
-	@After
+	@AfterEach
 	public void after() {
 		super.closeConnection();
 	}
 
 	@Test
+	@SuppressWarnings("static-access")
 	public void test_JdbcTypeInfo() throws SQLException {
 
 		JdbcDatabaseInfo jdbcDababaseInfo = new JdbcDababaseMetadata().getDatabaseInfo(connection);
